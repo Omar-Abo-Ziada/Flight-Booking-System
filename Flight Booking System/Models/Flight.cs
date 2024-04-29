@@ -24,9 +24,9 @@ namespace Flight_Booking_System.Models
         //-----------------------------------------
 
         [ForeignKey("Plane")]
-        public int PlaneId { get; set; }
+        public int? PlaneId { get; set; }
 
-        public Plane Plane { get; set; }
+        public Plane? Plane { get; set; }
 
         public List<Passenger>? Passengers { get; set; }
     }

@@ -19,13 +19,13 @@ namespace Flight_Booking_System.Models
         //------------------------------------
 
         [ForeignKey("PassengerId")]
-        public int PassengerId { get; set; }
+        public int? PassengerId { get; set; }
 
-        public Passenger Passenger { get; set; }
+        public Passenger? Passenger { get; set; }
 
         [ForeignKey("SeatId")]
-        public int SeatId { get; set; }
+        public int? SeatId { get; set; }
 
-        public Seat Seat { get; set; }
+        public Seat? Seat { get; set; }
     }
 }

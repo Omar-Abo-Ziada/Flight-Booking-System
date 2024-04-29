@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Flight_Booking_System.Models
 {
-    [Table("AirPort")]
+    [Table("AirPorts")]
     public class AirPort
     {
         [Key]

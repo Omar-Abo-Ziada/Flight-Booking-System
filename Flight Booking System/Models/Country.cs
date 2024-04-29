@@ -9,11 +9,11 @@ namespace Flight_Booking_System.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Country Name is required")]
         public string Name { get; set; }
 
         //---------------------------------------
 
-        public List<State> States { get; set; }
+        public List<State>? States { get; set; }
     }
 }
