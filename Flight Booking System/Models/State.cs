@@ -15,8 +15,8 @@ namespace Flight_Booking_System.Models
         //------------------------------------
 
         [ForeignKey("Country")]
-        public int CountryId { get; set; }
+        public int? CountryId { get; set; }
 
-        public Country Country { get; set; }
+        public Country? Country { get; set; }
     }
 }

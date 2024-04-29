@@ -11,6 +11,8 @@ namespace Flight_Booking_System.Context
 
         public DbSet<Flight> Flights { get; set; }
 
+        public DbSet<Plane> Planes { get; set; }
+
         public DbSet<Place> Places { get; set; }
 
         public DbSet<Country> Countries { get; set; }
@@ -21,21 +23,12 @@ namespace Flight_Booking_System.Context
 
         public DbSet<Ticket> Tickets { get; set; }
 
-        public DbSet<Place> Places { get; set; }
-
-        public DbSet<Country> Countries { get; set; }
-
         public DbSet<Seat> Seats { get; set; }
-
-        public DbSet<State> States { get; set; }
 
 
         public ITIContext(DbContextOptions contextOptions) : base(contextOptions) 
         {
             
         }
-
-        // test sdfsdfa
-        // sdffffffffff
     }
 }

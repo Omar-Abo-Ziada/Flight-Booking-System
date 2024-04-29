@@ -33,6 +33,7 @@ namespace Flight_Booking_System.Repositories
         {
             return Context.States.FirstOrDefault(item => item.Id == Id);
         }
+
         public List<State> Get(Func<State, bool> where)
         {
             return Context.States.Where(where).ToList();
