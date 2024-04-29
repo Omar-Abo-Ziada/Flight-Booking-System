@@ -53,6 +53,39 @@ namespace Flight_Booking_System.Controllers
             };
         }
 
+
+        //[HttpGet]
+        //public ActionResult<GeneralResponse> GetById()
+        //{
+        //    List<Flight> flights = _context.Flights.ToList();
+
+        //    List<FlightDTO> flightDTOs = new List<FlightDTO>();
+
+        //    foreach (Flight flight in flights)
+        //    {
+        //        FlightDTO flightDTO = new FlightDTO()
+        //        {
+        //            Id = flight.Id,
+
+        //            Start = flight.Start,
+        //            Destiantion = flight.Destiantion,
+
+        //            DepartureTime = flight.DepartureTime,
+        //            ArrivalTime = flight.ArrivalTime,
+
+        //            PlaneId = flight.PlaneId,
+        //        };
+
+        //        flightDTOs.Add(flightDTO);
+        //    }
+
+        //    return new GeneralResponse()
+        //    {
+        //        IsSuccess = true,
+        //        Data = flightDTOs
+        //    };
+        //}
+
         //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
 
