@@ -19,10 +19,24 @@ namespace Flight_Booking_System
 
             //************************************************************************************************
 
-
+            //  Registering context
             builder.Services.AddDbContext<ITIContext>(options =>
             {
                 options.UseSqlServer("Data Source=.;Initial Catalog=Flight_Booking_System;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            });
+
+            // to make the provider able to serve any consumer from other domains
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("MyPolicy", policy =>
+                {
+                    //policy.WithOrigins("http://our react app domain") // or just limited on our react app domain
+
+                    policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                    //.AllowCredentials();  // used to allow the authorization tokens / cookies 
+                });
             });
 
             //************************************************************************************************
@@ -35,6 +49,14 @@ namespace Flight_Booking_System
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            //************************************************************************************************
+
+            app.UseStaticFiles(); // to make it able to read static pages in wwwroot if needed
+
+            app.UseCors("MyPolicy"); // to make the provider able to serve consumer from other domains
+
+            //************************************************************************************************
 
             app.UseAuthorization();
 

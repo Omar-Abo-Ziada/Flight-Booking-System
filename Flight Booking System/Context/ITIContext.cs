@@ -11,7 +11,11 @@ namespace Flight_Booking_System.Context
 
         public DbSet<Flight> Flights { get; set; }
 
-        public DbSet<Plane> Planes { get; set; }
+        public DbSet<Place> Places { get; set; }
+
+        public DbSet<Country> Countries { get; set; }
+
+        public DbSet<State> States { get; set; }
 
         public DbSet<Passenger> Passengers { get; set; }
 
