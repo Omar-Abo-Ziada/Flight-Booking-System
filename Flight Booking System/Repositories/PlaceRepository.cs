@@ -8,6 +8,7 @@ namespace Flight_Booking_System.Repositories
     {
         public PlaceRepository(ITIContext _context) : base(_context)
         {
+
         }
 
         public void Insert(Place item)
