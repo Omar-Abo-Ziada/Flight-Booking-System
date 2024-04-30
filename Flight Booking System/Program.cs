@@ -1,5 +1,6 @@
 
 using Flight_Booking_System.Context;
+using Flight_Booking_System.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flight_Booking_System
@@ -24,6 +25,21 @@ namespace Flight_Booking_System
             {
                 options.UseSqlServer("Data Source=.;Initial Catalog=Flight_Booking_System;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
             });
+
+            //registering services 
+            builder.Services.AddScoped<IAirLineRepository, AirLineRepository>();
+            builder.Services.AddScoped<AirPortRepository, AirPortRepository>();
+            builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+            builder.Services.AddScoped<IFlightRepository, FlightRepository>();
+            builder.Services.AddScoped<IPassengerRepository, PassengerRepository>();
+            builder.Services.AddScoped<IPlaceRepository, PlaceRepository>();
+            builder.Services.AddScoped<IPlaneRepository, PlaneRepository>();
+            builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+            builder.Services.AddScoped<IStateRepository, StateRepository>();
+            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+
+
+
 
             // to make the provider able to serve any consumer from other domains
             builder.Services.AddCors(options =>
