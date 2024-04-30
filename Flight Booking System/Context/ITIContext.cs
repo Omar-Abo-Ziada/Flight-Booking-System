@@ -25,7 +25,6 @@ namespace Flight_Booking_System.Context
 
         public DbSet<Seat> Seats { get; set; }
 
-
         public ITIContext(DbContextOptions contextOptions) : base(contextOptions) 
         {
             
