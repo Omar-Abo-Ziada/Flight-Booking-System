@@ -12,7 +12,6 @@ namespace Flight_Booking_System.Repositories
             Context = _context;
         }
 
-
         public void Delete(T item)
         {
             Context.Remove(item);
