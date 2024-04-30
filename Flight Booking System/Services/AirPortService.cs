@@ -32,16 +32,19 @@ namespace Flight_Booking_System.Services
         public void Insert(AirPort item)
         {
             airPortRepository.Insert(item);
+            Save();
         }
 
         public void Update(AirPort item)
         {
             airPortRepository.Update(item);
+            Save();
         }
 
         public void Delete(AirPort item)
         {
             airPortRepository.Delete(item);
+            Save();
         }
 
         public void Save()
