@@ -2,9 +2,8 @@
 
 namespace Flight_Booking_System.Repositories
 {
-    
-        public interface IFlightRepository : IRepository<Flight>
-        {
-           
-        }
+    public interface IFlightRepository : IRepository<Flight>
+    {
+
     }
+}

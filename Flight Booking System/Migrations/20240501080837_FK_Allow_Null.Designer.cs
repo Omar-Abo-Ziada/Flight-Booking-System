@@ -4,6 +4,7 @@ using Flight_Booking_System.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Flight_Booking_System.Migrations
 {
     [DbContext(typeof(ITIContext))]
-    partial class ITIContextModelSnapshot : ModelSnapshot
+    [Migration("20240501080837_FK_Allow_Null")]
+    partial class FK_Allow_Null
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
