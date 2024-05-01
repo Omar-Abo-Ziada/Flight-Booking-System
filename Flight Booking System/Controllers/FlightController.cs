@@ -1,8 +1,8 @@
 ﻿using Flight_Booking_System.Context;
 using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
+using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
-using Flight_Booking_System.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,19 +14,19 @@ namespace Flight_Booking_System.Controllers
     [ApiController]
     public class FlightController : ControllerBase
     {
-        private readonly IFlightService flightService;
+        private readonly IFlightRepository flightRepository;
 
-        public FlightController(IFlightService flightService)
+        public FlightController(IFlightRepository flightRepository)
         {
-            this.flightService = flightService;
+            this.flightRepository = flightRepository;
         }
 
         //***********************************************
 
-        [HttpGet]// from route
+        [HttpGet]
         public ActionResult<GeneralResponse> Get()
         {
-            List<Flight> flights = flightService.GetAll();
+            List<Flight> flights = flightRepository.GetAll();
 
             List<FlightDTO> flightDTOs = new List<FlightDTO>();
 
@@ -51,7 +51,7 @@ namespace Flight_Booking_System.Controllers
             return new GeneralResponse()
             {
                 IsSuccess = true,
-                Data = flightDTOs , 
+                Data = flightDTOs,
                 Message = "All flights"
             };
         }
@@ -59,7 +59,7 @@ namespace Flight_Booking_System.Controllers
         [HttpGet("{id:int}")] // from route 
         public ActionResult<GeneralResponse> GetbyId(int id)
         {
-            Flight? flightFromDB = flightService.GetById(id);
+            Flight? flightFromDB = flightRepository.GetById(id);
 
             if (flightFromDB == null)
             {
@@ -105,9 +105,9 @@ namespace Flight_Booking_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                flightService.Insert(flight);
+                flightRepository.Insert(flight);
 
-                flightService.Save();
+                flightRepository.Save();
 
                 return new GeneralResponse()
                 {
@@ -145,7 +145,7 @@ namespace Flight_Booking_System.Controllers
         //[Authorize]
         public ActionResult<GeneralResponse> Edit(int id, Flight editedFlight)
         {
-            Flight? flightFromDB = flightService.GetById(id);
+            Flight? flightFromDB = flightRepository.GetById(id);
 
             if (flightFromDB == null || editedFlight.Id != id)
             {
@@ -161,9 +161,9 @@ namespace Flight_Booking_System.Controllers
             }
             else
             {
-                flightService.Update(editedFlight);
+                flightRepository.Update(editedFlight);
 
-                flightService.Save();
+                flightRepository.Save();
 
                 return new GeneralResponse()
                 {
@@ -191,7 +191,7 @@ namespace Flight_Booking_System.Controllers
         //[Authorize]
         public ActionResult<GeneralResponse> Delete(int id)
         {
-            Flight? flightFromDB = flightService.GetById(id);
+            Flight? flightFromDB = flightRepository.GetById(id);
 
             if (flightFromDB == null)
             {
@@ -208,9 +208,9 @@ namespace Flight_Booking_System.Controllers
             {
                 try
                 {
-                    flightService.Delete(flightFromDB);
+                    flightRepository.Delete(flightFromDB);
 
-                    flightService.Save();
+                    flightRepository.Save();
 
                     return new GeneralResponse()
                     {
