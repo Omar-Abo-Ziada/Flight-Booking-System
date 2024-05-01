@@ -218,7 +218,7 @@ namespace Flight_Booking_System.Controllers
 
                         Data = null,
 
-                        Message = "Flight Edited Successfully",
+                        Message = "Flight Deleted Successfully",
                     };
 
                     // omar : possible return response :
