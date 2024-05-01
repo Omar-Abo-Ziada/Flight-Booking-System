@@ -9,6 +9,8 @@ namespace Flight_Booking_System.Models
         [Key]
         public int Id { get; set; }
 
+        public int? AirPortNumber { get; set; }
+        public string? Name { get; set; }
         public List<AirLine>? AirLines { get; set; }
     }
 }
