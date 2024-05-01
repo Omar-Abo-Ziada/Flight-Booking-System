@@ -16,4 +16,3 @@ namespace Flight_Booking_System.Models
         public Section? Section { get; set; } 
     }
 }
-// test
