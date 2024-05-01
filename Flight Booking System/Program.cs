@@ -1,5 +1,6 @@
 
 using Flight_Booking_System.Context;
+using Flight_Booking_System.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flight_Booking_System
@@ -40,6 +41,19 @@ namespace Flight_Booking_System
             });
 
             //************************************************************************************************
+
+            builder.Services.AddScoped<IAirLineRepository,AirLineRepository >();
+            builder.Services.AddScoped<IAirPortRepository, AirPortRepository>();
+            builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+            builder.Services.AddScoped<IFlightRepository, FlightRepository>();
+            builder.Services.AddScoped<IPassengerRepository, PassengerRepository>();
+            builder.Services.AddScoped<IPlaceRepository, PlaceRepository>();
+            builder.Services.AddScoped<IPlaneRepository, PlaneRepository>();
+            builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+            builder.Services.AddScoped<IStateRepository, StateRepository>();
+            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+
+
 
             var app = builder.Build();
 
