@@ -4,6 +4,7 @@ using Flight_Booking_System.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Flight_Booking_System.Migrations
 {
     [DbContext(typeof(ITIContext))]
-    partial class ITIContextModelSnapshot : ModelSnapshot
+    [Migration("20240501171024_Flight_In_Ticket")]
+    partial class Flight_In_Ticket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,18 +33,12 @@ namespace Flight_Booking_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AirlineNumber")
+                    b.Property<int?>("AirPortId")
                         .HasColumnType("int");
-
-                    b.Property<int>("AirportId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AirportId");
+                    b.HasIndex("AirPortId");
 
                     b.ToTable("AirLines");
                 });
@@ -53,12 +50,6 @@ namespace Flight_Booking_System.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AirPortNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -302,13 +293,9 @@ namespace Flight_Booking_System.Migrations
 
             modelBuilder.Entity("Flight_Booking_System.Models.AirLine", b =>
                 {
-                    b.HasOne("Flight_Booking_System.Models.AirPort", "AirPort")
+                    b.HasOne("Flight_Booking_System.Models.AirPort", null)
                         .WithMany("AirLines")
-                        .HasForeignKey("AirportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AirPort");
+                        .HasForeignKey("AirPortId");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Flight", b =>
