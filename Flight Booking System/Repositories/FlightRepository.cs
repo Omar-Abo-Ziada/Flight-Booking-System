@@ -10,6 +10,7 @@ namespace Flight_Booking_System.Repositories
         {
             public FlightRepository(ITIContext _context) : base(_context)
             {
+
             }
 
             public void Insert(Flight item)
