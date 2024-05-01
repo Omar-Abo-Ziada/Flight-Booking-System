@@ -10,9 +10,9 @@ namespace Flight_Booking_System.Models
         public int Id { get; set; }
 
         [Required]
-        public Country Country { get; set; }
+        public Country? Country { get; set; }
 
         [Required]
-        public State State { get; set; }
+        public State? State { get; set; }
     }
 }

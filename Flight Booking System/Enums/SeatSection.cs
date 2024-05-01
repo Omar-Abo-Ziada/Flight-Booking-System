@@ -3,11 +3,13 @@
     [Flags]
     public enum Section
     {
-        Window = 0,
+        front = 0, 
 
         Middle = 1,
 
-        Tail = 2
+        back = 2 ,
+
+        window = 4,
     }
 }
     
