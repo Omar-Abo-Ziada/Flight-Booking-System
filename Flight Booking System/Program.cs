@@ -40,8 +40,8 @@ namespace Flight_Booking_System
                 });
             });
 
-            //************************************************************************************************
 
+            // Registering Repos :
             builder.Services.AddScoped<IAirLineRepository,AirLineRepository >();
             builder.Services.AddScoped<IAirPortRepository, AirPortRepository>();
             builder.Services.AddScoped<ICountryRepository, CountryRepository>();
@@ -54,6 +54,7 @@ namespace Flight_Booking_System
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
 
+            //************************************************************************************************
 
             var app = builder.Build();
 
