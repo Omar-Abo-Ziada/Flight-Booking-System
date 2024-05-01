@@ -10,16 +10,19 @@ namespace Flight_Booking_System.Models
         public int Id { get; set; }
 
         [Required]
-        public Place Start { get; set; }
+        public Place? Start { get; set; }
 
         [Required]
-        public Place Destiantion { get; set; }
+        public Place? Destiantion { get; set; }
 
         [Required]
-        public DateTime DepartureTime { get; set; }
+        public DateTime? DepartureTime { get; set; }
 
         [Required]
-        public DateTime ArrivalTime { get; set; }
+        public DateTime? ArrivalTime { get; set; }
+
+        [Required]
+        public DateTime? Duration { get; set; }
 
         //-----------------------------------------
 
