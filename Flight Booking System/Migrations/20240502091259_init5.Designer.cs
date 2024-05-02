@@ -4,6 +4,7 @@ using Flight_Booking_System.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Flight_Booking_System.Migrations
 {
     [DbContext(typeof(ITIContext))]
-    partial class ITIContextModelSnapshot : ModelSnapshot
+    [Migration("20240502091259_init5")]
+    partial class init5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -708,11 +711,7 @@ namespace Flight_Booking_System.Migrations
                     b.HasOne("Flight_Booking_System.Models.AirPort", "AirPort")
                         .WithMany("AirLines")
                         .HasForeignKey("AirportId")
-<<<<<<< HEAD
-                        .OnDelete(DeleteBehavior.NoAction)
-=======
                         .OnDelete(DeleteBehavior.Cascade)
->>>>>>> 95aceb6f38e1d5b14c3f2ee090236d1302548a70
                         .IsRequired();
 
                     b.Navigation("AirPort");
@@ -735,7 +734,7 @@ namespace Flight_Booking_System.Migrations
                     b.HasOne("Flight_Booking_System.Models.Place", "Start")
                         .WithMany()
                         .HasForeignKey("StartId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Destiantion");
@@ -763,13 +762,13 @@ namespace Flight_Booking_System.Migrations
                     b.HasOne("Flight_Booking_System.Models.Country", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Flight_Booking_System.Models.State", "State")
                         .WithMany()
                         .HasForeignKey("StateId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Country");
