@@ -2,6 +2,7 @@
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flight_Booking_System.Controllers
@@ -20,6 +21,7 @@ namespace Flight_Booking_System.Controllers
         //***********************************************
 
         [HttpGet]
+        [Authorize]
         public ActionResult<GeneralResponse> Get()
         {
             List<Flight> flights = flightRepository.GetAll();
