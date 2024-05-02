@@ -13,7 +13,13 @@ namespace Flight_Booking_System.Models
         [Required]
         public int? Number { get; set; }
 
-        public Section? Section { get; set; } 
+        public Section? Section { get; set; }
+
+        //--------------------------------
+
+        [ForeignKey("Ticket")]
+        public int? TicketId { get; set; }
+
+        public Ticket? Ticket { get; set; }
     }
 }
-// test

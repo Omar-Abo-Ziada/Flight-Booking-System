@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Flight_Booking_System.Models
@@ -11,13 +13,15 @@ namespace Flight_Booking_System.Models
 
         [Required]
         [ForeignKey("Start")]
-        public int StartId { get; set; }
+        public int? StartId { get; set; }
+
         public Place? Start { get; set; }
 
         [Required]
         [ForeignKey("Destination")]
-        public int DestinationId { get; set; }
-        public Place? Destiantion { get; set; }
+        public int? DestinationId { get; set; }
+
+        public Place? Destination { get; set; }
 
         [Required]
         public DateTime? DepartureTime { get; set; }
@@ -35,6 +39,13 @@ namespace Flight_Booking_System.Models
 
         public Plane? Plane { get; set; }
 
+        [ForeignKey("AirLine")]
+        public int? AirLineId { get; set; }
+
+        public AirLine? AirLine { get; set; }
+
         public List<Passenger>? Passengers { get; set; }
+
+        public List<Ticket>? Tickets { get; set; }
     }
 }

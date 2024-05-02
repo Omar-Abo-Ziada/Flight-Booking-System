@@ -33,12 +33,14 @@ namespace Flight_Booking_System.Controllers
                     Id = flight.Id,
 
                     Start = flight.Start,
-                    Destiantion = flight.Destiantion,
+                    Destiantion = flight.Destination,
 
                     DepartureTime = flight.DepartureTime,
                     ArrivalTime = flight.ArrivalTime,
 
                     PlaneId = flight.PlaneId,
+                    DestinationId = flight.DestinationId,
+                    StartId = flight.StartId,
                 };
 
                 flightDTOs.Add(flightDTO);
@@ -75,12 +77,14 @@ namespace Flight_Booking_System.Controllers
                     Id = flightFromDB.Id,
 
                     Start = flightFromDB.Start,
-                    Destiantion = flightFromDB.Destiantion,
+                    Destiantion = flightFromDB.Destination,
 
                     DepartureTime = flightFromDB.DepartureTime,
                     ArrivalTime = flightFromDB.ArrivalTime,
 
                     PlaneId = flightFromDB.PlaneId,
+                    DestinationId = flightFromDB.DestinationId,
+                    StartId = flightFromDB.StartId,
                 };
 
                 return new GeneralResponse()

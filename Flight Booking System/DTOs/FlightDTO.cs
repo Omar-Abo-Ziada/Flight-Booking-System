@@ -27,6 +27,13 @@ namespace Flight_Booking_System.DTOs
         [ForeignKey("Plane")]
         public int? PlaneId { get; set; }
 
+        [ForeignKey("Destination")]
+        public int? DestinationId { get; set; }
+
+        [ForeignKey("Start")]
+        public int? StartId { get; set; }
+
+
         // public Plane? Plane { get; set; }  // hide in DTO to avoid circular refernce if any includes are required
 
         // public List<Passenger>? Passengers { get; set; } // hide in DTO to avoid circular refernce if any includes are required

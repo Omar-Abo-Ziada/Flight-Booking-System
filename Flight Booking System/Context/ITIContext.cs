@@ -10,6 +10,7 @@ namespace Flight_Booking_System.Context
         {
 
         }
+
         public DbSet<AirPort> AirPorts { get; set; }
 
         public DbSet<AirLine> AirLines { get; set; }
@@ -33,6 +34,19 @@ namespace Flight_Booking_System.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Flight>()
+               .HasOne(f => f.Start)
+               .WithMany(p => p.DepartingFlights)
+               .HasForeignKey(f => f.StartId)
+               .IsRequired(false);
+
+            modelBuilder.Entity<Flight>()
+                .HasOne(f => f.Destination)
+                .WithMany(p => p.ArrivingFlights)
+                .HasForeignKey(f => f.DestinationId)
+                .IsRequired(false);
+
             modelBuilder.Entity<AirLine>().HasData(
                 new AirLine { Id = 1, AirlineNumber = 5, Name = "EgyptAirs", AirportId = 1 },
                 new AirLine { Id = 2, AirlineNumber = 10, Name = "Lufthansa", AirportId = 2 },
@@ -54,7 +68,7 @@ namespace Flight_Booking_System.Context
                  {
                      Id = 1,
                      Name = "Joy",
-                     Gender = Gender.Female, 
+                     Gender = Gender.Female,
                      IsChild = false,
                      Age = 22,
                      NationalId = "302245",
@@ -114,8 +128,8 @@ namespace Flight_Booking_System.Context
                 new Country { Id = 5, Name = "Japan" }
             );
             modelBuilder.Entity<Place>().HasData(
-               new Place { Id = 1 , CountryId =1, StateId = 1},
-               new Place { Id = 2, CountryId = 2, StateId = 2},
+               new Place { Id = 1, CountryId = 1, StateId = 1 },
+               new Place { Id = 2, CountryId = 2, StateId = 2 },
                new Place { Id = 3, CountryId = 3, StateId = 3 },
                new Place { Id = 4, CountryId = 4, StateId = 4 },
                new Place { Id = 5, CountryId = 5, StateId = 5 }
@@ -129,8 +143,8 @@ namespace Flight_Booking_System.Context
             Name = "Boeing 737",
             capacity = 188,
             Engine = "CFM56-7B",
-            Height = 41,  
-            Length = 110, 
+            Height = 41,
+            Length = 110,
             WingSpan = 117
         },
         new Plane
@@ -195,17 +209,17 @@ namespace Flight_Booking_System.Context
         {
             Id = 1,
             StartId = 1,
-            DestinationId = 1,  
+            DestinationId = 1,
             DepartureTime = new DateTime(2024, 12, 25, 10, 30, 0),
             ArrivalTime = new DateTime(2024, 12, 25, 16, 45, 0),
             Duration = new TimeSpan(6, 15, 0),
-            PlaneId = 1 
+            PlaneId = 1
         },
         new Flight
         {
             Id = 2,
             StartId = 2,
-            DestinationId = 2,  
+            DestinationId = 2,
             DepartureTime = new DateTime(2024, 12, 30, 14, 00, 0),
             ArrivalTime = new DateTime(2024, 12, 30, 20, 00, 0),
             Duration = new TimeSpan(6, 0, 0),
@@ -274,12 +288,6 @@ namespace Flight_Booking_System.Context
         }
     }
 );
-
-
-
-
-
         }
-
     }
 }

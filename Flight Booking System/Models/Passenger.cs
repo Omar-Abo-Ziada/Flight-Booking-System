@@ -30,5 +30,10 @@ namespace Flight_Booking_System.Models
         public int? TicketId { get; set; }
 
         public Ticket? Ticket { get; set; }
+
+        [ForeignKey("Flight")]
+        public int? FlightId { get; set; }
+
+        public Flight? Flight { get; set; }
     }
 }
