@@ -1,12 +1,14 @@
 ﻿using Flight_Booking_System.Enums;
 using Flight_Booking_System.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flight_Booking_System.Context
 {
-    public class ITIContext : DbContext
+    public class ITIContext : IdentityDbContext<ApplicationUSer> // DbContext
     {
-        public ITIContext(DbContextOptions contextOptions) : base(contextOptions)
+        public ITIContext(DbContextOptions<ITIContext> options) : base(options)
         {
 
         }
@@ -34,6 +36,10 @@ namespace Flight_Booking_System.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<IdentityUserLogin<string>>()
+           .HasKey(l => new { l.LoginProvider, l.ProviderKey });
 
             modelBuilder.Entity<Flight>()
                .HasOne(f => f.Start)

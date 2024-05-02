@@ -1,6 +1,9 @@
 
 using Flight_Booking_System.Context;
+using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flight_Booking_System
@@ -42,7 +45,7 @@ namespace Flight_Booking_System
 
 
             // Registering Repos :
-            builder.Services.AddScoped<IAirLineRepository,AirLineRepository >();
+            builder.Services.AddScoped<IAirLineRepository, AirLineRepository>();
             builder.Services.AddScoped<IAirPortRepository, AirPortRepository>();
             builder.Services.AddScoped<ICountryRepository, CountryRepository>();
             builder.Services.AddScoped<IFlightRepository, FlightRepository>();
@@ -53,13 +56,45 @@ namespace Flight_Booking_System
             builder.Services.AddScoped<IStateRepository, StateRepository>();
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
+            // Registering AutoMapper
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            // Registering Identiny
+            builder.Services.AddIdentity<ApplicationUSer, IdentityRole>(options =>
+            {
+                // removing some validations for easier testing
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = false;
+                //options.SignIn.RequireConfirmedAccount = true;        // maybe later
+            })
+            .AddEntityFrameworkStores<ITIContext>();
+
+
+            builder.Services.AddAuthentication(options =>
+            {
+                // adjusting the authorize attr to look for JWT Bearer tokens not schema
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                // in case of failer(challenge) => see the JWT default behaviour which is returing UnAuthorized res
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                // see the other schemas and change them with the JWT default schema
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                // the token must be saved not written
+                options.SaveToken = true;
+            });
+
 
             //************************************************************************************************
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())    
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
