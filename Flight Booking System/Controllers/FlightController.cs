@@ -1,12 +1,8 @@
-﻿using Flight_Booking_System.Context;
-using Flight_Booking_System.DTOs;
+﻿using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Flight_Booking_System.Controllers
 {
