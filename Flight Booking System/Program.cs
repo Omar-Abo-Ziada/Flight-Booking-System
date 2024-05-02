@@ -29,7 +29,7 @@ namespace Flight_Booking_System
             //  Registering context
             builder.Services.AddDbContext<ITIContext>(options =>
             {
-                options.UseSqlServer("Data Source=.;Initial Catalog=Flight_Booking_System;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+                options.UseSqlServer(builder.Configuration.GetConnectionString("CS"));
             });
 
             // to make the provider able to serve any consumer from other domains
