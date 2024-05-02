@@ -708,11 +708,8 @@ namespace Flight_Booking_System.Migrations
                     b.HasOne("Flight_Booking_System.Models.AirPort", "AirPort")
                         .WithMany("AirLines")
                         .HasForeignKey("AirportId")
-<<<<<<< HEAD
                         .OnDelete(DeleteBehavior.NoAction)
-=======
-                        .OnDelete(DeleteBehavior.Cascade)
->>>>>>> 95aceb6f38e1d5b14c3f2ee090236d1302548a70
+
                         .IsRequired();
 
                     b.Navigation("AirPort");
