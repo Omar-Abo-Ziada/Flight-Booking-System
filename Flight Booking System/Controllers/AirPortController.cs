@@ -23,24 +23,35 @@ namespace Flight_Booking_System.Controllers
         {
             try
             {
-
-                var airPort = new AirPort
+                if (ModelState.IsValid)
                 {
-                    Name = airPortDTO.Name,
-                    AirPortNumber = airPortDTO.AirPortNumber
-                };
+                    var airPort = new AirPort
+                    {
+                        Name = airPortDTO.Name,
+                        AirPortNumber = airPortDTO.AirPortNumber
+                    };
 
-                airPortRepository.Insert(airPort);
-                airPortRepository.Save();
+                    airPortRepository.Insert(airPort);
+                    airPortRepository.Save();
 
 
 
-                return new GeneralResponse
+                    return new GeneralResponse
+                    {
+                        IsSuccess = true,
+                        Data = airPortDTO,
+                        Message = "Airport created successfully"
+                    };
+                }
+                else
                 {
-                    IsSuccess = true,
-                    Data = airPortDTO,
-                    Message = "Airport created successfully"
-                };
+                    return new GeneralResponse
+                    {
+                        IsSuccess = false,
+                        Message = "model state is invalid"
+                    };
+                }
+
             }
             catch (Exception ex)
             {
@@ -94,6 +105,48 @@ namespace Flight_Booking_System.Controllers
 
 
 
+
+        [HttpGet("{id}")]
+        public ActionResult<GeneralResponse> getbyid(int id)
+        {
+            try
+            {
+                AirPort airPort = airPortRepository.GetById(id);
+                if (airPort is null)
+                {
+
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Data = null,
+                        Message = "invalid id"
+                    };
+                }
+                else
+                {
+
+                    AirPortDTO airPortDTO = new AirPortDTO()
+                    {
+                        Name = airPort.Name,
+                        AirPortNumber = airPort.AirPortNumber
+                    };
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = true,
+                        Data = airPortDTO,
+                        Message = $"thats the air port u search for it by id {id}"
+                    };
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new GeneralResponse
+                {
+                    IsSuccess = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
 
 
 
@@ -155,48 +208,6 @@ namespace Flight_Booking_System.Controllers
 
 
 
-        [HttpGet("{id}")]
-        public ActionResult<GeneralResponse> getbyid(int id)
-        {
-            try
-            {
-                AirPort airPort = airPortRepository.GetById(id);
-                if (airPort is null)
-                {
-
-                    return new GeneralResponse()
-                    {
-                        IsSuccess = false,
-                        Data = null,
-                        Message = "invalid id"
-                    };
-                }
-                else
-                {
-
-                    AirPortDTO airPortDTO = new AirPortDTO()
-                    {
-                        Name = airPort.Name,
-                        AirPortNumber = airPort.AirPortNumber
-                    };
-                    return new GeneralResponse()
-                    {
-                        IsSuccess = true,
-                        Data = airPortDTO,
-                        Message = $"thats the air port u search for it by id {id}"
-                    };
-                };
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new GeneralResponse
-                {
-                    IsSuccess = false,
-                    Message = $"Error: {ex.Message}"
-                });
-            }
-        }
-
 
 
 
@@ -208,32 +219,45 @@ namespace Flight_Booking_System.Controllers
             AirPort airPort;
             try
             {
-
-                airPort = airPortRepository.GetById(id);
-                if (airPort is null)
+                if (ModelState.IsValid)
                 {
 
-                    return new GeneralResponse()
+
+                    airPort = airPortRepository.GetById(id);
+                    if (airPort is null)
                     {
-                        IsSuccess = false,
-                        Data = null,
-                        Message = "invalid id"
-                    };
+
+                        return new GeneralResponse()
+                        {
+                            IsSuccess = false,
+                            Data = null,
+                            Message = "invalid id"
+                        };
+                    }
+                    else
+                    {
+                        airPort.Name = airPortDTO.Name;
+                        airPort.AirPortNumber = airPortDTO.AirPortNumber;
+
+                        airPortRepository.Update(airPort);
+                        airPortRepository.Save();
+
+
+                        return new GeneralResponse()
+                        {
+                            Data = airPortDTO,
+                            IsSuccess = true,
+                            Message = "updated successfully"
+                        };
+                    }
                 }
                 else
                 {
-                    airPort.Name = airPortDTO.Name;
-                    airPort.AirPortNumber = airPortDTO.AirPortNumber;
-
-                    airPortRepository.Update(airPort);
-                    airPortRepository.Save();
-
-
                     return new GeneralResponse()
                     {
-                        Data = airPortDTO,
-                        IsSuccess = true,
-                        Message = "updated successfully"
+
+                        IsSuccess = false,
+                        Message = "model state is invalid "
                     };
                 }
             }
