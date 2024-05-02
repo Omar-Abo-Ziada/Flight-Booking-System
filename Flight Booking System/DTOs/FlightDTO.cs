@@ -11,16 +11,16 @@ namespace Flight_Booking_System.DTOs
         public int Id { get; set; }
 
         [Required(ErrorMessage = "The departure Place is required")]
-        public Place Start { get; set; }
+        public Place? Start { get; set; }
 
         [Required(ErrorMessage = "The Destiantion Place is required")]
-        public Place Destiantion { get; set; }
+        public Place? Destiantion { get; set; }
 
         [Required(ErrorMessage = "The departure time is required")]
-        public DateTime DepartureTime { get; set; }
+        public DateTime? DepartureTime { get; set; }
 
         [Required(ErrorMessage = "The Arrival time is required")]
-        public DateTime ArrivalTime { get; set; }
+        public DateTime? ArrivalTime { get; set; }
 
         //-----------------------------------------
 

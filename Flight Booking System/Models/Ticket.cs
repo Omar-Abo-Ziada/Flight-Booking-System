@@ -26,6 +26,15 @@ namespace Flight_Booking_System.Models
         [ForeignKey("SeatId")]
         public int? SeatId { get; set; }
 
+<<<<<<< HEAD
         public Seat? Seat { get; set; } 
+=======
+        public Seat? Seat { get; set; }
+
+        [ForeignKey("Flight")]
+        public int? FlightId { get; set; }
+
+        public Flight? Flight { get; set; }
+>>>>>>> 9286b31788740556c8c5c7fcae88af10309a72e9
     }
 }

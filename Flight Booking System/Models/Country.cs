@@ -10,7 +10,7 @@ namespace Flight_Booking_System.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage ="Country Name is required")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         //---------------------------------------
 
