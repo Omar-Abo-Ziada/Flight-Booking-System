@@ -21,7 +21,6 @@ namespace Flight_Booking_System.Controllers
         //***********************************************
 
         [HttpGet]
-        [Authorize]
         public ActionResult<GeneralResponse> Get()
         {
             List<Flight> flights = flightRepository.GetAll();
@@ -100,9 +99,8 @@ namespace Flight_Booking_System.Controllers
             }
         }
 
-
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public ActionResult<GeneralResponse> Add(Flight flight)
         {
             if (ModelState.IsValid)
@@ -144,7 +142,7 @@ namespace Flight_Booking_System.Controllers
         }
 
         [HttpPut]
-        //[Authorize]
+        [Authorize]
         public ActionResult<GeneralResponse> Edit(int id, Flight editedFlight)
         {
             Flight? flightFromDB = flightRepository.GetById(id);
@@ -190,7 +188,7 @@ namespace Flight_Booking_System.Controllers
         }
 
         [HttpDelete("{id:int}")] // from route
-        //[Authorize]
+        [Authorize]
         public ActionResult<GeneralResponse> Delete(int id)
         {
             Flight? flightFromDB = flightRepository.GetById(id);

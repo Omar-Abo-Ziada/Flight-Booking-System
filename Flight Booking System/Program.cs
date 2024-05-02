@@ -5,6 +5,9 @@ using Flight_Booking_System.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace Flight_Booking_System
 {
@@ -86,6 +89,74 @@ namespace Flight_Booking_System
             {
                 // the token must be saved not written
                 options.SaveToken = true;
+
+                // validate the token itself
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    // check that the issuer is this wep API
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["JWT:ValidIss"],
+
+                    // check that the audience is target React App
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["JWT:ValidAud"],// note : don't write any sapces
+
+                    // check the signature resulting from : key + payload 
+                    IssuerSigningKey =
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"])),
+                };
+            });
+
+
+            /// <summary>
+            /// disapling checking for authorize by default because of the [Api Controller] attribute
+            /// if the model state was Invalid => the default was not to enter the action nad return directly Badrequest with arr of Errors
+            /// So I disaple this default so it enters the action and returns my customized response
+            /// </summary>
+            builder.Services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.SuppressModelStateInvalidFilter = true;
+                });
+
+            //-----------------------------------------------------
+
+            /// <summary>
+            /// swager configuration to deal with register and login tokens
+            /// <summary>
+            builder.Services.AddSwaggerGen(swagger =>
+            {
+                //This is to generate the Default UI of Swagger Documentation
+                swagger.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "ASP.NET 5 Web API",
+                    Description = " ITI Projrcy"
+                });
+                // To Enable authorization using Swagger (JWT)
+                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6 IkpXVCJ9\"",
+                });
+                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+                  {
+                      {
+                      new OpenApiSecurityScheme
+                      {
+                  Reference = new OpenApiReference
+                  {
+                      Type = ReferenceType.SecurityScheme,
+                      Id = "Bearer"
+                      }
+                  },
+                      new string[] {}
+                      }
+                  });
             });
 
 

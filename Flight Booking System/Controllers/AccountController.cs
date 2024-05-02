@@ -17,10 +17,12 @@ namespace Flight_Booking_System.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUSer> userManager;
+        private readonly IConfiguration configuration;
 
-        public AccountController(UserManager<ApplicationUSer> userManager)
+        public AccountController(UserManager<ApplicationUSer> userManager , IConfiguration configuration)
         {
             this.userManager = userManager;
+            this.configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -92,7 +94,7 @@ namespace Flight_Booking_System.Controllers
                     {
                         // create token steps : 
                         List<Claim> myClaims = new List<Claim>();
-                        myClaims.Add(new Claim(ClaimTypes.Name, userFromDB.UserName));
+                        myClaims.Add(new Claim(ClaimTypes.Name, userFromDB.UserName??"Not Available"));
                         myClaims.Add(new Claim(ClaimTypes.NameIdentifier, userFromDB.Id));
                         //myClaims.Add(new Claim(JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString())); // if u want for the same user => his token be unique for each login => uncomment this
 
@@ -105,20 +107,19 @@ namespace Flight_Booking_System.Controllers
                         }
 
                         // security key 
-                        SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ASDPKfsdomfASD@#$SDpsdja2dspe#$DSF,SADlpsd<DPFSwq,xfv,ofsfa"));
+                        SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:SecretKey"]));
 
-                        // credentials : key + ALgorithm
+                        // in the JWT header =>  credentials : key + ALgorithm
                         SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
                          
-
-                        // JwtSecurityToken is a class that design the token
+                        // in the JWT payload => JwtSecurityToken is a class that design the token
                         JwtSecurityToken jwtSecurityToken = new JwtSecurityToken
                             (
-                            issuer: "http://localhost:40640/", // the povider API who is responsible for creating the token
-                            audience: "http://localhost:3000/",  // the consumer (React domain)
+                            issuer: configuration["JWT:ValidIss"] , // the povider API who is responsible for creating the token
+                            audience: configuration["JWT:ValidAud"],  // the consumer (React domain)
                             expires: DateTime.Now.AddHours(1),
                             claims: myClaims ,
-                            signingCredentials: null 
+                            signingCredentials: signingCredentials
                             );
 
                         //return the token
