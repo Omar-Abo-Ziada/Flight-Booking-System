@@ -15,6 +15,7 @@ namespace Flight_Booking_System.Models
         [ForeignKey("Start")]
         public int? StartId { get; set; }
 
+        //[ForeignKey("StartId")]
         public Place? Start { get; set; }
 
         [Required]
