@@ -18,10 +18,6 @@ namespace Flight_Booking_System.Controllers
         }
 
 
-
-
-
-
         [HttpPost]
         public ActionResult<GeneralResponse> CreateAirPort(AirPortDTO airPortDTO)
         {

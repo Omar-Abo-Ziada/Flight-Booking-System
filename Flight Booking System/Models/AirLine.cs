@@ -10,11 +10,14 @@ namespace Flight_Booking_System.Models
         public int Id { get; set; }
 
         public int? AirlineNumber { get; set; }
+
         public string? Name { get; set; }
 
         [ForeignKey("AirPort")]
-        public int AirportId { get; set; }
+        public int? AirportId { get; set; }
+
         public AirPort? AirPort { get; set; }
+
         public List<Flight>? Flights { get; set; }
     }
 }

@@ -13,6 +13,11 @@ namespace Flight_Booking_System.Models
 
         public int capacity { get; set; } // number of passengers can hold
 
+        [ForeignKey("Flight")]
+        public int? FlightId { get; set; }
+
+        public Flight? Flight { get; set; }
+
         //-------------------------------
         // not really necessary info
 
