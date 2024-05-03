@@ -123,7 +123,7 @@ namespace Flight_Booking_System.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("{ticketId:int}")]
         public ActionResult<GeneralResponse> UpdateTicket(int ticketId, TicketDTO ticketDTO)
         {
             Ticket t1 = ticketRepository.GetById(ticketId);
