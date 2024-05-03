@@ -44,7 +44,7 @@ namespace Flight_Booking_System.Controllers
             };
         }
 
-        [HttpGet("{seatId: int}")]
+        [HttpGet("{seatId:int}")]
         public ActionResult<GeneralResponse> GetSeatById(int seatId)
         {
             Seat seat = seatRepository.GetById(seatId);
@@ -146,7 +146,32 @@ namespace Flight_Booking_System.Controllers
         }
 
 
+        [HttpDelete("{seatId:int}")]
+        public ActionResult<GeneralResponse> DeleteSeat(int seatId)
+        {
+            Seat seat=seatRepository.GetById(seatId);
+            if(seat==null)
+            {
 
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Data = null,
+                    Message = "Invalid Seat ID"
+                };
+            }
+            else
+            {
+                seatRepository.Delete(seat);
+                seatRepository.Save();
+                return new GeneralResponse()
+                {
+                    IsSuccess = true,
+                    Data = null,
+                    Message = "Seat Deleted Successfully"
+                };
+            }
+        }
 
 
 
