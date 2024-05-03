@@ -10,7 +10,6 @@ namespace Flight_Booking_System.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
         public int? Number { get; set; }
 
         public Section? Section { get; set; }
