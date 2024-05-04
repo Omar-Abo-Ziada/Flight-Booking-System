@@ -36,7 +36,7 @@ namespace Flight_Booking_System.Controllers
                     Start = flight.Start,
                     Destiantion = flight.Destination,
 
-                    DepartureTime = flight.DepartureTime,
+                    DepartureTime = flight.DepartureTime,  
                     ArrivalTime = flight.ArrivalTime,
 
                     PlaneId = flight.PlaneId,
@@ -55,7 +55,7 @@ namespace Flight_Booking_System.Controllers
             };
         }
 
-        [HttpGet("{id:int}")] // from route 
+        [HttpGet("{id:int}")] // from route  
         public ActionResult<GeneralResponse> GetbyId(int id)
         {
             Flight? flightFromDB = flightRepository.GetById(id);

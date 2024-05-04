@@ -15,9 +15,9 @@ namespace Flight_Booking_System.Models
         //---------------------------------------
 
         [ForeignKey("Place")]
-        public int? PlaceId { get; set; }
+        public int? PlaceId { get; set; } 
 
-        public Place? Place { get; set; }
+        public Place? Place { get; set; } 
 
         public List<State>? States { get; set; }
     }
