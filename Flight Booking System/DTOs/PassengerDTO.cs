@@ -33,7 +33,7 @@ namespace Flight_Booking_System.DTOs
         [ForeignKey("Ticket")]
         public int? TicketId { get; set; }
 
-        public Ticket? Ticket { get; set; }
+        //public Ticket? Ticket { get; set; }
 
     }
 }

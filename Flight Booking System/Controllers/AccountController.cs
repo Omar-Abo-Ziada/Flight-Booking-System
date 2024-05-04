@@ -38,7 +38,7 @@ namespace Flight_Booking_System.Controllers
                 };
 
                 // create Account in database
-                IdentityResult createAccResult = await userManager.CreateAsync(user, userDTO.Password);
+                IdentityResult createAccResult = await userManager.CreateAsync(user, userDTO.Password );
 
                 if (createAccResult.Succeeded)
                 {
@@ -96,7 +96,7 @@ namespace Flight_Booking_System.Controllers
                         List<Claim> myClaims = new List<Claim>();
                         myClaims.Add(new Claim(ClaimTypes.Name, userFromDB.UserName??"Not Available"));
                         myClaims.Add(new Claim(ClaimTypes.NameIdentifier, userFromDB.Id));
-                        //myClaims.Add(new Claim(JwtRegisteredClaimNames.Jti , Guid.NewGuid().ToString())); // if u want for the same user => his token be unique for each login => uncomment this
+                        //myClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())); // if u want for the same user => his token be unique for each login => uncomment this
 
                         // claim roles
                         IList<string> roles = await userManager.GetRolesAsync(userFromDB);
