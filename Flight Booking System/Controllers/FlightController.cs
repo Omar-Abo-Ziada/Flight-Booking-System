@@ -1,4 +1,5 @@
-﻿using Flight_Booking_System.DTOs;
+﻿using AutoMapper;
+using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
@@ -14,11 +15,14 @@ namespace Flight_Booking_System.Controllers
     {
         private readonly IFlightRepository flightRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IMapper mapper;
+        
 
-        public FlightController(IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment)
+        public FlightController(IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment ,  IMapper mapper)
         {
             this.flightRepository = flightRepository;
             _webHostEnvironment = webHostEnvironment;
+            this.mapper = mapper;
         }
 
         //***********************************************
@@ -32,20 +36,22 @@ namespace Flight_Booking_System.Controllers
 
             foreach (Flight flight in flights)
             {
-                FlightDTO flightDTO = new FlightDTO()
-                {
-                    Id = flight.Id,
+                //FlightDTO flightDTO = new FlightDTO()
+                //{
+                //    Id = flight.Id,
 
-                    Start = flight.Start,
-                    Destiantion = flight.Destination,
+                //    //Start = flight.Start,
+                //    //Destiantion = flight.Destination,
 
-                    DepartureTime = flight.DepartureTime,  
-                    ArrivalTime = flight.ArrivalTime,
+                //    DepartureTime = flight.DepartureTime,
+                //    ArrivalTime = flight.ArrivalTime,
 
-                    PlaneId = flight.PlaneId,
-                    DestinationId = flight.DestinationId,
-                    StartId = flight.StartId,
-                };
+                //    PlaneId = flight.PlaneId,
+                //    DestinationId = flight.DestinationId,
+                //    StartId = flight.StartId,
+                //};
+
+                FlightDTO flightDTO = mapper.Map<Flight, FlightDTO>(flight);
 
                 flightDTOs.Add(flightDTO);
             }
@@ -76,20 +82,23 @@ namespace Flight_Booking_System.Controllers
             }
             else
             {
-                FlightDTO flightDTO = new FlightDTO()
-                {
-                    Id = flightFromDB.Id,
+                //FlightDTO flightDTO = new FlightDTO()
+                //{
+                //    Id = flightFromDB.Id,
 
-                    Start = flightFromDB.Start,
-                    Destiantion = flightFromDB.Destination,
+                //    //Start = flightFromDB.Start,
+                //    //Destiantion = flightFromDB.Destination,
 
-                    DepartureTime = flightFromDB.DepartureTime,
-                    ArrivalTime = flightFromDB.ArrivalTime,
+                //    DepartureTime = flightFromDB.DepartureTime,
+                //    ArrivalTime = flightFromDB.ArrivalTime,
 
-                    PlaneId = flightFromDB.PlaneId,
-                    DestinationId = flightFromDB.DestinationId,
-                    StartId = flightFromDB.StartId,
-                };
+                //    PlaneId = flightFromDB.PlaneId,
+                //    DestinationId = flightFromDB.DestinationId,
+                //    StartId = flightFromDB.StartId,
+                //};
+
+                FlightDTO flightDTO = mapper.Map<Flight, FlightDTO>(flightFromDB);
+
 
                 return new GeneralResponse()
                 {

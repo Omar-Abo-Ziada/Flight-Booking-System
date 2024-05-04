@@ -13,9 +13,6 @@ namespace Flight_Booking_System.Models
 
         public string? imageURL { get; set; }
 
-       
-
-        [Required]
         [ForeignKey("Start")]
         public int? StartId { get; set; }
 
@@ -23,16 +20,13 @@ namespace Flight_Booking_System.Models
         //[ForeignKey("StartId")]
         public Place? Start { get; set; }
 
-        [Required]
         [ForeignKey("Destination")]
         public int? DestinationId { get; set; }
 
         public Place? Destination { get; set; }
 
-        [Required]
         public DateTime? DepartureTime { get; set; }
 
-        [Required]
         public DateTime? ArrivalTime { get; set; }
 
         public TimeSpan? Duration { get; set; }
