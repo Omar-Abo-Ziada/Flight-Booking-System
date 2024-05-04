@@ -3,6 +3,7 @@ using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flight_Booking_System.Controllers
@@ -12,10 +13,12 @@ namespace Flight_Booking_System.Controllers
     public class FlightController : ControllerBase
     {
         private readonly IFlightRepository flightRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public FlightController(IFlightRepository flightRepository)
+        public FlightController(IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment)
         {
             this.flightRepository = flightRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         //***********************************************
@@ -100,11 +103,32 @@ namespace Flight_Booking_System.Controllers
         }
 
         [HttpPost]
-        [Authorize]
-        public ActionResult<GeneralResponse> Add(Flight flight)
+     //   [Authorize]
+        public ActionResult<GeneralResponse> Add(FlightWithImgDTO flightDTO)
         {
+            string uploadpath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+            string imagename = Guid.NewGuid().ToString() + "_" + flightDTO.Image.FileName;
+            string filepath = Path.Combine(uploadpath, imagename);
+            using (FileStream fileStream = new FileStream(filepath, FileMode.Create))
+            {
+                flightDTO.Image.CopyTo(fileStream);
+            }
+            flightDTO.imageURL = imagename;
+
             if (ModelState.IsValid)
             {
+                Flight flight = new Flight()
+                {
+                    Id = flightDTO.Id,
+                    PlaneId= flightDTO.PlaneId,
+                    DestinationId = flightDTO.DestinationId,
+                    imageURL=flightDTO.imageURL,
+                    StartId = flightDTO.StartId,
+                    ArrivalTime= flightDTO.ArrivalTime,
+                    DepartureTime= flightDTO.DepartureTime,
+                  Duration= flightDTO.Duration,
+                  AirLineId= flightDTO.AirLineId,
+                };
                 flightRepository.Insert(flight);
 
                 flightRepository.Save();
