@@ -135,10 +135,10 @@ namespace Flight_Booking_System.Context
             );
             modelBuilder.Entity<Place>().HasData(
                new Place { Id = 1, CountryId = 1, StateId = 1 },
-               new Place { Id = 2, CountryId = 2, StateId = 2 },
-               new Place { Id = 3, CountryId = 3, StateId = 3 },
-               new Place { Id = 4, CountryId = 4, StateId = 4 },
-               new Place { Id = 5, CountryId = 5, StateId = 5 }
+               new Place { Id = 2, CountryId = 1, StateId = 2 },
+               new Place { Id = 3, CountryId = 1, StateId = 3 },   // saeed : change country id values >> to make sense
+               new Place { Id = 4, CountryId = 2, StateId = 4 },
+               new Place { Id = 5, CountryId = 2, StateId = 5 }
            );
             modelBuilder.Entity<Plane>().HasData(
      new List<Plane>

@@ -1,4 +1,4 @@
-
+﻿
 using Flight_Booking_System.Context;
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Flight_Booking_System.Controllers;
 
 namespace Flight_Booking_System
 {
@@ -183,6 +184,7 @@ namespace Flight_Booking_System
 
 
             app.MapControllers();
+
 
             app.Run();
         }

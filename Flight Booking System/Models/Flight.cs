@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Flight_Booking_System.Models
 {
     [Table("Flights")]
-    public class Flight
+    public class Flight 
     {
         [Key]
         public int Id { get; set; }
