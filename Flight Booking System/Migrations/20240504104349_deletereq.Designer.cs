@@ -4,6 +4,7 @@ using Flight_Booking_System.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Flight_Booking_System.Migrations
 {
     [DbContext(typeof(ITIContext))]
-    partial class ITIContextModelSnapshot : ModelSnapshot
+    [Migration("20240504104349_deletereq")]
+    partial class deletereq
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,41 +83,6 @@ namespace Flight_Booking_System.Migrations
                             AirlineNumber = 25,
                             AirportId = 5,
                             Name = "Delta"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AirlineNumber = 30,
-                            AirportId = 6,
-                            Name = "British Airways"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AirlineNumber = 35,
-                            AirportId = 7,
-                            Name = "Air France"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            AirlineNumber = 40,
-                            AirportId = 8,
-                            Name = "American Airlines"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            AirlineNumber = 45,
-                            AirportId = 9,
-                            Name = "United Airlines"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            AirlineNumber = 50,
-                            AirportId = 10,
-                            Name = "Singapore Airlines"
                         });
                 });
 
@@ -167,36 +135,6 @@ namespace Flight_Booking_System.Migrations
                             Id = 5,
                             AirPortNumber = 5,
                             Name = "Atlanta AirPort"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AirPortNumber = 6,
-                            Name = "Heathrow Airport"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AirPortNumber = 7,
-                            Name = "Charles de Gaulle Airport"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            AirPortNumber = 8,
-                            Name = "Los Angeles International Airport"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            AirPortNumber = 9,
-                            Name = "O'Hare International Airport"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            AirPortNumber = 10,
-                            Name = "Changi Airport"
                         });
                 });
 
@@ -311,31 +249,6 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 5,
                             Name = "Japan"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "United Kingdom"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "France"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "United States"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Singapore"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Qatar"
                         });
                 });
 
@@ -351,12 +264,15 @@ namespace Flight_Booking_System.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ArrivalTime")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DepartureTime")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("DestinationId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<TimeSpan?>("Duration")
@@ -366,6 +282,7 @@ namespace Flight_Booking_System.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("StartId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("imageURL")
@@ -413,36 +330,6 @@ namespace Flight_Booking_System.Migrations
                             Duration = new TimeSpan(0, 3, 15, 0, 0),
                             PlaneId = 3,
                             StartId = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ArrivalTime = new DateTime(2024, 12, 25, 16, 45, 0, 0, DateTimeKind.Unspecified),
-                            DepartureTime = new DateTime(2024, 12, 25, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                            DestinationId = 4,
-                            Duration = new TimeSpan(0, 6, 15, 0, 0),
-                            PlaneId = 5,
-                            StartId = 4
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ArrivalTime = new DateTime(2024, 12, 30, 20, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartureTime = new DateTime(2024, 12, 30, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            DestinationId = 5,
-                            Duration = new TimeSpan(0, 6, 0, 0, 0),
-                            PlaneId = 6,
-                            StartId = 5
-                        },
-                        new
-                        {
-                            Id = 6,
-                            ArrivalTime = new DateTime(2024, 11, 15, 12, 15, 0, 0, DateTimeKind.Unspecified),
-                            DepartureTime = new DateTime(2024, 11, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            DestinationId = 6,
-                            Duration = new TimeSpan(0, 3, 15, 0, 0),
-                            PlaneId = 7,
-                            StartId = 6
                         });
                 });
 
@@ -544,61 +431,6 @@ namespace Flight_Booking_System.Migrations
                             NationalId = "987654",
                             PassportNum = "11223344",
                             TicketId = 5
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Age = 35,
-                            Gender = 0,
-                            IsChild = false,
-                            Name = "John",
-                            NationalId = "789012",
-                            PassportNum = "77889900",
-                            TicketId = 6
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Age = 29,
-                            Gender = 1,
-                            IsChild = false,
-                            Name = "Sophia",
-                            NationalId = "567890",
-                            PassportNum = "11223344",
-                            TicketId = 7
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Age = 45,
-                            Gender = 0,
-                            IsChild = false,
-                            Name = "William",
-                            NationalId = "345678",
-                            PassportNum = "55667788",
-                            TicketId = 8
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Age = 8,
-                            Gender = 1,
-                            IsChild = true,
-                            Name = "Olivia",
-                            NationalId = "456789",
-                            PassportNum = "99001122",
-                            TicketId = 9
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Age = 55,
-                            Gender = 0,
-                            IsChild = false,
-                            Name = "James",
-                            NationalId = "234567",
-                            PassportNum = "33445566",
-                            TicketId = 10
                         });
                 });
 
@@ -654,36 +486,6 @@ namespace Flight_Booking_System.Migrations
                             Id = 5,
                             CountryId = 2,
                             StateId = 5
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CountryId = 6,
-                            StateId = 6
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CountryId = 6,
-                            StateId = 7
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CountryId = 6,
-                            StateId = 8
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CountryId = 7,
-                            StateId = 9
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CountryId = 7,
-                            StateId = 10
                         });
                 });
 
@@ -763,56 +565,6 @@ namespace Flight_Booking_System.Migrations
                             Name = "Airbus A380",
                             WingSpan = 261f,
                             capacity = 853
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Engine = "GEnx-1B",
-                            Height = 56f,
-                            Length = 206f,
-                            Name = "Boeing 787",
-                            WingSpan = 197f,
-                            capacity = 242
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Engine = "Trent XWB",
-                            Height = 56f,
-                            Length = 227f,
-                            Name = "Airbus A350",
-                            WingSpan = 212f,
-                            capacity = 325
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Engine = "CF6-80",
-                            Height = 48f,
-                            Length = 201f,
-                            Name = "Boeing 767",
-                            WingSpan = 156f,
-                            capacity = 375
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Engine = "Trent 700",
-                            Height = 58f,
-                            Length = 63f,
-                            Name = "Airbus A330",
-                            WingSpan = 197f,
-                            capacity = 440
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Engine = "RB211-535",
-                            Height = 44f,
-                            Length = 54f,
-                            Name = "Boeing 757",
-                            WingSpan = 38f,
-                            capacity = 295
                         });
                 });
 
@@ -901,36 +653,6 @@ namespace Flight_Booking_System.Migrations
                             Id = 10,
                             Number = 10,
                             Section = 4
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Number = 11,
-                            Section = 4
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Number = 12,
-                            Section = 0
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Number = 13,
-                            Section = 1
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Number = 14,
-                            Section = 6
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Number = 15,
-                            Section = 2
                         });
                 });
 
@@ -990,36 +712,6 @@ namespace Flight_Booking_System.Migrations
                             Id = 5,
                             CountryId = 2,
                             Name = "California"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CountryId = 6,
-                            Name = "England"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CountryId = 6,
-                            Name = "Scotland"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CountryId = 6,
-                            Name = "Wales"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CountryId = 7,
-                            Name = "Île-de-France"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CountryId = 7,
-                            Name = "Provence-Alpes-Côte d'Azur"
                         });
                 });
 
@@ -1097,51 +789,6 @@ namespace Flight_Booking_System.Migrations
                             PassengerId = 5,
                             Price = 850.00m,
                             SeatId = 5
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Class = 0,
-                            FlightId = 4,
-                            PassengerId = 6,
-                            Price = 399.99m,
-                            SeatId = 11
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Class = 1,
-                            FlightId = 5,
-                            PassengerId = 7,
-                            Price = 599.99m,
-                            SeatId = 12
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Class = 2,
-                            FlightId = 6,
-                            PassengerId = 8,
-                            Price = 1399.99m,
-                            SeatId = 13
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Class = 0,
-                            FlightId = 4,
-                            PassengerId = 9,
-                            Price = 380.00m,
-                            SeatId = 14
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Class = 1,
-                            FlightId = 5,
-                            PassengerId = 10,
-                            Price = 900.00m,
-                            SeatId = 15
                         });
                 });
 
