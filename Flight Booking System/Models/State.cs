@@ -15,12 +15,12 @@ namespace Flight_Booking_System.Models
         //------------------------------------
 
         [ForeignKey("Country")]
-        public int? CountryId { get; set; }
+        public int CountryId { get; set; }         // saeed : delete nullable operator to allow implicit casting on state controller
 
         public Country? Country { get; set; }
 
         [ForeignKey("Place")]
-        public int? PlaceId { get; set; }
+        public int? PlaceId { get; set; } 
 
         public Place? Place { get; set; }
     }
