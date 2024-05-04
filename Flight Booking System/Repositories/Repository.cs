@@ -50,6 +50,5 @@ namespace Flight_Booking_System.Repositories
         {
             Context.Update(item);
         }
-
     }
 }

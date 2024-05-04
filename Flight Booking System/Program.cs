@@ -9,6 +9,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Flight_Booking_System.Controllers;
+using Flight_Booking_System.Services;
+using Vonage;
+using Vonage.Messaging;
+using Vonage.Request;
+using Microsoft.Extensions.DependencyInjection;
+using FluentValidation;
+
+
 
 namespace Flight_Booking_System
 {
@@ -31,7 +39,7 @@ namespace Flight_Booking_System
             builder.Services.AddDbContext<ITIContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("CS"));
-            });
+            }); 
 
             // to make the provider able to serve any consumer from other domains
             builder.Services.AddCors(options =>
@@ -73,7 +81,8 @@ namespace Flight_Booking_System
                 options.Password.RequireDigit = false;
                 //options.SignIn.RequireConfirmedAccount = true;        // maybe later
             })
-            .AddEntityFrameworkStores<ITIContext>();
+            .AddEntityFrameworkStores<ITIContext>()
+            .AddDefaultTokenProviders();
 
 
             builder.Services.AddAuthentication(options =>
@@ -160,10 +169,49 @@ namespace Flight_Booking_System
                   });
             });
 
+            // registering Mail service
+            builder.Services.AddScoped<IEmailService, EmailService>();
+
+            // Registering Vonage for phone confiramtion
+            builder.Services.AddSingleton<VonageClient>(provider =>
+            {
+                var config = provider.GetRequiredService<IConfiguration>();
+                var key = config.GetValue<string>("Vonage_key");
+                var secret = config.GetValue<string>("Vonage_Secret");
+                var credentials = Credentials.FromApiKeyAndSecret(key, secret);
+
+                return new VonageClient(credentials);
+            });
+
+            // Register validators
+            // Register validators
+            //builder.Services.AddValidatorsFromAssemblyContaining<SMSModel>();
+            builder.Services.AddTransient<IValidator<SMSModel>, SmsModelValidator>();
+
 
             //************************************************************************************************
 
             var app = builder.Build();
+
+            app.MapGet("/", () => "Hello World!");
+
+            app.MapPost("/sms", async (VonageClient vonageClient, SMSModel smsModel, IValidator<SMSModel> validator) =>
+            {
+                ValidationResult validationResult = validator.Validate(smsModel);
+                if (!validationResult.IsValid)
+                {
+                    return Results.ValidationProblem(validationResult.ToDictionary());
+                }
+
+                var smsResponse = await vonageClient.SmsClient.SendAnSmsAsync(new SendSmsRequest
+                {
+                    To = smsModel.To,
+                    From = smsModel.From,
+                    Text = smsModel.Text
+                });
+
+                return Results.Ok();
+            });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
