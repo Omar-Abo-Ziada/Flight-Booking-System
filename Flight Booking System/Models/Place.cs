@@ -6,7 +6,7 @@ namespace Flight_Booking_System.Models
     [Table("Places")]
     public class Place
     {
-        [Key]
+        [Key] 
         public int Id { get; set; } 
 
         [Required]

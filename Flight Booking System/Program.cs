@@ -119,7 +119,7 @@ namespace Flight_Booking_System
                 {
                     options.SuppressModelStateInvalidFilter = true;
                 });
-
+            
             //-----------------------------------------------------
 
             /// <summary>
@@ -134,6 +134,7 @@ namespace Flight_Booking_System
                     Title = "ASP.NET 5 Web API",
                     Description = " ITI Projrcy"
                 });
+              
                 // To Enable authorization using Swagger (JWT)
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {

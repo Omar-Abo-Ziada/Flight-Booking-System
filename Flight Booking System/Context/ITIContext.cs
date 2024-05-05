@@ -69,6 +69,23 @@ namespace Flight_Booking_System.Context
                 new AirPort { Id = 4, Name = "Dubai AirPort", AirPortNumber = 4 },
                 new AirPort { Id = 5, Name = "Atlanta AirPort", AirPortNumber = 5 }
             );
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+               new IdentityRole()
+               {
+                   Id = "1",
+                   Name = "Admin",
+                   NormalizedName = "ADMIN"
+               },
+                new IdentityRole()
+                {
+                    Id = "2",
+                    Name = "User",
+                    NormalizedName = "USER"
+                }
+               );
+
+
             modelBuilder.Entity<Passenger>().HasData(
                  new Passenger
                  {
