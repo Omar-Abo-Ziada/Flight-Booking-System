@@ -11,6 +11,7 @@ namespace Flight_Booking_System.Services
         {
             _config = config;
         }
+
         public Task SendEmailAsync(string toEmail, string subject, string body, bool isBodyHTML)
         {
             string MailServer = _config["EmailSettings:MailServer"];
@@ -23,10 +24,12 @@ namespace Flight_Booking_System.Services
                 Credentials = new NetworkCredential(FromEmail, Password),
                 EnableSsl = true,
             };
+
             MailMessage mailMessage = new MailMessage(FromEmail, toEmail, subject, body)
             {
                 IsBodyHtml = isBodyHTML
             };
+
             return client.SendMailAsync(mailMessage);
         }
     }

@@ -195,7 +195,6 @@ namespace Flight_Booking_System.Controllers
                         };
                     }
 
-
                     //  Validates that an email confirmation token matches the specified user.
                     var result = await _userManager.ConfirmEmailAsync(user, token);
 
