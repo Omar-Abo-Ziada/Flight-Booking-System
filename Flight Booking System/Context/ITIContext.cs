@@ -311,6 +311,108 @@ namespace Flight_Booking_System.Context
         }
     }
 );
+
+            //adding extra info ibrahim   
+
+
+            // Adding more airlines
+            modelBuilder.Entity<AirLine>().HasData(
+                new AirLine { Id = 6, AirlineNumber = 30, Name = "British Airways", AirportId = 6 },
+                new AirLine { Id = 7, AirlineNumber = 35, Name = "Air France", AirportId = 7 },
+                new AirLine { Id = 8, AirlineNumber = 40, Name = "American Airlines", AirportId = 8 },
+                new AirLine { Id = 9, AirlineNumber = 45, Name = "United Airlines", AirportId = 9 },
+                new AirLine { Id = 10, AirlineNumber = 50, Name = "Singapore Airlines", AirportId = 10 }
+
+            );
+
+            // Adding more airports
+            modelBuilder.Entity<AirPort>().HasData(
+                new AirPort { Id = 6, Name = "Heathrow Airport", AirPortNumber = 6 },
+                new AirPort { Id = 7, Name = "Charles de Gaulle Airport", AirPortNumber = 7 },
+                new AirPort { Id = 8, Name = "Los Angeles International Airport", AirPortNumber = 8 },
+                new AirPort { Id = 9, Name = "O'Hare International Airport", AirPortNumber = 9 },
+                new AirPort { Id = 10, Name = "Changi Airport", AirPortNumber = 10 }
+
+            );
+
+            // Adding more passengers
+            modelBuilder.Entity<Passenger>().HasData(
+                new Passenger { Id = 6, Name = "John", Gender = Gender.Male, IsChild = false, Age = 35, NationalId = "789012", PassportNum = "77889900", TicketId = 6 },
+                new Passenger { Id = 7, Name = "Sophia", Gender = Gender.Female, IsChild = false, Age = 29, NationalId = "567890", PassportNum = "11223344", TicketId = 7 },
+                new Passenger { Id = 8, Name = "William", Gender = Gender.Male, IsChild = false, Age = 45, NationalId = "345678", PassportNum = "55667788", TicketId = 8 },
+                new Passenger { Id = 9, Name = "Olivia", Gender = Gender.Female, IsChild = true, Age = 8, NationalId = "456789", PassportNum = "99001122", TicketId = 9 },
+                new Passenger { Id = 10, Name = "James", Gender = Gender.Male, IsChild = false, Age = 55, NationalId = "234567", PassportNum = "33445566", TicketId = 10 }
+
+            );
+
+            // Adding more countries
+            modelBuilder.Entity<Country>().HasData(
+                new Country { Id = 6, Name = "United Kingdom" },
+                new Country { Id = 7, Name = "France" },
+                new Country { Id = 8, Name = "United States" },
+                new Country { Id = 9, Name = "Singapore" },
+                new Country { Id = 10, Name = "Qatar" }
+
+            );
+
+            // Adding more states
+            modelBuilder.Entity<State>().HasData(
+                new State { Id = 6, CountryId = 6, Name = "England" },
+                new State { Id = 7, CountryId = 6, Name = "Scotland" },
+                new State { Id = 8, CountryId = 6, Name = "Wales" },
+                new State { Id = 9, CountryId = 7, Name = "Île-de-France" },
+                new State { Id = 10, CountryId = 7, Name = "Provence-Alpes-Côte d'Azur" }
+
+            );
+
+            // Adding more planes
+            modelBuilder.Entity<Plane>().HasData(
+                new Plane { Id = 5, Name = "Boeing 787", capacity = 242, Engine = "GEnx-1B", Height = 56, Length = 206, WingSpan = 197 },
+                new Plane { Id = 6, Name = "Airbus A350", capacity = 325, Engine = "Trent XWB", Height = 56, Length = 227, WingSpan = 212 },
+                new Plane { Id = 7, Name = "Boeing 767", capacity = 375, Engine = "CF6-80", Height = 48, Length = 201, WingSpan = 156 },
+                new Plane { Id = 8, Name = "Airbus A330", capacity = 440, Engine = "Trent 700", Height = 58, Length = 63, WingSpan = 197 },
+                new Plane { Id = 9, Name = "Boeing 757", capacity = 295, Engine = "RB211-535", Height = 44, Length = 54, WingSpan = 38 }
+
+            );
+
+            // Adding more places
+            modelBuilder.Entity<Place>().HasData(
+                new Place { Id = 6, CountryId = 6, StateId = 6 },
+                new Place { Id = 7, CountryId = 6, StateId = 7 },
+                new Place { Id = 8, CountryId = 6, StateId = 8 },
+                new Place { Id = 9, CountryId = 7, StateId = 9 },
+                new Place { Id = 10, CountryId = 7, StateId = 10 }
+
+            );
+
+            // Adding more seats
+            modelBuilder.Entity<Seat>().HasData(
+                new Seat { Id = 11, Number = 11, Section = Section.front | Section.window },
+                new Seat { Id = 12, Number = 12, Section = Section.front },
+                new Seat { Id = 13, Number = 13, Section = Section.Middle },
+                new Seat { Id = 14, Number = 14, Section = Section.back | Section.window },
+                new Seat { Id = 15, Number = 15, Section = Section.back }
+
+            );
+
+            // Adding more flights
+            modelBuilder.Entity<Flight>().HasData(
+                new Flight { Id = 4, StartId = 4, DestinationId = 4, DepartureTime = new DateTime(2024, 12, 25, 10, 30, 0), ArrivalTime = new DateTime(2024, 12, 25, 16, 45, 0), Duration = new TimeSpan(6, 15, 0), PlaneId = 5 },
+                new Flight { Id = 5, StartId = 5, DestinationId = 5, DepartureTime = new DateTime(2024, 12, 30, 14, 0, 0), ArrivalTime = new DateTime(2024, 12, 30, 20, 0, 0), Duration = new TimeSpan(6, 0, 0), PlaneId = 6 },
+                new Flight { Id = 6, StartId = 6, DestinationId = 6, DepartureTime = new DateTime(2024, 11, 15, 9, 0, 0), ArrivalTime = new DateTime(2024, 11, 15, 12, 15, 0), Duration = new TimeSpan(3, 15, 0), PlaneId = 7 }
+
+            );
+
+            // Adding more tickets
+            modelBuilder.Entity<Ticket>().HasData(
+                new Ticket { Id = 6, Price = 399.99m, Class = Class.Economy, PassengerId = 6, SeatId = 11, FlightId = 4 },
+                new Ticket { Id = 7, Price = 599.99m, Class = Class.Business, PassengerId = 7, SeatId = 12, FlightId = 5 },
+                new Ticket { Id = 8, Price = 1399.99m, Class = Class.First, PassengerId = 8, SeatId = 13, FlightId = 6 },
+                new Ticket { Id = 9, Price = 380.00m, Class = Class.Economy, PassengerId = 9, SeatId = 14, FlightId = 4 },
+                new Ticket { Id = 10, Price = 900.00m, Class = Class.Business, PassengerId = 10, SeatId = 15, FlightId = 5 }
+
+            );
+
         }
     }
 }
