@@ -43,7 +43,10 @@ namespace Flight_Booking_System.Controllers
                     UserName = userDTO.UserName,
                     PasswordHash = userDTO.Password,
                     Email = userDTO.Email,
-                    PhoneNumber = userDTO.PhoneNumber 
+                    PhoneNumber = userDTO.PhoneNumber,
+
+                    EmailConfirmed =false,
+                    PhoneNumberConfirmed = false,
                 };
 
                 // create Account in database
@@ -58,75 +61,77 @@ namespace Flight_Booking_System.Controllers
                     // Send email confirmation link
                     await _emailService.SendEmailAsync(userDTO.Email, "Email Confiramtion" , $"Please confirm your email by clicking here: <a href='{confirmationLink}'>link</a>", true);
 
-                   // // Generate phone number confirmation token
-                   // var phoneToken = await _userManager.GenerateChangePhoneNumberTokenAsync(user, userDTO.PhoneNumber);
+                    #region Phone confiramtion (not done yet)
+                    // // Generate phone number confirmation token
+                    // var phoneToken = await _userManager.GenerateChangePhoneNumberTokenAsync(user, userDTO.PhoneNumber);
 
-                   // // Send phone number confirmation token via SMS or other means
-                   // var infobipClientOptions = new RestClientOptions("https://qy2pew.api.infobip.com")
-                   // {
-                   //     MaxTimeout = -1,
-                   // };
-                   // var infobipClient = new RestClient(infobipClientOptions);
+                    // // Send phone number confirmation token via SMS or other means
+                    // var infobipClientOptions = new RestClientOptions("https://qy2pew.api.infobip.com")
+                    // {
+                    //     MaxTimeout = -1,
+                    // };
+                    // var infobipClient = new RestClient(infobipClientOptions);
 
-                   // var infobipRequest = new RestRequest("/2fa/2/applications", RestSharp.Method.Get);
+                    // var infobipRequest = new RestRequest("/2fa/2/applications", RestSharp.Method.Get);
 
-                   // infobipRequest.AddHeader("Authorization", "{authorization}"); // Replace {authorization} with your actual authorization token
-                   // infobipRequest.AddHeader("Accept", "application/json");
-                   // var infobipResponse = await infobipClient.ExecuteAsync(infobipRequest);
-                   // // Log the response content
-                   // // Example using Serilog: Log.Information(infobipResponse.Content);
+                    // infobipRequest.AddHeader("Authorization", "{authorization}"); // Replace {authorization} with your actual authorization token
+                    // infobipRequest.AddHeader("Accept", "application/json");
+                    // var infobipResponse = await infobipClient.ExecuteAsync(infobipRequest);
+                    // // Log the response content
+                    // // Example using Serilog: Log.Information(infobipResponse.Content);
 
-                   // //----------------------------------
+                    // //----------------------------------
 
-                   // var infobipApiBaseUrl = _configuration["Infobip:ApiBaseUrl"];
-                   // var qy2pewApiBaseUrl = _configuration["Infobip:Qy2pewApiBaseUrl"];
-                   // var apiKey = _configuration["Infobip:ApiKey"];
-                   // var apiKeyPrefix = _configuration["Infobip:ApiKeyPrefix"];
-                   // var userAgent = _configuration["Infobip:UserAgent"];
+                    // var infobipApiBaseUrl = _configuration["Infobip:ApiBaseUrl"];
+                    // var qy2pewApiBaseUrl = _configuration["Infobip:Qy2pewApiBaseUrl"];
+                    // var apiKey = _configuration["Infobip:ApiKey"];
+                    // var apiKeyPrefix = _configuration["Infobip:ApiKeyPrefix"];
+                    // var userAgent = _configuration["Infobip:UserAgent"];
 
-                   // // Initialize Infobip SMS client
-                   // var infobipConfiguration = new Configuration() 
-                   // { 
-                   //     BasePath = infobipApiBaseUrl ,
-                   //     ApiKey = apiKey ,
-                   //     //UserAgent = userAgent ,
-                   //     //ApiKeyPrefix = apiKeyPrefix ,
-                   // };
+                    // // Initialize Infobip SMS client
+                    // var infobipConfiguration = new Configuration() 
+                    // { 
+                    //     BasePath = infobipApiBaseUrl ,
+                    //     ApiKey = apiKey ,
+                    //     //UserAgent = userAgent ,
+                    //     //ApiKeyPrefix = apiKeyPrefix ,
+                    // };
 
-                   // var infobipSmsClient = new SmsClient(infobipConfiguration);
+                    // var infobipSmsClient = new SmsClient(infobipConfiguration);
 
-                   // // Create SMS message
-                   // var smsTextualRequest = new SmsTextualRequest
-                   // {
-                   //     From = "SenderName", // Your sender name or number
-                   //     To = userDTO.PhoneNumber, // Recipient phone number
-                   //     Text = "Your confirmation code is: " + phoneToken // Your confirmation message
-                   // };
+                    // // Create SMS message
+                    // var smsTextualRequest = new SmsTextualRequest
+                    // {
+                    //     From = "SenderName", // Your sender name or number
+                    //     To = userDTO.PhoneNumber, // Recipient phone number
+                    //     Text = "Your confirmation code is: " + phoneToken // Your confirmation message
+                    // };
 
-                   // //Send SMS message
-                   //var smsResponse = await infobipSmsClient.SendSmsTextualAsync(smsTextualRequest);
+                    // //Send SMS message
+                    //var smsResponse = await infobipSmsClient.SendSmsTextualAsync(smsTextualRequest);
 
-                   // //Handle response(e.g., check if the message was sent successfully)
-                   // if (smsResponse != null && smsResponse.Messages != null && smsResponse.Messages.Count > 0)
-                   // {
-                   //     // SMS sent successfully
-                   //     return new GeneralResponse()
-                   //     {
-                   //         IsSuccess = true,
-                   //         Data = smsResponse.Messages,
-                   //         Message = "SMS Sent Successfully"
-                   //     };
-                   // }
-                   // else
-                   // {
-                   //     // Failed to send SMS
-                   //     return new GeneralResponse()
-                   //     {
-                   //         IsSuccess = false,
-                   //         Data = null,
-                   //         Message = "Failed to send SMS"
-                   //     };
-                   // }
+                    // //Handle response(e.g., check if the message was sent successfully)
+                    // if (smsResponse != null && smsResponse.Messages != null && smsResponse.Messages.Count > 0)
+                    // {
+                    //     // SMS sent successfully
+                    //     return new GeneralResponse()
+                    //     {
+                    //         IsSuccess = true,
+                    //         Data = smsResponse.Messages,
+                    //         Message = "SMS Sent Successfully"
+                    //     };
+                    // }
+                    // else
+                    // {
+                    //     // Failed to send SMS
+                    //     return new GeneralResponse()
+                    //     {
+                    //         IsSuccess = false,
+                    //         Data = null,
+                    //         Message = "Failed to send SMS"
+                    //     };
+                    // } 
+                    #endregion
 
                     //----------------------------------
 

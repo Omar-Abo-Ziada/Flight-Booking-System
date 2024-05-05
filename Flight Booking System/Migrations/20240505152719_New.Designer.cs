@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Flight_Booking_System.Migrations
 {
     [DbContext(typeof(ITIContext))]
-    [Migration("20240502235322_3_5_3")]
-    partial class _3_5_3
+    [Migration("20240505152719_New")]
+    partial class New
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,7 +98,8 @@ namespace Flight_Booking_System.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.HasKey("Id");
 
@@ -219,7 +220,9 @@ namespace Flight_Booking_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlaceId");
+                    b.HasIndex("PlaceId")
+                        .IsUnique()
+                        .HasFilter("[PlaceId] IS NOT NULL");
 
                     b.ToTable("Countries");
 
@@ -227,7 +230,8 @@ namespace Flight_Booking_System.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Egypt"
+                            Name = "Egypt",
+                            PlaceId = 1
                         },
                         new
                         {
@@ -263,26 +267,21 @@ namespace Flight_Booking_System.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ArrivalTime")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DepartureTime")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("DestinationId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<TimeSpan?>("Duration")
-                        .IsRequired()
                         .HasColumnType("time");
 
-                    b.Property<int?>("PlaneId")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("StartId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -290,8 +289,6 @@ namespace Flight_Booking_System.Migrations
                     b.HasIndex("AirLineId");
 
                     b.HasIndex("DestinationId");
-
-                    b.HasIndex("PlaneId");
 
                     b.HasIndex("StartId");
 
@@ -303,9 +300,9 @@ namespace Flight_Booking_System.Migrations
                             Id = 1,
                             ArrivalTime = new DateTime(2024, 12, 25, 16, 45, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new DateTime(2024, 12, 25, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                            DestinationId = 1,
+                            DestinationId = 2,
                             Duration = new TimeSpan(0, 6, 15, 0, 0),
-                            PlaneId = 1,
+                            IsActive = false,
                             StartId = 1
                         },
                         new
@@ -313,9 +310,9 @@ namespace Flight_Booking_System.Migrations
                             Id = 2,
                             ArrivalTime = new DateTime(2024, 12, 30, 20, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new DateTime(2024, 12, 30, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            DestinationId = 2,
+                            DestinationId = 1,
                             Duration = new TimeSpan(0, 6, 0, 0, 0),
-                            PlaneId = 2,
+                            IsActive = false,
                             StartId = 2
                         },
                         new
@@ -323,9 +320,9 @@ namespace Flight_Booking_System.Migrations
                             Id = 3,
                             ArrivalTime = new DateTime(2024, 11, 15, 12, 15, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new DateTime(2024, 11, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            DestinationId = 3,
+                            DestinationId = 1,
                             Duration = new TimeSpan(0, 3, 15, 0, 0),
-                            PlaneId = 3,
+                            IsActive = false,
                             StartId = 3
                         });
                 });
@@ -439,50 +436,30 @@ namespace Flight_Booking_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CountryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StateId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("StateId");
 
                     b.ToTable("Places");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            CountryId = 1,
-                            StateId = 1
+                            Id = 1
                         },
                         new
                         {
-                            Id = 2,
-                            CountryId = 2,
-                            StateId = 2
+                            Id = 2
                         },
                         new
                         {
-                            Id = 3,
-                            CountryId = 3,
-                            StateId = 3
+                            Id = 3
                         },
                         new
                         {
-                            Id = 4,
-                            CountryId = 4,
-                            StateId = 4
+                            Id = 4
                         },
                         new
                         {
-                            Id = 5,
-                            CountryId = 5,
-                            StateId = 5
+                            Id = 5
                         });
                 });
 
@@ -518,7 +495,9 @@ namespace Flight_Booking_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FlightId");
+                    b.HasIndex("FlightId")
+                        .IsUnique()
+                        .HasFilter("[FlightId] IS NOT NULL");
 
                     b.ToTable("Planes");
 
@@ -574,7 +553,6 @@ namespace Flight_Booking_System.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("Number")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("Section")
@@ -662,7 +640,7 @@ namespace Flight_Booking_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CountryId")
+                    b.Property<int>("CountryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -676,7 +654,9 @@ namespace Flight_Booking_System.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.HasIndex("PlaceId");
+                    b.HasIndex("PlaceId")
+                        .IsUnique()
+                        .HasFilter("[PlaceId] IS NOT NULL");
 
                     b.ToTable("States");
 
@@ -935,8 +915,8 @@ namespace Flight_Booking_System.Migrations
             modelBuilder.Entity("Flight_Booking_System.Models.Country", b =>
                 {
                     b.HasOne("Flight_Booking_System.Models.Place", "Place")
-                        .WithMany()
-                        .HasForeignKey("PlaceId");
+                        .WithOne("Country")
+                        .HasForeignKey("Flight_Booking_System.Models.Country", "PlaceId");
 
                     b.Navigation("Place");
                 });
@@ -951,10 +931,6 @@ namespace Flight_Booking_System.Migrations
                         .WithMany("ArrivingFlights")
                         .HasForeignKey("DestinationId");
 
-                    b.HasOne("Flight_Booking_System.Models.Plane", "Plane")
-                        .WithMany()
-                        .HasForeignKey("PlaneId");
-
                     b.HasOne("Flight_Booking_System.Models.Place", "Start")
                         .WithMany("DepartingFlights")
                         .HasForeignKey("StartId");
@@ -962,8 +938,6 @@ namespace Flight_Booking_System.Migrations
                     b.Navigation("AirLine");
 
                     b.Navigation("Destination");
-
-                    b.Navigation("Plane");
 
                     b.Navigation("Start");
                 });
@@ -983,30 +957,11 @@ namespace Flight_Booking_System.Migrations
                     b.Navigation("Ticket");
                 });
 
-            modelBuilder.Entity("Flight_Booking_System.Models.Place", b =>
-                {
-                    b.HasOne("Flight_Booking_System.Models.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Flight_Booking_System.Models.State", "State")
-                        .WithMany()
-                        .HasForeignKey("StateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-
-                    b.Navigation("State");
-                });
-
             modelBuilder.Entity("Flight_Booking_System.Models.Plane", b =>
                 {
                     b.HasOne("Flight_Booking_System.Models.Flight", "Flight")
-                        .WithMany()
-                        .HasForeignKey("FlightId");
+                        .WithOne("Plane")
+                        .HasForeignKey("Flight_Booking_System.Models.Plane", "FlightId");
 
                     b.Navigation("Flight");
                 });
@@ -1024,11 +979,13 @@ namespace Flight_Booking_System.Migrations
                 {
                     b.HasOne("Flight_Booking_System.Models.Country", "Country")
                         .WithMany("States")
-                        .HasForeignKey("CountryId");
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Flight_Booking_System.Models.Place", "Place")
-                        .WithMany()
-                        .HasForeignKey("PlaceId");
+                        .WithOne("State")
+                        .HasForeignKey("Flight_Booking_System.Models.State", "PlaceId");
 
                     b.Navigation("Country");
 
@@ -1114,6 +1071,8 @@ namespace Flight_Booking_System.Migrations
                 {
                     b.Navigation("Passengers");
 
+                    b.Navigation("Plane");
+
                     b.Navigation("Tickets");
                 });
 
@@ -1121,7 +1080,11 @@ namespace Flight_Booking_System.Migrations
                 {
                     b.Navigation("ArrivingFlights");
 
+                    b.Navigation("Country");
+
                     b.Navigation("DepartingFlights");
+
+                    b.Navigation("State");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Ticket", b =>

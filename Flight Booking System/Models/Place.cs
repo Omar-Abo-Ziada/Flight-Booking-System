@@ -9,15 +9,15 @@ namespace Flight_Booking_System.Models
         [Key]
         public int Id { get; set; } 
 
-        [Required]
-        [ForeignKey("Country")]
-        public int CountryId { get; set; } 
+        //[Required]
+        //[ForeignKey("Country")]
+        //public int CountryId { get; set; } 
 
         public Country? Country { get; set; } 
 
-        [Required]
-        [ForeignKey("State")]
-        public int StateId { get; set; } 
+        //[Required]
+        //[ForeignKey("State")]
+        //public int StateId { get; set; } 
 
         public State? State { get; set; }
 
@@ -26,5 +26,11 @@ namespace Flight_Booking_System.Models
 
         // Navigation property representing flights arriving at this place
         public List<Flight>? ArrivingFlights { get; set; }
+
+        //-----------------------------------------------------
+
+        //public List<int>? MyDepartingFlightsIDs { get; set; } //= new List<int>();
+
+        //public List<int>? MyArrivingFlightsIDs { get; set; } //= new List<int>();
     }
 }

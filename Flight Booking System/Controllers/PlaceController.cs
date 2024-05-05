@@ -33,8 +33,8 @@ namespace Flight_Booking_System.Controllers
             {
                 placeDTOs.Add(new PlaceDTO()
                 {
-                    countryName = countryRepository.GetById(place.CountryId).Name,
-                    stateName = stateRepository.GetById(place.StateId).Name
+                    //countryName = countryRepository.GetById(place.CountryId).Name,
+                    //stateName = stateRepository.GetById(place.StateId).Name
                 });
             }
             return new GeneralResponse()
@@ -54,8 +54,8 @@ namespace Flight_Booking_System.Controllers
             {
                 PlaceDTO placeDTO = new PlaceDTO()
                 {
-                    countryName = countryRepository.GetById(place.CountryId).Name,
-                    stateName = stateRepository.GetById(place.StateId).Name
+                    //countryName = countryRepository.GetById(place.CountryId).Name,
+                    //stateName = stateRepository.GetById(place.StateId).Name
                 };
                 return new GeneralResponse()
                 {
@@ -83,8 +83,8 @@ namespace Flight_Booking_System.Controllers
                 Place place = new Place()
                 {
                     Id = placeDTO.Id,
-                    CountryId = placeDTO.CountryId,
-                    StateId = placeDTO.StateId,
+                    //CountryId = placeDTO.CountryId,
+                    //StateId = placeDTO.StateId,
                 };
                 placeRepository.Insert(place);           // should throw exc when country id and state id is found!!!!!!!!!!!
                 placeRepository.Save();
@@ -115,8 +115,8 @@ namespace Flight_Booking_System.Controllers
                 Place editedPlace = new Place()
                 {
                     Id = editedPlaceDTO.Id,
-                    CountryId = editedPlaceDTO.CountryId,
-                    StateId = editedPlaceDTO.StateId,
+                    //CountryId = editedPlaceDTO.CountryId,
+                    //StateId = editedPlaceDTO.StateId,
                 };
                 placeRepository.Update(editedPlace);
                 placeRepository.Save();

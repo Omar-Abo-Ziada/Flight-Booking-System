@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
+using Flight_Booking_System.Context;
 using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace Flight_Booking_System.Controllers
 {
@@ -14,11 +18,26 @@ namespace Flight_Booking_System.Controllers
     {
         private readonly IFlightRepository flightRepository;
         private readonly IMapper mapper;
+        private readonly ITicketRepository ticketRepository;
+        private readonly IPlaceRepository placeRepository;
 
-        public FlightController(IFlightRepository flightRepository , IMapper mapper)
+        public ITIContext ITIContext { get; }
+        public IPlaneRepository PlaneRepository { get; }
+
+        public FlightController
+        (IFlightRepository flightRepository,
+            IMapper mapper,
+            ITicketRepository ticketRepository,
+            ITIContext iTIContext,
+            IPlaceRepository placeRepository,
+            IPlaneRepository planeRepository)
         {
             this.flightRepository = flightRepository;
             this.mapper = mapper;
+            this.ticketRepository = ticketRepository;
+            ITIContext = iTIContext;
+            this.placeRepository = placeRepository;
+            PlaneRepository = planeRepository;
         }
 
         //***********************************************
@@ -48,6 +67,23 @@ namespace Flight_Booking_System.Controllers
                 //};
 
                 FlightDTO flightDTO = mapper.Map<Flight, FlightDTO>(flight);
+
+                flightDTO.PlaneName = PlaneRepository.Get(p => p.FlightId == flight.Id).Select(p => p.Name).FirstOrDefault();
+
+                List<Place> FlightPlaces = placeRepository.GetAllWithChilds(flight.Id);
+
+                flightDTO.StartCountryName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
+                                             .Select(p => p.Country.Name).FirstOrDefault();
+
+                flightDTO.StartStateName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
+                                           .Select(p => p.State.Name).FirstOrDefault();
+
+                flightDTO.DestainationCountryName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
+                                           .Select(p => p.Country.Name).FirstOrDefault();
+
+                flightDTO.DestainationStateName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
+                                           .Select(p => p.State.Name).FirstOrDefault();
+
 
                 flightDTOs.Add(flightDTO);
             }
@@ -108,11 +144,15 @@ namespace Flight_Booking_System.Controllers
         }
 
         [HttpPost]
-        [Authorize]
-        public ActionResult<GeneralResponse> Add(Flight flight)
+        //[Authorize]
+        public ActionResult<GeneralResponse> Add(FlightDTO flightDTO)
         {
             if (ModelState.IsValid)
             {
+                Flight flight = new Flight();
+
+                flight = mapper.Map<FlightDTO, Flight>(flightDTO);
+
                 flightRepository.Insert(flight);
 
                 flightRepository.Save();
@@ -149,13 +189,13 @@ namespace Flight_Booking_System.Controllers
             }
         }
 
-        [HttpPut]
-        [Authorize]
-        public ActionResult<GeneralResponse> Edit(int id, Flight editedFlight)
+        [HttpPut("{id:int}")]
+        //[Authorize]
+        public ActionResult<GeneralResponse> Update(int id, FlightDTO editedFlightDTO)
         {
             Flight? flightFromDB = flightRepository.GetById(id);
 
-            if (flightFromDB == null || editedFlight.Id != id)
+            if (flightFromDB == null || editedFlightDTO.Id != id)
             {
                 return new GeneralResponse()
                 {
@@ -169,15 +209,64 @@ namespace Flight_Booking_System.Controllers
             }
             else
             {
-                flightRepository.Update(editedFlight);
+                //flightFromDB = mapper.Map<FlightDTO, Flight>(editedFlightDTO);
+
+                // I Must Map properties manually from editedFlightDTO to flightFromDB
+                #region Why can't use Automapper here
+                //When you use AutoMapper to map a DTO to an entity, it typically creates a new instance of the entity
+                //and copies the values from the DTO to the corresponding properties of the entity.
+                //This process doesn't directly update the existing tracked entity in the DbContext.
+                //Instead, it creates a new detached entity instance. 
+                #endregion
+
+                flightFromDB.StartId = editedFlightDTO.StartId;
+                flightFromDB.DestinationId = editedFlightDTO.DestinationId;
+                flightFromDB.DepartureTime = editedFlightDTO.DepartureTime;
+                flightFromDB.ArrivalTime = editedFlightDTO.ArrivalTime;
+                flightFromDB.AirLineId = editedFlightDTO.AirLineId;
+                //flightFromDB.PlaneId = editedFlightDTO.PlaneId;
+                //flightFromDB.Duration = editedFlightDTO.Duration;  // the next lines trying to parse the string correctly to map this prop
+
+                // Convert string representation of duration to TimeSpan
+                if (!string.IsNullOrEmpty(editedFlightDTO.Duration))
+                {
+                    TimeSpan duration;
+                    if (TimeSpan.TryParseExact(editedFlightDTO.Duration, "hh\\:mm\\:ss", null, out duration))
+                    {
+                        flightFromDB.Duration = duration;
+                    }
+                    else
+                    {
+                        // Handle parsing error
+                        return new GeneralResponse()
+                        {
+                            IsSuccess = false,
+                            Data = null,
+                            Message = "Invalid duration format in the DTO.",
+                        };
+                    }
+                }
+                else
+                {
+                    // Handle null or empty duration string
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Data = null,
+                        Message = "Duration is required.",
+                    };
+                }
+
+                //ITIContext.Entry(flightFromDB).State = EntityState.Detached;
+
+                //flightRepository.Update(flightFromDB);
 
                 flightRepository.Save();
 
                 return new GeneralResponse()
                 {
                     IsSuccess = true,
-
-                    Data = editedFlight,
+                    Data = editedFlightDTO,
 
                     Message = "Flight Edited Successfully",
                 };
@@ -196,7 +285,7 @@ namespace Flight_Booking_System.Controllers
         }
 
         [HttpDelete("{id:int}")] // from route
-        [Authorize]
+                                 //[Authorize]
         public ActionResult<GeneralResponse> Delete(int id)
         {
             Flight? flightFromDB = flightRepository.GetById(id);
@@ -216,6 +305,14 @@ namespace Flight_Booking_System.Controllers
             {
                 try
                 {
+                    Ticket? ticketfromDB = ticketRepository.Get(t => t.FlightId == id).FirstOrDefault();
+                    ticketfromDB.FlightId = null;
+
+                    flightFromDB.AirLineId = null;
+                    //flightFromDB.PlaneId = null;
+                    flightFromDB.StartId = null;
+                    flightFromDB.DestinationId = null;
+
                     flightRepository.Delete(flightFromDB);
 
                     flightRepository.Save();

@@ -28,10 +28,12 @@ namespace Flight_Booking_System.Models
 
         public TimeSpan? Duration { get; set; }
 
+        public bool IsActive { get; set; } = false;
+
         //-----------------------------------------
 
-        [ForeignKey("Plane")]
-        public int? PlaneId { get; set; }
+        //[ForeignKey("Plane")]
+        //public int? PlaneId { get; set; }
 
         public Plane? Plane { get; set; }
 

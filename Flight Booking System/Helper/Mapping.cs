@@ -11,6 +11,8 @@ namespace Flight_Booking_System.Helper
             CreateMap<Passenger, PassengerDTO>(); 
 
             CreateMap<Flight, FlightDTO>(); 
+
+            CreateMap<FlightDTO, Flight>(); 
         }
     }
 }

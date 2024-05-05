@@ -1,5 +1,6 @@
 ﻿using Flight_Booking_System.Context;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 
 namespace Flight_Booking_System.Repositories
 {
@@ -46,7 +47,7 @@ namespace Flight_Booking_System.Repositories
             Context.SaveChanges();
         }
 
-        public void Update(T item)
+        public void Update( T item)
         {
             Context.Update(item);
         }

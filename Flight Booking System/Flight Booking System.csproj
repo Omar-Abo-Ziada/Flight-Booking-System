@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="SQL Queries\" />
     <Folder Include="Repositories\" />
 

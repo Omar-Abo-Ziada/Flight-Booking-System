@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Flight_Booking_System.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class New : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,7 @@ namespace Flight_Booking_System.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AirPortNumber = table.Column<int>(type: "int", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,6 +64,18 @@ namespace Flight_Booking_System.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Places",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Places", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -204,6 +216,11 @@ namespace Flight_Booking_System.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Countries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Countries_Places_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "Places",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -212,12 +229,12 @@ namespace Flight_Booking_System.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StartId = table.Column<int>(type: "int", nullable: false),
-                    DestinationId = table.Column<int>(type: "int", nullable: false),
-                    DepartureTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Duration = table.Column<TimeSpan>(type: "time", nullable: false),
-                    PlaneId = table.Column<int>(type: "int", nullable: true),
+                    StartId = table.Column<int>(type: "int", nullable: true),
+                    DestinationId = table.Column<int>(type: "int", nullable: true),
+                    DepartureTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Duration = table.Column<TimeSpan>(type: "time", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     AirLineId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -227,6 +244,42 @@ namespace Flight_Booking_System.Migrations
                         name: "FK_Flights_AirLines_AirLineId",
                         column: x => x.AirLineId,
                         principalTable: "AirLines",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Flights_Places_DestinationId",
+                        column: x => x.DestinationId,
+                        principalTable: "Places",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Flights_Places_StartId",
+                        column: x => x.StartId,
+                        principalTable: "Places",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "States",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CountryId = table.Column<int>(type: "int", nullable: false),
+                    PlaceId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_States", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_States_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_States_Places_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "Places",
                         principalColumn: "Id");
                 });
 
@@ -312,7 +365,7 @@ namespace Flight_Booking_System.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Number = table.Column<int>(type: "int", nullable: false),
+                    Number = table.Column<int>(type: "int", nullable: true),
                     Section = table.Column<int>(type: "int", nullable: true),
                     TicketId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -323,51 +376,6 @@ namespace Flight_Booking_System.Migrations
                         name: "FK_Seats_Tickets_TicketId",
                         column: x => x.TicketId,
                         principalTable: "Tickets",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Places",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CountryId = table.Column<int>(type: "int", nullable: false),
-                    StateId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Places", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Places_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "States",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CountryId = table.Column<int>(type: "int", nullable: true),
-                    PlaceId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_States", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_States_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_States_Places_PlaceId",
-                        column: x => x.PlaceId,
-                        principalTable: "Places",
                         principalColumn: "Id");
                 });
 
@@ -388,11 +396,22 @@ namespace Flight_Booking_System.Migrations
                 columns: new[] { "Id", "Name", "PlaceId" },
                 values: new object[,]
                 {
-                    { 1, "Egypt", null },
                     { 2, "USA", null },
                     { 3, "Germany", null },
                     { 4, "Australia", null },
                     { 5, "Japan", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Places",
+                column: "Id",
+                values: new object[]
+                {
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
                 });
 
             migrationBuilder.InsertData(
@@ -436,37 +455,30 @@ namespace Flight_Booking_System.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Countries",
+                columns: new[] { "Id", "Name", "PlaceId" },
+                values: new object[] { 1, "Egypt", 1 });
+
+            migrationBuilder.InsertData(
+                table: "Flights",
+                columns: new[] { "Id", "AirLineId", "ArrivalTime", "DepartureTime", "DestinationId", "Duration", "IsActive", "StartId" },
+                values: new object[,]
+                {
+                    { 1, null, new DateTime(2024, 12, 25, 16, 45, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 12, 25, 10, 30, 0, 0, DateTimeKind.Unspecified), 2, new TimeSpan(0, 6, 15, 0, 0), false, 1 },
+                    { 2, null, new DateTime(2024, 12, 30, 20, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 12, 30, 14, 0, 0, 0, DateTimeKind.Unspecified), 1, new TimeSpan(0, 6, 0, 0, 0), false, 2 },
+                    { 3, null, new DateTime(2024, 11, 15, 12, 15, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 11, 15, 9, 0, 0, 0, DateTimeKind.Unspecified), 1, new TimeSpan(0, 3, 15, 0, 0), false, 3 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "States",
                 columns: new[] { "Id", "CountryId", "Name", "PlaceId" },
                 values: new object[,]
                 {
+                    { 4, 2, "Texas", null },
+                    { 5, 2, "California", null },
                     { 1, 1, "Cairo", null },
                     { 2, 1, "Alexandria", null },
-                    { 3, 1, "Aswan", null },
-                    { 4, 2, "Texas", null },
-                    { 5, 2, "California", null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Places",
-                columns: new[] { "Id", "CountryId", "StateId" },
-                values: new object[,]
-                {
-                    { 1, 1, 1 },
-                    { 2, 2, 2 },
-                    { 3, 3, 3 },
-                    { 4, 4, 4 },
-                    { 5, 5, 5 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Flights",
-                columns: new[] { "Id", "AirLineId", "ArrivalTime", "DepartureTime", "DestinationId", "Duration", "PlaneId", "StartId" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(2024, 12, 25, 16, 45, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 12, 25, 10, 30, 0, 0, DateTimeKind.Unspecified), 1, new TimeSpan(0, 6, 15, 0, 0), 1, 1 },
-                    { 2, null, new DateTime(2024, 12, 30, 20, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 12, 30, 14, 0, 0, 0, DateTimeKind.Unspecified), 2, new TimeSpan(0, 6, 0, 0, 0), 2, 2 },
-                    { 3, null, new DateTime(2024, 11, 15, 12, 15, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 11, 15, 9, 0, 0, 0, DateTimeKind.Unspecified), 3, new TimeSpan(0, 3, 15, 0, 0), 3, 3 }
+                    { 3, 1, "Aswan", null }
                 });
 
             migrationBuilder.InsertData(
@@ -540,7 +552,9 @@ namespace Flight_Booking_System.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Countries_PlaceId",
                 table: "Countries",
-                column: "PlaceId");
+                column: "PlaceId",
+                unique: true,
+                filter: "[PlaceId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Flights_AirLineId",
@@ -551,11 +565,6 @@ namespace Flight_Booking_System.Migrations
                 name: "IX_Flights_DestinationId",
                 table: "Flights",
                 column: "DestinationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Flights_PlaneId",
-                table: "Flights",
-                column: "PlaneId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Flights_StartId",
@@ -575,19 +584,11 @@ namespace Flight_Booking_System.Migrations
                 filter: "[TicketId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Places_CountryId",
-                table: "Places",
-                column: "CountryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Places_StateId",
-                table: "Places",
-                column: "StateId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Planes_FlightId",
                 table: "Planes",
-                column: "FlightId");
+                column: "FlightId",
+                unique: true,
+                filter: "[FlightId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Seats_TicketId",
@@ -604,81 +605,19 @@ namespace Flight_Booking_System.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_States_PlaceId",
                 table: "States",
-                column: "PlaceId");
+                column: "PlaceId",
+                unique: true,
+                filter: "[PlaceId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_FlightId",
                 table: "Tickets",
                 column: "FlightId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Countries_Places_PlaceId",
-                table: "Countries",
-                column: "PlaceId",
-                principalTable: "Places",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Flights_Places_DestinationId",
-                table: "Flights",
-                column: "DestinationId",
-                principalTable: "Places",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Flights_Places_StartId",
-                table: "Flights",
-                column: "StartId",
-                principalTable: "Places",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Flights_Planes_PlaneId",
-                table: "Flights",
-                column: "PlaneId",
-                principalTable: "Planes",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Places_States_StateId",
-                table: "Places",
-                column: "StateId",
-                principalTable: "States",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.NoAction);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AirLines_AirPorts_AirportId",
-                table: "AirLines");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Countries_Places_PlaceId",
-                table: "Countries");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Flights_Places_DestinationId",
-                table: "Flights");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Flights_Places_StartId",
-                table: "Flights");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_States_Places_PlaceId",
-                table: "States");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Flights_AirLines_AirLineId",
-                table: "Flights");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Flights_Planes_PlaneId",
-                table: "Flights");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -698,7 +637,13 @@ namespace Flight_Booking_System.Migrations
                 name: "Passengers");
 
             migrationBuilder.DropTable(
+                name: "Planes");
+
+            migrationBuilder.DropTable(
                 name: "Seats");
+
+            migrationBuilder.DropTable(
+                name: "States");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -710,25 +655,19 @@ namespace Flight_Booking_System.Migrations
                 name: "Tickets");
 
             migrationBuilder.DropTable(
-                name: "AirPorts");
-
-            migrationBuilder.DropTable(
-                name: "Places");
-
-            migrationBuilder.DropTable(
-                name: "States");
-
-            migrationBuilder.DropTable(
                 name: "Countries");
+
+            migrationBuilder.DropTable(
+                name: "Flights");
 
             migrationBuilder.DropTable(
                 name: "AirLines");
 
             migrationBuilder.DropTable(
-                name: "Planes");
+                name: "Places");
 
             migrationBuilder.DropTable(
-                name: "Flights");
+                name: "AirPorts");
         }
     }
 }

@@ -186,32 +186,32 @@ namespace Flight_Booking_System
             // Register validators
             // Register validators
             //builder.Services.AddValidatorsFromAssemblyContaining<SMSModel>();
-            builder.Services.AddTransient<IValidator<SMSModel>, SmsModelValidator>();
+            //builder.Services.AddTransient<IValidator<SMSModel>, SmsModelValidator>();
 
 
             //************************************************************************************************
 
             var app = builder.Build();
 
-            app.MapGet("/", () => "Hello World!");
+            //app.MapGet("/", () => "Hello World!");
 
-            app.MapPost("/sms", async (VonageClient vonageClient, SMSModel smsModel, IValidator<SMSModel> validator) =>
-            {
-                ValidationResult validationResult = validator.Validate(smsModel);
-                if (!validationResult.IsValid)
-                {
-                    return Results.ValidationProblem(validationResult.ToDictionary());
-                }
+            //app.MapPost("/sms", async (VonageClient vonageClient, SMSModel smsModel, IValidator<SMSModel> validator) =>
+            //{
+            //    ValidationResult validationResult = validator.Validate(smsModel);
+            //    if (!validationResult.IsValid)
+            //    {
+            //        return Results.ValidationProblem(validationResult.ToDictionary());
+            //    }
 
-                var smsResponse = await vonageClient.SmsClient.SendAnSmsAsync(new SendSmsRequest
-                {
-                    To = smsModel.To,
-                    From = smsModel.From,
-                    Text = smsModel.Text
-                });
+            //    var smsResponse = await vonageClient.SmsClient.SendAnSmsAsync(new SendSmsRequest
+            //    {
+            //        To = smsModel.To,
+            //        From = smsModel.From,
+            //        Text = smsModel.Text
+            //    });
 
-                return Results.Ok();
-            });
+            //    return Results.Ok();
+            //});
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

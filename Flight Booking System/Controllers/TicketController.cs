@@ -19,7 +19,6 @@ namespace Flight_Booking_System.Controllers
         }
 
 
-
         [HttpGet]
         public ActionResult<GeneralResponse> GetAllTickets()
         {
@@ -127,6 +126,7 @@ namespace Flight_Booking_System.Controllers
         public ActionResult<GeneralResponse> UpdateTicket(int ticketId, TicketDTO ticketDTO)
         {
             Ticket t1 = ticketRepository.GetById(ticketId);
+
             if (t1 == null || t1.Id != ticketId)
             {
                 return new GeneralResponse()
