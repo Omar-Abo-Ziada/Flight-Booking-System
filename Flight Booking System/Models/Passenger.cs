@@ -11,29 +11,30 @@ namespace Flight_Booking_System.Models
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; } = string.Empty;
 
-        public Gender Gender { get; set; }
+        public Gender Gender { get; set; } = Gender.Male;
 
-        [Required]
-        public int Age { get; set; }
+        public int? Age { get; set; } = 30;
 
-        public bool IsChild { get; set; }
+        public bool IsChild { get; set; } = false;
 
-        public string? PassportNum { get; set; }
+        public string? PassportNum { get; set; } = "123";
 
-        public string? NationalId { get; set; }
+        public string? NationalId { get; set; } = "456";
 
         //----------------------------------------
-
-        //[ForeignKey("Ticket")]
-        //public int? TicketId { get; set; }
-
-        public Ticket? Ticket { get; set; }
 
         [ForeignKey("Flight")]
         public int? FlightId { get; set; }
 
         public Flight? Flight { get; set; }
+
+        //----------------------------------------
+
+        //[ForeignKey("Ticket")]
+        //public int? TicketId { get; set; } // => had to put the FK here because it's needed in the passenger details
+
+        public Ticket? Ticket { get; set; }
     }
 }

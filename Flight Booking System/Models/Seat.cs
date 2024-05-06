@@ -12,7 +12,7 @@ namespace Flight_Booking_System.Models
 
         public int? Number { get; set; }
 
-        public Section? Section { get; set; }
+        public Section? Section { get; set; } = Enums.Section.Middle;
 
         //--------------------------------
 

@@ -4,48 +4,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Flight_Booking_System.Repositories
 {
-     public class AirPortRepository : Repository<AirPort>, IAirPortRepository
+    public class AirPortRepository : Repository<AirPort>, IAirPortRepository
     {
         public AirPortRepository(ITIContext _context) : base(_context)
         {
+
         }
 
-        public void Insert(AirPort item)
-        {
-            Context.Add(item);
-        }
+        //**************************************************************
 
-        public void Update(AirPort item)
-        {
-            Context.Update(item);
-        }
+        /// TODO : use this when u want to include country and state with the airport
+        //public List<Place> GetAllWithChilds(int flightId)
+        //{
+        //    Flight flightfromDB = Context.Flights.FirstOrDefault(f => f.Id == flightId);
 
-        public List<AirPort> GetAll(string? include = null)
-        {
-            if (include == null)
-            {
-                return Context.AirPorts.ToList();
-            }
-            return Context.AirPorts.Include(include).ToList();
-        }
+        //    IQueryable<Place> query = Context.Places.Where(p => p.ArrivingFlights.Contains(flightfromDB));
 
-        public AirPort GetById(int Id)
-        {
-            return Context.AirPorts.FirstOrDefault(item => item.Id == Id);
-        }
-        public List<AirPort> Get(Func<AirPort, bool> where)
-        {
-            return Context.AirPorts.Where(where).ToList();
-        }
+        //    query = query.Include(p => p.Country).Include(p => p.State);
 
-        public void Delete(AirPort item)
-        {
-            Context.Remove(item);
-        }
+        //    return query.ToList();
+        //}
 
-        public void Save()
-        {
-            Context.SaveChanges();
-        }
     }
 }

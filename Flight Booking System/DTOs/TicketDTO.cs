@@ -14,7 +14,7 @@ namespace Flight_Booking_System.DTOs
         [Column(TypeName = "money")]
         [Required(ErrorMessage = "The Price  is required")]
 
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
 
         [Required(ErrorMessage = "The Class  is required")]
         public Class Class { get; set; }

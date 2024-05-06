@@ -19,7 +19,7 @@ namespace Flight_Booking_System.Controllers
         private readonly IFlightRepository flightRepository;
         private readonly IMapper mapper;
         private readonly ITicketRepository ticketRepository;
-        private readonly IPlaceRepository placeRepository;
+        private readonly IAirPortRepository  airPortRepository;
 
         public ITIContext ITIContext { get; }
         public IPlaneRepository PlaneRepository { get; }
@@ -29,14 +29,14 @@ namespace Flight_Booking_System.Controllers
             IMapper mapper,
             ITicketRepository ticketRepository,
             ITIContext iTIContext,
-            IPlaceRepository placeRepository,
+            IAirPortRepository airPortRepository,
             IPlaneRepository planeRepository)
         {
             this.flightRepository = flightRepository;
             this.mapper = mapper;
             this.ticketRepository = ticketRepository;
             ITIContext = iTIContext;
-            this.placeRepository = placeRepository;
+            this.airPortRepository = airPortRepository;
             PlaneRepository = planeRepository;
         }
 
@@ -70,19 +70,19 @@ namespace Flight_Booking_System.Controllers
 
                 flightDTO.PlaneName = PlaneRepository.Get(p => p.FlightId == flight.Id).Select(p => p.Name).FirstOrDefault();
 
-                List<Place> FlightPlaces = placeRepository.GetAllWithChilds(flight.Id);
+                ////List<Place> FlightPlaces = placeRepository.GetAllWithChilds(flight.Id);
 
-                flightDTO.StartCountryName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
-                                             .Select(p => p.Country.Name).FirstOrDefault();
+                //flightDTO.StartCountryName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
+                //                             .Select(p => p.Country.Name).FirstOrDefault();
 
-                flightDTO.StartStateName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
-                                           .Select(p => p.State.Name).FirstOrDefault();
+                //flightDTO.StartStateName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
+                //                           .Select(p => p.State.Name).FirstOrDefault();
 
-                flightDTO.DestainationCountryName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
-                                           .Select(p => p.Country.Name).FirstOrDefault();
+                //flightDTO.DestainationCountryName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
+                //                           .Select(p => p.Country.Name).FirstOrDefault();
 
-                flightDTO.DestainationStateName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
-                                           .Select(p => p.State.Name).FirstOrDefault();
+                //flightDTO.DestainationStateName = FlightPlaces.Where(p => p.DepartingFlights.Contains(flight))
+                //                           .Select(p => p.State.Name).FirstOrDefault();
 
 
                 flightDTOs.Add(flightDTO);
@@ -219,11 +219,11 @@ namespace Flight_Booking_System.Controllers
                 //Instead, it creates a new detached entity instance. 
                 #endregion
 
-                flightFromDB.StartId = editedFlightDTO.StartId;
-                flightFromDB.DestinationId = editedFlightDTO.DestinationId;
-                flightFromDB.DepartureTime = editedFlightDTO.DepartureTime;
-                flightFromDB.ArrivalTime = editedFlightDTO.ArrivalTime;
-                flightFromDB.AirLineId = editedFlightDTO.AirLineId;
+                //flightFromDB.StartId = editedFlightDTO.StartId;
+                //flightFromDB.DestinationId = editedFlightDTO.DestinationId;
+                //flightFromDB.DepartureTime = editedFlightDTO.DepartureTime;
+                //flightFromDB.ArrivalTime = editedFlightDTO.ArrivalTime;
+                //flightFromDB.AirLineId = editedFlightDTO.AirLineId;
                 //flightFromDB.PlaneId = editedFlightDTO.PlaneId;
                 //flightFromDB.Duration = editedFlightDTO.Duration;  // the next lines trying to parse the string correctly to map this prop
 
@@ -308,10 +308,9 @@ namespace Flight_Booking_System.Controllers
                     Ticket? ticketfromDB = ticketRepository.Get(t => t.FlightId == id).FirstOrDefault();
                     ticketfromDB.FlightId = null;
 
-                    flightFromDB.AirLineId = null;
                     //flightFromDB.PlaneId = null;
-                    flightFromDB.StartId = null;
-                    flightFromDB.DestinationId = null;
+                    flightFromDB.SourceAirportId = null;
+                    flightFromDB.DestinationAirportId = null;
 
                     flightRepository.Delete(flightFromDB);
 

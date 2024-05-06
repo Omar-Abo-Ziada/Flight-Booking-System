@@ -22,67 +22,6 @@ namespace Flight_Booking_System.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Flight_Booking_System.Models.AirLine", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AirlineNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AirportId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AirportId");
-
-                    b.ToTable("AirLines");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AirlineNumber = 5,
-                            AirportId = 1,
-                            Name = "EgyptAirs"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AirlineNumber = 10,
-                            AirportId = 2,
-                            Name = "Lufthansa"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AirlineNumber = 15,
-                            AirportId = 3,
-                            Name = "Qantas"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AirlineNumber = 20,
-                            AirportId = 4,
-                            Name = "Emirates"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AirlineNumber = 25,
-                            AirportId = 5,
-                            Name = "Delta"
-                        });
-                });
-
             modelBuilder.Entity("Flight_Booking_System.Models.AirPort", b =>
                 {
                     b.Property<int>("Id")
@@ -95,8 +34,7 @@ namespace Flight_Booking_System.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -208,18 +146,15 @@ namespace Flight_Booking_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PlaceId")
+                    b.Property<int?>("AirPortId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlaceId")
-                        .IsUnique()
-                        .HasFilter("[PlaceId] IS NOT NULL");
+                    b.HasIndex("AirPortId");
 
                     b.ToTable("Countries");
 
@@ -227,32 +162,32 @@ namespace Flight_Booking_System.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Egypt",
-                            PlaceId = 1
+                            AirPortId = 1,
+                            Name = "Egypt"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "USA",
-                            PlaceId = 2
+                            AirPortId = 2,
+                            Name = "USA"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Germany",
-                            PlaceId = 3
+                            AirPortId = 3,
+                            Name = "Germany"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Australia",
-                            PlaceId = 4
+                            AirPortId = 4,
+                            Name = "Australia"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Japan",
-                            PlaceId = 5
+                            AirPortId = 5,
+                            Name = "Japan"
                         });
                 });
 
@@ -264,16 +199,13 @@ namespace Flight_Booking_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AirLineId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("ArrivalTime")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DepartureTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DestinationId")
+                    b.Property<int?>("DestinationAirportId")
                         .HasColumnType("int");
 
                     b.Property<TimeSpan?>("Duration")
@@ -282,16 +214,14 @@ namespace Flight_Booking_System.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("StartId")
+                    b.Property<int?>("SourceAirportId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AirLineId");
+                    b.HasIndex("DestinationAirportId");
 
-                    b.HasIndex("DestinationId");
-
-                    b.HasIndex("StartId");
+                    b.HasIndex("SourceAirportId");
 
                     b.ToTable("Flights");
 
@@ -299,35 +229,32 @@ namespace Flight_Booking_System.Migrations
                         new
                         {
                             Id = 1,
-                            AirLineId = 1,
                             ArrivalTime = new DateTime(2024, 12, 25, 16, 45, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new DateTime(2024, 12, 25, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                            DestinationId = 2,
+                            DestinationAirportId = 2,
                             Duration = new TimeSpan(0, 6, 15, 0, 0),
                             IsActive = false,
-                            StartId = 1
+                            SourceAirportId = 1
                         },
                         new
                         {
                             Id = 2,
-                            AirLineId = 2,
                             ArrivalTime = new DateTime(2024, 12, 30, 20, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new DateTime(2024, 12, 30, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            DestinationId = 1,
+                            DestinationAirportId = 1,
                             Duration = new TimeSpan(0, 6, 0, 0, 0),
                             IsActive = false,
-                            StartId = 2
+                            SourceAirportId = 2
                         },
                         new
                         {
                             Id = 3,
-                            AirLineId = 3,
                             ArrivalTime = new DateTime(2024, 11, 15, 12, 15, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new DateTime(2024, 11, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            DestinationId = 1,
+                            DestinationAirportId = 1,
                             Duration = new TimeSpan(0, 3, 15, 0, 0),
                             IsActive = false,
-                            StartId = 3
+                            SourceAirportId = 3
                         });
                 });
 
@@ -339,7 +266,7 @@ namespace Flight_Booking_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Age")
+                    b.Property<int?>("Age")
                         .HasColumnType("int");
 
                     b.Property<int?>("FlightId")
@@ -372,6 +299,7 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 1,
                             Age = 22,
+                            FlightId = 1,
                             Gender = 1,
                             IsChild = false,
                             Name = "Joy",
@@ -382,6 +310,7 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 2,
                             Age = 30,
+                            FlightId = 1,
                             Gender = 0,
                             IsChild = false,
                             Name = "Bob",
@@ -392,6 +321,7 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 3,
                             Age = 27,
+                            FlightId = 2,
                             Gender = 1,
                             IsChild = false,
                             Name = "Alice",
@@ -402,6 +332,7 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 4,
                             Age = 12,
+                            FlightId = 2,
                             Gender = 0,
                             IsChild = true,
                             Name = "Charlie",
@@ -412,46 +343,23 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 5,
                             Age = 45,
+                            FlightId = 3,
                             Gender = 1,
                             IsChild = false,
                             Name = "Diana",
                             NationalId = "987654",
                             PassportNum = "11223344"
-                        });
-                });
-
-            modelBuilder.Entity("Flight_Booking_System.Models.Place", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Places");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1
                         },
                         new
                         {
-                            Id = 2
-                        },
-                        new
-                        {
-                            Id = 3
-                        },
-                        new
-                        {
-                            Id = 4
-                        },
-                        new
-                        {
-                            Id = 5
+                            Id = 6,
+                            Age = 26,
+                            FlightId = 3,
+                            Gender = 0,
+                            IsChild = false,
+                            Name = "Omar",
+                            NationalId = "98322",
+                            PassportNum = "234231"
                         });
                 });
 
@@ -476,13 +384,12 @@ namespace Flight_Booking_System.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<float?>("WingSpan")
                         .HasColumnType("real");
 
-                    b.Property<int>("capacity")
+                    b.Property<int?>("capacity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -600,23 +507,20 @@ namespace Flight_Booking_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CountryId")
+                    b.Property<int?>("AirPortId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CountryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PlaceId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CountryId");
+                    b.HasIndex("AirPortId");
 
-                    b.HasIndex("PlaceId")
-                        .IsUnique()
-                        .HasFilter("[PlaceId] IS NOT NULL");
+                    b.HasIndex("CountryId");
 
                     b.ToTable("States");
 
@@ -624,37 +528,37 @@ namespace Flight_Booking_System.Migrations
                         new
                         {
                             Id = 1,
+                            AirPortId = 1,
                             CountryId = 1,
-                            Name = "Cairo",
-                            PlaceId = 1
+                            Name = "Cairo"
                         },
                         new
                         {
                             Id = 2,
+                            AirPortId = 2,
                             CountryId = 2,
-                            Name = "Manhaten",
-                            PlaceId = 2
+                            Name = "Manhaten"
                         },
                         new
                         {
                             Id = 3,
+                            AirPortId = 3,
                             CountryId = 1,
-                            Name = "Aswan",
-                            PlaceId = 3
+                            Name = "Aswan"
                         },
                         new
                         {
                             Id = 4,
+                            AirPortId = 4,
                             CountryId = 4,
-                            Name = "Sedney",
-                            PlaceId = 4
+                            Name = "Sedney"
                         },
                         new
                         {
                             Id = 5,
+                            AirPortId = 5,
                             CountryId = 5,
-                            Name = "Tokyo",
-                            PlaceId = 5
+                            Name = "Tokyo"
                         });
                 });
 
@@ -675,7 +579,7 @@ namespace Flight_Booking_System.Migrations
                     b.Property<int?>("PassengerId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("Price")
                         .HasColumnType("money");
 
                     b.HasKey("Id");
@@ -864,43 +768,28 @@ namespace Flight_Booking_System.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Flight_Booking_System.Models.AirLine", b =>
+            modelBuilder.Entity("Flight_Booking_System.Models.Country", b =>
                 {
                     b.HasOne("Flight_Booking_System.Models.AirPort", "AirPort")
-                        .WithMany("AirLines")
-                        .HasForeignKey("AirportId");
+                        .WithMany()
+                        .HasForeignKey("AirPortId");
 
                     b.Navigation("AirPort");
                 });
 
-            modelBuilder.Entity("Flight_Booking_System.Models.Country", b =>
-                {
-                    b.HasOne("Flight_Booking_System.Models.Place", "Place")
-                        .WithOne("Country")
-                        .HasForeignKey("Flight_Booking_System.Models.Country", "PlaceId");
-
-                    b.Navigation("Place");
-                });
-
             modelBuilder.Entity("Flight_Booking_System.Models.Flight", b =>
                 {
-                    b.HasOne("Flight_Booking_System.Models.AirLine", "AirLine")
-                        .WithMany("Flights")
-                        .HasForeignKey("AirLineId");
-
-                    b.HasOne("Flight_Booking_System.Models.Place", "Destination")
+                    b.HasOne("Flight_Booking_System.Models.AirPort", "DestinationAirport")
                         .WithMany("ArrivingFlights")
-                        .HasForeignKey("DestinationId");
+                        .HasForeignKey("DestinationAirportId");
 
-                    b.HasOne("Flight_Booking_System.Models.Place", "Start")
-                        .WithMany("DepartingFlights")
-                        .HasForeignKey("StartId");
+                    b.HasOne("Flight_Booking_System.Models.AirPort", "SourceAirport")
+                        .WithMany("LeavingFlights")
+                        .HasForeignKey("SourceAirportId");
 
-                    b.Navigation("AirLine");
+                    b.Navigation("DestinationAirport");
 
-                    b.Navigation("Destination");
-
-                    b.Navigation("Start");
+                    b.Navigation("SourceAirport");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Passenger", b =>
@@ -932,19 +821,17 @@ namespace Flight_Booking_System.Migrations
 
             modelBuilder.Entity("Flight_Booking_System.Models.State", b =>
                 {
+                    b.HasOne("Flight_Booking_System.Models.AirPort", "AirPort")
+                        .WithMany()
+                        .HasForeignKey("AirPortId");
+
                     b.HasOne("Flight_Booking_System.Models.Country", "Country")
                         .WithMany("States")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CountryId");
 
-                    b.HasOne("Flight_Booking_System.Models.Place", "Place")
-                        .WithOne("State")
-                        .HasForeignKey("Flight_Booking_System.Models.State", "PlaceId");
+                    b.Navigation("AirPort");
 
                     b.Navigation("Country");
-
-                    b.Navigation("Place");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Ticket", b =>
@@ -1013,14 +900,11 @@ namespace Flight_Booking_System.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Flight_Booking_System.Models.AirLine", b =>
-                {
-                    b.Navigation("Flights");
-                });
-
             modelBuilder.Entity("Flight_Booking_System.Models.AirPort", b =>
                 {
-                    b.Navigation("AirLines");
+                    b.Navigation("ArrivingFlights");
+
+                    b.Navigation("LeavingFlights");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Country", b =>
@@ -1040,17 +924,6 @@ namespace Flight_Booking_System.Migrations
             modelBuilder.Entity("Flight_Booking_System.Models.Passenger", b =>
                 {
                     b.Navigation("Ticket");
-                });
-
-            modelBuilder.Entity("Flight_Booking_System.Models.Place", b =>
-                {
-                    b.Navigation("ArrivingFlights");
-
-                    b.Navigation("Country");
-
-                    b.Navigation("DepartingFlights");
-
-                    b.Navigation("State");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Ticket", b =>

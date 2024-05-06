@@ -9,15 +9,16 @@ namespace Flight_Booking_System.Models
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage ="Country Name is required")]
         public string? Name { get; set; }
 
         //---------------------------------------
 
-        [ForeignKey("Place")]
-        public int? PlaceId { get; set; } 
+        [ForeignKey("AirPort")]
+        public int? AirPortId { get; set; }
 
-        public Place? Place { get; set; } 
+        public AirPort? AirPort { get; set; }
+
+        //---------------------------------------
 
         public List<State>? States { get; set; }
     }

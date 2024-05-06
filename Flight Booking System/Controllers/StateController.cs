@@ -33,9 +33,9 @@ namespace Flight_Booking_System.Controllers
                 {
                     Name = state.Name,
                     Id = state.Id,
-                    countryName = countryRepository.GetById(state.CountryId).Name,
+                    countryName = countryRepository.GetById((int)state.CountryId).Name,
                     CountryId = state.CountryId,
-                    PlaceId = state.PlaceId, 
+                    PlaceId = state.AirPortId, 
                 });
             }
             return new GeneralResponse()
@@ -57,9 +57,9 @@ namespace Flight_Booking_System.Controllers
                 {
                     Id = state.Id,
                     Name = state.Name,
-                    countryName = countryRepository.GetById(state.CountryId).Name,
+                    countryName = countryRepository.GetById((int)state.CountryId).Name,
                     CountryId = state.CountryId,
-                    PlaceId = state.PlaceId,
+                    PlaceId = state.AirPortId,
                 };
                 return new GeneralResponse()
                 {
@@ -94,9 +94,9 @@ namespace Flight_Booking_System.Controllers
                     {
                         Name = state.Name,
                         Id = state.Id,
-                        countryName = countryRepository.GetById(state.CountryId).Name,
+                        countryName = countryRepository.GetById((int)state.CountryId).Name,
                         CountryId = state.CountryId,
-                        PlaceId = state.PlaceId,
+                        PlaceId = state.AirPortId,
                     });
                 }
                 return new GeneralResponse()
@@ -124,7 +124,7 @@ namespace Flight_Booking_System.Controllers
                     Id = stateDTO.Id,
                     Name = stateDTO.Name,
                     CountryId = stateDTO.CountryId,
-                    PlaceId = stateDTO.PlaceId,
+                    AirPortId = stateDTO.PlaceId,
                 };
 
                 stateRepository.Insert(state);
@@ -157,7 +157,7 @@ namespace Flight_Booking_System.Controllers
                 {
                     Id = editedStateDTO.Id,
                     Name = editedStateDTO.Name,
-                    PlaceId = editedStateDTO.PlaceId,
+                    AirPortId = editedStateDTO.PlaceId,
                     CountryId = editedStateDTO.CountryId,
                 };
 
@@ -218,8 +218,5 @@ namespace Flight_Booking_System.Controllers
                 Message = "Invalid Id"
             };
         }
-
-
-
     }
 }
