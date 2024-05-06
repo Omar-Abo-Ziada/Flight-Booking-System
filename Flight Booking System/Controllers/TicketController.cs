@@ -36,7 +36,7 @@ namespace Flight_Booking_System.Controllers
                     Price = ticket.Price,
                     PassengerId = ticket.PassengerId,
                     FlightId = ticket.FlightId,
-                    SeatId = ticket.SeatId,
+                    //SeatId = ticket.SeatId,
 
                 };
 
@@ -73,7 +73,7 @@ namespace Flight_Booking_System.Controllers
                     Class = ticket.Class,
                     Price = ticket.Price,
                     FlightId = ticket.FlightId,
-                    SeatId = ticket.SeatId,
+                    //SeatId = ticket.SeatId,
                     PassengerId = ticket.PassengerId,
                 };
 
@@ -101,7 +101,7 @@ namespace Flight_Booking_System.Controllers
                     Price = ticketDTO.Price,
                     FlightId = ticketDTO.FlightId,
                     PassengerId = ticketDTO.PassengerId,
-                    SeatId = ticketDTO.SeatId
+                    //SeatId = ticketDTO.SeatId
                 };
                 ticketRepository.Insert(ticket);
                 ticketRepository.Save();
@@ -142,7 +142,7 @@ namespace Flight_Booking_System.Controllers
                 t1.Class = ticketDTO.Class;
                 t1.Price = ticketDTO.Price;
                 t1.FlightId = ticketDTO.FlightId;
-                t1.SeatId = ticketDTO.SeatId;
+                //t1.SeatId = ticketDTO.SeatId;
                 t1.PassengerId = ticketDTO.PassengerId;
 
                 ticketRepository.Update(t1);

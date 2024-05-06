@@ -28,6 +28,7 @@ namespace Flight_Booking_System.Models
 
         //[ForeignKey("Seat")]
         //public int? SeatId { get; set; }   // => had to put the FK also because u need it in the ticket details for sure
+        // couldn't do that because it leads to migrations Error
 
         public Seat? Seat { get; set; }
 
