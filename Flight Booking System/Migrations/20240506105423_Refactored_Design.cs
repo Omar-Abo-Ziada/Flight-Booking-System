@@ -112,7 +112,7 @@ namespace Flight_Booking_System.Migrations
                         principalTable: "AirPorts",
                         principalColumn: "Id");
                 });
-
+            //dsd
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
