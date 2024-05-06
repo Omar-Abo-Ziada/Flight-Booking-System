@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Flight_Booking_System.Controllers;
+using Flight_Booking_System.Services;
 
 namespace Flight_Booking_System
 {
@@ -70,9 +71,13 @@ namespace Flight_Booking_System
                 options.Password.RequireUppercase = false;
                 options.Password.RequireDigit = false;
                 //options.SignIn.RequireConfirmedAccount = true;        // maybe later
-            })
-            .AddEntityFrameworkStores<ITIContext>();
 
+                options.SignIn.RequireConfirmedEmail = true; // You can adjust this based on your requirements
+
+            })
+            .AddEntityFrameworkStores<ITIContext>()
+            .AddDefaultTokenProviders(); // This line registers the default token providers
+           
 
             builder.Services.AddAuthentication(options =>
             {
@@ -158,6 +163,8 @@ namespace Flight_Booking_System
                       }
                   });
             });
+
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
 
             //************************************************************************************************

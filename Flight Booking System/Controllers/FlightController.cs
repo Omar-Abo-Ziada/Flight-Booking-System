@@ -16,13 +16,16 @@ namespace Flight_Booking_System.Controllers
         private readonly IFlightRepository flightRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMapper mapper;
-        
+        private readonly IAirPortRepository airPortRepository;
 
-        public FlightController(IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment ,  IMapper mapper)
+        public FlightController
+            (IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment ,  IMapper mapper,
+            IAirPortRepository airPortRepository)
         {
             this.flightRepository = flightRepository;
             _webHostEnvironment = webHostEnvironment;
             this.mapper = mapper;
+            this.airPortRepository = airPortRepository;
         }
 
         //***********************************************
@@ -52,6 +55,21 @@ namespace Flight_Booking_System.Controllers
                 //};
 
                 FlightDTO flightDTO = mapper.Map<Flight, FlightDTO>(flight);
+
+                AirPort SourceAirport = airPortRepository.GetWithIncludes((int)flight.SourceAirportId);
+
+                AirPort DestinationAirport = airPortRepository.GetWithIncludes((int)flight.DestinationAirportId);
+
+                flightDTO.SourceAirportNum = SourceAirport.AirPortNumber;
+                flightDTO.SourceAirportName = SourceAirport.Name;
+                flightDTO.SourceAirportCountryName = SourceAirport.Country.Name;
+                flightDTO.SourceAirportStateName = SourceAirport.State.Name;
+
+
+                flightDTO.DestinationAirportNum = DestinationAirport.AirPortNumber;
+                flightDTO.DestinationAirportName = DestinationAirport.Name;
+                flightDTO.DestinationAirportCountryName = DestinationAirport.Country.Name;
+                flightDTO.DestinationAirportStateName = DestinationAirport.State.Name;
 
                 flightDTOs.Add(flightDTO);
             }
@@ -98,6 +116,21 @@ namespace Flight_Booking_System.Controllers
                 //};
 
                 FlightDTO flightDTO = mapper.Map<Flight, FlightDTO>(flightFromDB);
+
+                AirPort SourceAirport = airPortRepository.GetWithIncludes((int)flightFromDB.SourceAirportId);
+
+                AirPort DestinationAirport = airPortRepository.GetWithIncludes((int)flightFromDB.DestinationAirportId);
+
+                flightDTO.SourceAirportNum = SourceAirport.AirPortNumber;
+                flightDTO.SourceAirportName = SourceAirport.Name;
+                flightDTO.SourceAirportCountryName = SourceAirport.Country.Name;
+                flightDTO.SourceAirportStateName = SourceAirport.State.Name;
+
+
+                flightDTO.DestinationAirportNum = DestinationAirport.AirPortNumber;
+                flightDTO.DestinationAirportName = DestinationAirport.Name;
+                flightDTO.DestinationAirportCountryName = DestinationAirport.Country.Name;
+                flightDTO.DestinationAirportStateName = DestinationAirport.State.Name;
 
 
                 return new GeneralResponse()
@@ -175,12 +208,12 @@ namespace Flight_Booking_System.Controllers
         }
 
         [HttpPut]
-        [Authorize]
-        public ActionResult<GeneralResponse> Edit(int id, Flight editedFlight)
+        //[Authorize]
+        public ActionResult<GeneralResponse> Edit(int id, FlightDTO editedFlightDTO)
         {
             Flight? flightFromDB = flightRepository.GetById(id);
 
-            if (flightFromDB == null || editedFlight.Id != id)
+            if (flightFromDB == null )
             {
                 return new GeneralResponse()
                 {
@@ -188,13 +221,39 @@ namespace Flight_Booking_System.Controllers
 
                     Data = null,
 
-                    Message = "No Flight Found with this ID or the IDs are not matched , \n" +
-                    " make sure that the original flight ID matches the edited flight ID .",
+                    Message = "No Flight Found with this ID or the IDs are not matched "   // +
+                    //" make sure that the original flight ID matches the edited flight ID 
                 };
             }
             else
             {
-                flightRepository.Update(editedFlight);
+                // can't use update here because the same instance is already tracked when I got him by Id
+                // so I just map with my self and save changes => also cant use automapper because it creates a new instance and doesn't modify the existed one 
+                // so SaveChanges won't take effect unless I Mapped manually
+                //flightRepository.Update(editedFlightDTO);
+
+                //Maual Mapping
+                flightFromDB.imageURL = editedFlightDTO.imageURL;
+                flightFromDB.DepartureTime = editedFlightDTO.DepartureTime;
+                flightFromDB.ArrivalTime = editedFlightDTO.ArrivalTime;
+                flightFromDB.IsActive = editedFlightDTO.IsActive;
+
+                flightFromDB.SourceAirportId = editedFlightDTO.SourceAirportId;
+                flightFromDB.DestinationAirportId = editedFlightDTO.DestinationAirportId;
+
+                if (TimeSpan.TryParse(editedFlightDTO.Duration , out TimeSpan ParsedDuration))
+                {
+                    flightFromDB.Duration = ParsedDuration;
+                }
+                else
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Data = null,
+                        Message = "Invalid Duration Format , it has to be like this : 'HH:MM:SS'"
+                    };
+                }
 
                 flightRepository.Save();
 
@@ -202,7 +261,7 @@ namespace Flight_Booking_System.Controllers
                 {
                     IsSuccess = true,
 
-                    Data = editedFlight,
+                    Data = editedFlightDTO,
 
                     Message = "Flight Edited Successfully",
                 };
@@ -221,7 +280,7 @@ namespace Flight_Booking_System.Controllers
         }
 
         [HttpDelete("{id:int}")] // from route
-        [Authorize]
+        //[Authorize]
         public ActionResult<GeneralResponse> Delete(int id)
         {
             Flight? flightFromDB = flightRepository.GetById(id);
