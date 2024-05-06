@@ -8,7 +8,7 @@ namespace Flight_Booking_System.Models
     [Table("Flights")]
     public class Flight
     {
-        [Key]
+        [Key]//dsdasd
         public int Id { get; set; }
 
         public string? imageURL { get; set; }
