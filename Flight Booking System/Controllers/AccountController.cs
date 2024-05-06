@@ -47,6 +47,7 @@ namespace Flight_Booking_System.Controllers
 
                     EmailConfirmed =false,
                     PhoneNumberConfirmed = false,
+
                 };
 
                 // create Account in database
