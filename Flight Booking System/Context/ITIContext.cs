@@ -50,6 +50,21 @@ namespace Flight_Booking_System.Context
                   .HasForeignKey(f => f.DestinationAirportId)
                   .IsRequired(false);
 
+            modelBuilder.Entity<IdentityRole>().HasData(
+             new IdentityRole()
+             {
+                 Id = "1",
+                 Name = "Admin",
+                 NormalizedName = "ADMIN"
+             },
+              new IdentityRole()
+              {
+                  Id = "2",
+                  Name = "User",
+                  NormalizedName = "USER"
+              }
+             );
+
 
             #region Initial Data
 
