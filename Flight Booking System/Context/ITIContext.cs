@@ -41,17 +41,17 @@ namespace Flight_Booking_System.Context
             modelBuilder.Entity<IdentityUserLogin<string>>()
            .HasKey(l => new { l.LoginProvider, l.ProviderKey });
 
-            modelBuilder.Entity<Flight>()
-               .HasOne(f => f.Start)
-               .WithMany(p => p.DepartingFlights)
-               .HasForeignKey(f => f.StartId)
-               .IsRequired(false);
+            //modelBuilder.Entity<Flight>()
+            //   .HasOne(f => f.Start)
+            //   .WithMany(p => p.DepartingFlights)
+            //   .HasForeignKey(f => f.StartId)
+            //   .IsRequired(false);
 
-            modelBuilder.Entity<Flight>()
-                .HasOne(f => f.Destination)
-                .WithMany(p => p.ArrivingFlights)
-                .HasForeignKey(f => f.DestinationId)
-                .IsRequired(false);
+            //modelBuilder.Entity<Flight>()
+            //    .HasOne(f => f.Destination)
+            //    .WithMany(p => p.ArrivingFlights)
+            //    .HasForeignKey(f => f.DestinationId)
+            //    .IsRequired(false);
 
         }
     }
