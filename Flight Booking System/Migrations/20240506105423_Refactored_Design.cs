@@ -112,7 +112,6 @@ namespace Flight_Booking_System.Migrations
                         principalTable: "AirPorts",
                         principalColumn: "Id");
                 });
-            // test
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
