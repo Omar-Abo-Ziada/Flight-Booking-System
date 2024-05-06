@@ -10,6 +10,8 @@ namespace Flight_Booking_System.Models
     {
         [Key]
         public int Id { get; set; }
+        public string? imageURL { get; set; }
+
 
         public DateTime? DepartureTime { get; set; } = DateTime.Now;
 

@@ -131,7 +131,7 @@ namespace Flight_Booking_System.Controllers
                     Id = flightDTO.Id,
                     //PlaneId= flightDTO.PlaneId,
                     DestinationAirportId = flightDTO.DestinationId,
-                    //imageURL=flightDTO.imageURL,
+                    imageURL=flightDTO.imageURL,
                     SourceAirportId = flightDTO.StartId,
                     ArrivalTime= flightDTO.ArrivalTime,
                     DepartureTime= flightDTO.DepartureTime,
