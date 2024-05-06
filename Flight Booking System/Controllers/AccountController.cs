@@ -34,6 +34,7 @@ namespace Flight_Booking_System.Controllers
                     UserName = userDTO.UserName,
                     PasswordHash = userDTO.Password,
                     Email = userDTO.Email,
+                    PhoneNumber = userDTO.PhoneNumber,
                 };
 
                 // create Account in database
@@ -43,7 +44,6 @@ namespace Flight_Booking_System.Controllers
                 {
                     return new GeneralResponse()
                     {
-                        //hello
                         IsSuccess = true,
                         Data = null,
                         Message = "Account Created Successfully"

@@ -6,45 +6,59 @@ namespace Flight_Booking_System.DTOs
 {
     public class FlightDTO
     {
-        //[Key]
-        [Required(ErrorMessage = "The Flight ID is required")]
-        public int Id { get; set; }
+        public int? SourceAirportNum { get; set; }
 
-        //[Required(ErrorMessage = "The departure Place is required")]
-        //public Place? Start { get; set; }
+        public string? SourceAirportName { get; set; }
 
-        [Required]
-        [ForeignKey("Start")]
-        public int? StartId { get; set; }
+        public string? SourceAirportCountryName{ get; set; }
 
-        //[Required(ErrorMessage = "The Destiantion Place is required")]
-        //public Place? Destiantion { get; set; }
+        public string? SourceAirportStateName{ get; set; }
 
-        [Required]
-        [ForeignKey("Destination")]
-        public int? DestinationId { get; set; }
+        //*******************************************
 
-        [Required(ErrorMessage = "The departure time is required")]
-        public DateTime? DepartureTime { get; set; }
+        public int? DestinationAirportNum { get; set; }
 
-        [Required(ErrorMessage = "The Arrival time is required")]
-        public DateTime? ArrivalTime { get; set; }
+        public string? DestinationAirportName { get; set; }
 
-        [Required]
-        public TimeSpan? Duration { get; set; }
+        public string? DestinationAirportCountryName { get; set; }
 
-        [ForeignKey("AirLine")]
-        public int? AirLineId { get; set; }
+        public string? DestinationAirportStateName { get; set; }
 
-        //public AirLine? AirLine { get; set; }
+        //********************************************
 
-        [ForeignKey("Plane")]
-        public int? PlaneId { get; set; }
+        //public int Id { get; set; }  // testing Ibrahim opinoin
 
-        // public Plane? Plane { get; set; }  // hide in DTO to avoid circular refernce if any includes are required
+        public string? imageURL { get; set; }
+
+        public DateTime? DepartureTime { get; set; } = DateTime.Now;
+
+        public DateTime? ArrivalTime { get; set; } = DateTime.Now.AddHours(5);
+
+        public string? Duration { get; set; } = "05:30:10";
+
+        public bool IsActive { get; set; } = false;
+
+        //--------------------------------------
+
+        public int? SourceAirportId { get; set; }
+
+        //public AirPort? SourceAirport { get; set; }
+
+        public int? DestinationAirportId { get; set; }
+
+        //public AirPort? DestinationAirport { get; set; }
+
+        //-----------------------------------------
+
+        //public Plane? Plane { get; set; }
+
+        //-----------------------------------------
+
+        //public List<Passenger>? Passengers { get; set; }
+
+        //-----------------------------------------
 
         //public List<Ticket>? Tickets { get; set; }
-
-        // public List<Passenger>? Passengers { get; set; } // hide in DTO to avoid circular refernce if any includes are required
     }
 }
+

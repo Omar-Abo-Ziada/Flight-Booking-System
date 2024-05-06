@@ -15,9 +15,9 @@ namespace Flight_Booking_System.Models
 
         //----------------------------------------
 
-        Country? Country { get; set; }
+        public Country? Country { get; set; }
 
-        State? State { get; set; }
+        public State? State { get; set; }
 
         //----------------------------------------
 
