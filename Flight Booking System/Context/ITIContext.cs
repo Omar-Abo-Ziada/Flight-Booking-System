@@ -12,7 +12,7 @@ namespace Flight_Booking_System.Context
         {
 
         }
-
+        //hello
         public DbSet<AirPort> AirPorts { get; set; }
 
         public DbSet<Country> Countries { get; set; }
