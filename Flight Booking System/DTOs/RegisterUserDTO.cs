@@ -15,7 +15,7 @@ namespace Flight_Booking_System.DTOs
         public string ConfirmPassword { get; set; }
 
         [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Invalid Email Address")]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [RegularExpression(@"^01\d{9}$", ErrorMessage = "Invalid Phone Number")]
         public string PhoneNumber { get; set; }
