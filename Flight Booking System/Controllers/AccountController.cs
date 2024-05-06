@@ -11,7 +11,6 @@ using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Flight_Booking_System.Controllers
 {
-    // test
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
