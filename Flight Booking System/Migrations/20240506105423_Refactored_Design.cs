@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 #nullable disable
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
+//hello
 namespace Flight_Booking_System.Migrations
 {
     /// <inheritdoc />
@@ -112,7 +112,7 @@ namespace Flight_Booking_System.Migrations
                         principalTable: "AirPorts",
                         principalColumn: "Id");
                 });
-            //dsd
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
