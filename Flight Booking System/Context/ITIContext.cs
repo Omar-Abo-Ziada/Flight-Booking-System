@@ -29,7 +29,7 @@ namespace Flight_Booking_System.Context
 
         public DbSet<Seat> Seats { get; set; }
 
-        //hello
+        //hello again
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
