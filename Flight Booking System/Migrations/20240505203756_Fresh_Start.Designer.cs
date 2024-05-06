@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Flight_Booking_System.Migrations
 {
     [DbContext(typeof(ITIContext))]
-    [Migration("20240505152719_New")]
-    partial class New
+    [Migration("20240505203756_Fresh_Start")]
+    partial class Fresh_Start
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -236,22 +236,26 @@ namespace Flight_Booking_System.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "USA"
+                            Name = "USA",
+                            PlaceId = 2
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Germany"
+                            Name = "Germany",
+                            PlaceId = 3
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Australia"
+                            Name = "Australia",
+                            PlaceId = 4
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Japan"
+                            Name = "Japan",
+                            PlaceId = 5
                         });
                 });
 
@@ -298,6 +302,7 @@ namespace Flight_Booking_System.Migrations
                         new
                         {
                             Id = 1,
+                            AirLineId = 1,
                             ArrivalTime = new DateTime(2024, 12, 25, 16, 45, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new DateTime(2024, 12, 25, 10, 30, 0, 0, DateTimeKind.Unspecified),
                             DestinationId = 2,
@@ -308,6 +313,7 @@ namespace Flight_Booking_System.Migrations
                         new
                         {
                             Id = 2,
+                            AirLineId = 2,
                             ArrivalTime = new DateTime(2024, 12, 30, 20, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new DateTime(2024, 12, 30, 14, 0, 0, 0, DateTimeKind.Unspecified),
                             DestinationId = 1,
@@ -318,6 +324,7 @@ namespace Flight_Booking_System.Migrations
                         new
                         {
                             Id = 3,
+                            AirLineId = 3,
                             ArrivalTime = new DateTime(2024, 11, 15, 12, 15, 0, 0, DateTimeKind.Unspecified),
                             DepartureTime = new DateTime(2024, 11, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             DestinationId = 1,
@@ -357,16 +364,9 @@ namespace Flight_Booking_System.Migrations
                     b.Property<string>("PassportNum")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TicketId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FlightId");
-
-                    b.HasIndex("TicketId")
-                        .IsUnique()
-                        .HasFilter("[TicketId] IS NOT NULL");
 
                     b.ToTable("Passengers");
 
@@ -379,8 +379,7 @@ namespace Flight_Booking_System.Migrations
                             IsChild = false,
                             Name = "Joy",
                             NationalId = "302245",
-                            PassportNum = "52546874",
-                            TicketId = 1
+                            PassportNum = "52546874"
                         },
                         new
                         {
@@ -390,8 +389,7 @@ namespace Flight_Booking_System.Migrations
                             IsChild = false,
                             Name = "Bob",
                             NationalId = "547289",
-                            PassportNum = "63546844",
-                            TicketId = 2
+                            PassportNum = "63546844"
                         },
                         new
                         {
@@ -401,8 +399,7 @@ namespace Flight_Booking_System.Migrations
                             IsChild = false,
                             Name = "Alice",
                             NationalId = "223456",
-                            PassportNum = "48567234",
-                            TicketId = 3
+                            PassportNum = "48567234"
                         },
                         new
                         {
@@ -412,8 +409,7 @@ namespace Flight_Booking_System.Migrations
                             IsChild = true,
                             Name = "Charlie",
                             NationalId = "567890",
-                            PassportNum = "58694230",
-                            TicketId = 4
+                            PassportNum = "58694230"
                         },
                         new
                         {
@@ -423,8 +419,7 @@ namespace Flight_Booking_System.Migrations
                             IsChild = false,
                             Name = "Diana",
                             NationalId = "987654",
-                            PassportNum = "11223344",
-                            TicketId = 5
+                            PassportNum = "11223344"
                         });
                 });
 
@@ -506,6 +501,7 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 1,
                             Engine = "CFM56-7B",
+                            FlightId = 1,
                             Height = 41f,
                             Length = 110f,
                             Name = "Boeing 737",
@@ -516,6 +512,7 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 2,
                             Engine = "CFM56-5B4",
+                            FlightId = 2,
                             Height = 39f,
                             Length = 123f,
                             Name = "Airbus A320",
@@ -526,21 +523,12 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 3,
                             Engine = "GE90-115B",
+                            FlightId = 3,
                             Height = 61f,
                             Length = 242f,
                             Name = "Boeing 777",
                             WingSpan = 199f,
                             capacity = 396
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Engine = "Trent 900",
-                            Height = 79f,
-                            Length = 238f,
-                            Name = "Airbus A380",
-                            WingSpan = 261f,
-                            capacity = 853
                         });
                 });
 
@@ -574,61 +562,36 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 1,
                             Number = 1,
-                            Section = 4
+                            Section = 4,
+                            TicketId = 1
                         },
                         new
                         {
                             Id = 2,
                             Number = 2,
-                            Section = 0
+                            Section = 0,
+                            TicketId = 2
                         },
                         new
                         {
                             Id = 3,
                             Number = 3,
-                            Section = 1
+                            Section = 1,
+                            TicketId = 3
                         },
                         new
                         {
                             Id = 4,
                             Number = 4,
-                            Section = 6
+                            Section = 6,
+                            TicketId = 4
                         },
                         new
                         {
                             Id = 5,
                             Number = 5,
-                            Section = 2
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Number = 6,
-                            Section = 5
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Number = 7,
-                            Section = 4
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Number = 8,
-                            Section = 2
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Number = 9,
-                            Section = 1
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Number = 10,
-                            Section = 4
+                            Section = 2,
+                            TicketId = 5
                         });
                 });
 
@@ -665,31 +628,36 @@ namespace Flight_Booking_System.Migrations
                         {
                             Id = 1,
                             CountryId = 1,
-                            Name = "Cairo"
+                            Name = "Cairo",
+                            PlaceId = 1
                         },
                         new
                         {
                             Id = 2,
-                            CountryId = 1,
-                            Name = "Alexandria"
+                            CountryId = 2,
+                            Name = "Manhaten",
+                            PlaceId = 2
                         },
                         new
                         {
                             Id = 3,
                             CountryId = 1,
-                            Name = "Aswan"
+                            Name = "Aswan",
+                            PlaceId = 3
                         },
                         new
                         {
                             Id = 4,
-                            CountryId = 2,
-                            Name = "Texas"
+                            CountryId = 4,
+                            Name = "Sedney",
+                            PlaceId = 4
                         },
                         new
                         {
                             Id = 5,
-                            CountryId = 2,
-                            Name = "California"
+                            CountryId = 5,
+                            Name = "Tokyo",
+                            PlaceId = 5
                         });
                 });
 
@@ -713,12 +681,13 @@ namespace Flight_Booking_System.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("money");
 
-                    b.Property<int?>("SeatId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FlightId");
+
+                    b.HasIndex("PassengerId")
+                        .IsUnique()
+                        .HasFilter("[PassengerId] IS NOT NULL");
 
                     b.ToTable("Tickets");
 
@@ -729,8 +698,7 @@ namespace Flight_Booking_System.Migrations
                             Class = 0,
                             FlightId = 1,
                             PassengerId = 1,
-                            Price = 299.99m,
-                            SeatId = 1
+                            Price = 299.99m
                         },
                         new
                         {
@@ -738,8 +706,7 @@ namespace Flight_Booking_System.Migrations
                             Class = 1,
                             FlightId = 1,
                             PassengerId = 2,
-                            Price = 499.99m,
-                            SeatId = 2
+                            Price = 499.99m
                         },
                         new
                         {
@@ -747,8 +714,7 @@ namespace Flight_Booking_System.Migrations
                             Class = 2,
                             FlightId = 2,
                             PassengerId = 3,
-                            Price = 1299.99m,
-                            SeatId = 3
+                            Price = 1299.99m
                         },
                         new
                         {
@@ -756,8 +722,7 @@ namespace Flight_Booking_System.Migrations
                             Class = 0,
                             FlightId = 2,
                             PassengerId = 4,
-                            Price = 350.00m,
-                            SeatId = 4
+                            Price = 350.00m
                         },
                         new
                         {
@@ -765,8 +730,7 @@ namespace Flight_Booking_System.Migrations
                             Class = 1,
                             FlightId = 3,
                             PassengerId = 5,
-                            Price = 850.00m,
-                            SeatId = 5
+                            Price = 850.00m
                         });
                 });
 
@@ -948,13 +912,7 @@ namespace Flight_Booking_System.Migrations
                         .WithMany("Passengers")
                         .HasForeignKey("FlightId");
 
-                    b.HasOne("Flight_Booking_System.Models.Ticket", "Ticket")
-                        .WithOne("Passenger")
-                        .HasForeignKey("Flight_Booking_System.Models.Passenger", "TicketId");
-
                     b.Navigation("Flight");
-
-                    b.Navigation("Ticket");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Plane", b =>
@@ -998,7 +956,13 @@ namespace Flight_Booking_System.Migrations
                         .WithMany("Tickets")
                         .HasForeignKey("FlightId");
 
+                    b.HasOne("Flight_Booking_System.Models.Passenger", "Passenger")
+                        .WithOne("Ticket")
+                        .HasForeignKey("Flight_Booking_System.Models.Ticket", "PassengerId");
+
                     b.Navigation("Flight");
+
+                    b.Navigation("Passenger");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1076,6 +1040,11 @@ namespace Flight_Booking_System.Migrations
                     b.Navigation("Tickets");
                 });
 
+            modelBuilder.Entity("Flight_Booking_System.Models.Passenger", b =>
+                {
+                    b.Navigation("Ticket");
+                });
+
             modelBuilder.Entity("Flight_Booking_System.Models.Place", b =>
                 {
                     b.Navigation("ArrivingFlights");
@@ -1089,8 +1058,6 @@ namespace Flight_Booking_System.Migrations
 
             modelBuilder.Entity("Flight_Booking_System.Models.Ticket", b =>
                 {
-                    b.Navigation("Passenger");
-
                     b.Navigation("Seat");
                 });
 #pragma warning restore 612, 618

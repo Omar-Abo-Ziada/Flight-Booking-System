@@ -22,11 +22,11 @@ namespace Flight_Booking_System.Models
 
         public Place? Destination { get; set; }
 
-        public DateTime? DepartureTime { get; set; }
+        public DateTime? DepartureTime { get; set; } = DateTime.Now;
 
-        public DateTime? ArrivalTime { get; set; }
+        public DateTime? ArrivalTime { get; set; } = DateTime.Now.AddHours(5);
 
-        public TimeSpan? Duration { get; set; }
+        public TimeSpan? Duration { get; set; } = TimeSpan.FromHours(5);
 
         public bool IsActive { get; set; } = false;
 

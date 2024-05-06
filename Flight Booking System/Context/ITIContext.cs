@@ -39,7 +39,7 @@ namespace Flight_Booking_System.Context
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<IdentityUserLogin<string>>()
-       .HasKey(l => new { l.LoginProvider, l.ProviderKey });
+             .HasKey(l => new { l.LoginProvider, l.ProviderKey });
 
 
             modelBuilder.Entity<Flight>()
@@ -85,7 +85,7 @@ namespace Flight_Booking_System.Context
                      Age = 22,
                      NationalId = "302245",
                      PassportNum = "52546874",
-                     TicketId = 1
+                     //TicketId = 1
                  },
                  new Passenger
                  {
@@ -96,7 +96,7 @@ namespace Flight_Booking_System.Context
                      Age = 30,
                      NationalId = "547289",
                      PassportNum = "63546844",
-                     TicketId = 2
+                     //TicketId = 2
                  },
                  new Passenger
                  {
@@ -107,7 +107,7 @@ namespace Flight_Booking_System.Context
                      Age = 27,
                      NationalId = "223456",
                      PassportNum = "48567234",
-                     TicketId = 3
+                     //TicketId = 3
                  },
                  new Passenger
                  {
@@ -118,7 +118,7 @@ namespace Flight_Booking_System.Context
                      Age = 12,
                      NationalId = "567890",
                      PassportNum = "58694230",
-                     TicketId = 4
+                     //TicketId = 4
                  },
                  new Passenger
                  {
@@ -129,26 +129,34 @@ namespace Flight_Booking_System.Context
                      Age = 45,
                      NationalId = "987654",
                      PassportNum = "11223344",
-                     TicketId = 5
+                     //TicketId = 5
                  }
              );
 
 
             modelBuilder.Entity<Country>().HasData(
                 new Country { Id = 1, Name = "Egypt", PlaceId = 1 },
-                new Country { Id = 2, Name = "USA" },
-                new Country { Id = 3, Name = "Germany" },
-                new Country { Id = 4, Name = "Australia" },
-                new Country { Id = 5, Name = "Japan" }
+                new Country { Id = 2, Name = "USA", PlaceId = 2 },
+                new Country { Id = 3, Name = "Germany", PlaceId = 3 },
+                new Country { Id = 4, Name = "Australia", PlaceId = 4 },
+                new Country { Id = 5, Name = "Japan", PlaceId = 5 }
             );
 
             modelBuilder.Entity<State>().HasData(
-           new State { Id = 1, CountryId = 1, Name = "Cairo" },
-           new State { Id = 2, CountryId = 1, Name = "Alexandria" },
-           new State { Id = 3, CountryId = 1, Name = "Aswan" },
-           new State { Id = 4, CountryId = 2, Name = "Texas" },
-           new State { Id = 5, CountryId = 2, Name = "California" }
+           new State { Id = 1, CountryId = 1, Name = "Cairo", PlaceId = 1 },
+           new State { Id = 2, CountryId = 2, Name = "Manhaten", PlaceId = 2 },
+           new State { Id = 3, CountryId = 1, Name = "Aswan", PlaceId = 3 },
+           new State { Id = 4, CountryId = 4, Name = "Sedney", PlaceId = 4 },
+           new State { Id = 5, CountryId = 5, Name = "Tokyo", PlaceId = 5 }
            );
+
+            modelBuilder.Entity<Place>().HasData(
+              new Place { Id = 1 },
+              new Place { Id = 2 },
+              new Place { Id = 3 },   // saeed : change country id values >> to make sense
+              new Place { Id = 4 },
+              new Place { Id = 5 }
+                );
 
             //         modelBuilder.Entity<Place>().HasData(
             //    new Place { Id = 1, CountryId = 1, StateId = 1, },
@@ -158,23 +166,16 @@ namespace Flight_Booking_System.Context
             //    new Place { Id = 5, CountryId = 2, StateId = 5 }
             //);
 
-            modelBuilder.Entity<Place>().HasData(
-       new Place { Id = 1 },
-       new Place { Id = 2},
-       new Place { Id = 3},   // saeed : change country id values >> to make sense
-       new Place { Id = 4},
-       new Place { Id = 5}
-   );
 
 
             modelBuilder.Entity<Plane>().HasData(
-     new List<Plane>
-     {
+             new List<Plane>
+             {
                     new Plane
                     {
                         Id = 1,
                         Name = "Boeing 737",
-                        //FlightId = 1,
+                        FlightId = 1,
                         capacity = 188,
                         Engine = "CFM56-7B",
                         Height = 41,
@@ -185,7 +186,7 @@ namespace Flight_Booking_System.Context
                     {
                         Id = 2,
                         Name = "Airbus A320",
-                        //FlightId = 2,
+                        FlightId = 2,
                         capacity = 180,
                         Engine = "CFM56-5B4",
                         Height = 39 ,
@@ -196,45 +197,84 @@ namespace Flight_Booking_System.Context
                     {
                         Id = 3,
                         Name = "Boeing 777",
-                        //FlightId = 3,
+                        FlightId = 3,
                         capacity = 396,
                         Engine = "GE90-115B",
                         Height = 61,
                         Length = 242,
                         WingSpan = 199
+                    }
+                }
+            );
+
+            modelBuilder.Entity<Ticket>().HasData(
+                    new List<Ticket>
+                    {
+                    new Ticket
+                    {
+                        Id = 1,
+                        Price = 299.99m,
+                        Class = Class.Economy,
+                        PassengerId = 1,
+                        FlightId = 1
                     },
-                    new Plane
+                    new Ticket
+                    {
+                        Id = 2,
+                        Price = 499.99m,
+                        Class = Class.Business,
+                        PassengerId = 2,
+                        FlightId = 1
+                    },
+                    new Ticket
+                    {
+                        Id = 3,
+                        Price = 1299.99m,
+                        Class = Class.First,
+                        PassengerId = 3,
+                        FlightId = 2
+                    },
+                    new Ticket
                     {
                         Id = 4,
-                        Name = "Airbus A380",
-                        capacity = 853,
-                        Engine = "Trent 900",
-                        Height = 79,
-                        Length = 238,
-                        WingSpan = 261
+                        Price = 350.00m,
+                        Class = Class.Economy,
+                        PassengerId = 4,
+                        FlightId = 2
+                    },
+                    new Ticket
+                    {
+                        Id = 5,
+                        Price = 850.00m,
+                        Class = Class.Business,
+                        PassengerId = 5,
+                        FlightId = 3
                     }
-     }
- );
+                    }
+                  
+                    );
+
 
             modelBuilder.Entity<Seat>().HasData(
                 new List<Seat>
                 {
-                                new Seat { Id = 1, Number = 1, Section = Section.front | Section.window },
-                                new Seat { Id = 2, Number = 2, Section = Section.front },
-                                new Seat { Id = 3, Number = 3, Section = Section.Middle },
-                                new Seat { Id = 4, Number = 4, Section = Section.back | Section.window },
-                                new Seat { Id = 5, Number = 5, Section = Section.back },
-                                new Seat { Id = 6, Number = 6, Section = Section.Middle | Section.window },
-                                new Seat { Id = 7, Number = 7, Section = Section.front | Section.window },
-                                new Seat { Id = 8, Number = 8, Section = Section.back },
-                                new Seat { Id = 9, Number = 9, Section = Section.Middle },
-                                new Seat { Id = 10, Number = 10, Section = Section.front | Section.window }
+                    new Seat { Id = 1, Number = 1 , TicketId = 1 , Section = Section.front | Section.window },
+                    new Seat { Id = 2, Number = 2,TicketId = 2 , Section = Section.front },
+                    new Seat { Id = 3, Number = 3, TicketId = 3 ,Section = Section.Middle },
+                    new Seat { Id = 4, Number = 4,TicketId = 4 , Section = Section.back | Section.window },
+                    new Seat { Id = 5, Number = 5,TicketId = 5 , Section = Section.back },
+                    //new Seat { Id = 6, Number = 6,TicketId = 1 , Section = Section.Middle | Section.window },
+                    //new Seat { Id = 7, Number = 7,TicketId = 2 , Section = Section.front | Section.window },
+                    //new Seat { Id = 8, Number = 8,TicketId = 3 , Section = Section.back },
+                    //new Seat { Id = 9, Number = 9,TicketId = 4 , Section = Section.Middle },
+                    //new Seat { Id = 10, Number = 10,TicketId = 5 , Section = Section.front | Section.window }
                 }
             );
 
+
             modelBuilder.Entity<Flight>().HasData(
-     new List<Flight>
-     {
+             new List<Flight>
+             {
                     new Flight
                     {
                         Id = 1,
@@ -243,7 +283,7 @@ namespace Flight_Booking_System.Context
                         DepartureTime = new DateTime(2024, 12, 25, 10, 30, 0),
                         ArrivalTime = new DateTime(2024, 12, 25, 16, 45, 0),
                         Duration = new TimeSpan(6, 15, 0),
-                        //PlaneId = 1
+                        AirLineId = 1 
                     },
                     new Flight
                     {
@@ -253,7 +293,7 @@ namespace Flight_Booking_System.Context
                         DepartureTime = new DateTime(2024, 12, 30, 14, 00, 0),
                         ArrivalTime = new DateTime(2024, 12, 30, 20, 00, 0),
                         Duration = new TimeSpan(6, 0, 0),
-                        //PlaneId = 2
+                        AirLineId = 2
                     },
                     new Flight
                     {
@@ -263,71 +303,10 @@ namespace Flight_Booking_System.Context
                         DepartureTime = new DateTime(2024, 11, 15, 9, 0, 0),
                         ArrivalTime = new DateTime(2024, 11, 15, 12, 15, 0),
                         Duration = new TimeSpan(3, 15, 0),
-                        //PlaneId = 3
+                        AirLineId = 3
                     }
-     }
- );
-
-            modelBuilder.Entity<Ticket>().HasData(
-    new List<Ticket>
-    {
-                    new Ticket
-                    {
-                        Id = 1,
-                        Price = 299.99m,
-                        Class = Class.Economy,
-                        PassengerId = 1,
-                        SeatId = 1,
-                        FlightId = 1
-                    },
-                    new Ticket
-                    {
-                        Id = 2,
-                        Price = 499.99m,
-                        Class = Class.Business,
-                        PassengerId = 2,
-                        SeatId = 2,
-                        FlightId = 1
-                    },
-                    new Ticket
-                    {
-                        Id = 3,
-                        Price = 1299.99m,
-                        Class = Class.First,
-                        PassengerId = 3,
-                        SeatId = 3,
-                        FlightId = 2
-                    },
-                    new Ticket
-                    {
-                        Id = 4,
-                        Price = 350.00m,
-                        Class = Class.Economy,
-                        PassengerId = 4,
-                        SeatId = 4,
-                        FlightId = 2
-                    },
-                    new Ticket
-                    {
-                        Id = 5,
-                        Price = 850.00m,
-                        Class = Class.Business,
-                        PassengerId = 5,
-                        SeatId = 5,
-                        FlightId = 3
-                    }
-
-
-    }
-);
-
-            //foreach (var flight in modelBuilder.Entity<Flight>().tols)
-            //{
-            //    modelBuilder.Entity<Place>().HasData(
-            //        new { PlaceId = flight.StartId, FlightId = flight.Id },
-            //        new { PlaceId = flight.DestinationId, FlightId = flight.Id }
-            //    );
-            //}
+                 }
+             );
 
             #endregion
 
