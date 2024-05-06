@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Flight_Booking_System.Models
 {
+
     [Table("Tickets")]
     public class Ticket
     {
@@ -11,10 +12,24 @@ namespace Flight_Booking_System.Models
         public int Id { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; } = 1000m;
 
         [Required]
-        public Class Class { get; set; } = Class.Economy;  // default value
+        public Class Class { get; set; } = Class.Economy;
+
+        //------------------------------------
+
+        [ForeignKey("Flight")]
+        public int? FlightId { get; set; }
+
+        public Flight? Flight { get; set; }
+
+        //------------------------------------
+
+        //[ForeignKey("Seat")]
+        //public int? SeatId { get; set; }   // => had to put the FK also because u need it in the ticket details for sure
+
+        public Seat? Seat { get; set; }
 
         //------------------------------------
 
@@ -23,14 +38,5 @@ namespace Flight_Booking_System.Models
 
         public Passenger? Passenger { get; set; }
 
-        [ForeignKey("SeatId")]
-        public int? SeatId { get; set; }
-
-        public Seat? Seat { get; set; } 
-
-        [ForeignKey("Flight")]
-        public int? FlightId { get; set; }
-
-        public Flight? Flight { get; set; }
     }
 }
