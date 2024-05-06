@@ -9,10 +9,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-//test
-//test
 namespace Flight_Booking_System.Controllers
 {
+    // test
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
