@@ -30,7 +30,7 @@ namespace Flight_Booking_System.Controllers
                 {  
                    Name = country.Name,
                    Id = country.Id,
-                   PlaceId = country.PlaceId,
+                   AirPortId = country.AirPortId,
                 });
             }
             return new GeneralResponse()
@@ -52,7 +52,7 @@ namespace Flight_Booking_System.Controllers
                 {
                     Id = country.Id,
                     Name = country.Name,
-                    PlaceId= country.PlaceId,
+                    AirPortId = country.AirPortId,
                 };
                 return new GeneralResponse()
                 {
@@ -81,7 +81,7 @@ namespace Flight_Booking_System.Controllers
                 {
                     Id = countryDTO.Id,
                     Name = countryDTO.Name,
-                    PlaceId = countryDTO.PlaceId,
+                    AirPortId = countryDTO.AirPortId,
                 };
                 countryRepository.Insert(country);
                 countryRepository.Save();
@@ -113,7 +113,7 @@ namespace Flight_Booking_System.Controllers
                 {
                     Id = editedCountryDTO.Id,
                     Name = editedCountryDTO.Name,
-                    PlaceId = editedCountryDTO.PlaceId,
+                    AirPortId = editedCountryDTO.AirPortId,
                 };
                 countryRepository.Update(editedCountry);
                 countryRepository.Save();

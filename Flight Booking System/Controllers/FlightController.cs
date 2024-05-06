@@ -129,14 +129,14 @@ namespace Flight_Booking_System.Controllers
                 Flight flight = new Flight()
                 {
                     Id = flightDTO.Id,
-                    PlaneId= flightDTO.PlaneId,
-                    DestinationId = flightDTO.DestinationId,
-                    imageURL=flightDTO.imageURL,
-                    StartId = flightDTO.StartId,
+                    //PlaneId= flightDTO.PlaneId,
+                    DestinationAirportId = flightDTO.DestinationId,
+                    //imageURL=flightDTO.imageURL,
+                    SourceAirportId = flightDTO.StartId,
                     ArrivalTime= flightDTO.ArrivalTime,
                     DepartureTime= flightDTO.DepartureTime,
                   Duration= flightDTO.Duration,
-                  AirLineId= flightDTO.AirLineId,
+                  //AirLineId= flightDTO.AirLineId,
                 };
                 flightRepository.Insert(flight);
 

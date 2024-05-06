@@ -43,3 +43,4 @@ namespace Flight_Booking_System.Models
 
         public List<Ticket>? Tickets { get; set; }
     }
+}

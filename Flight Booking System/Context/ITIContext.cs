@@ -40,7 +40,7 @@ namespace Flight_Booking_System.Context
 
             modelBuilder.Entity<Flight>()
                    .HasOne(f => f.SourceAirport)
-                   .WithMany(a => a.Le)
+                   .WithMany(a => a.LeavingFlights)
                    .HasForeignKey(f => f.SourceAirportId)
                    .IsRequired(false);
 
