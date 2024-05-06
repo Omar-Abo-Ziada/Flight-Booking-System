@@ -11,9 +11,18 @@ namespace Flight_Booking_System.Models
 
         public int? AirPortNumber { get; set; }
 
-        [MaxLength(40)]
-        public string? Name { get; set; }
+        public string? Name { get; set; } = string.Empty;
 
-        public List<AirLine>? AirLines { get; set; }
+        //----------------------------------------
+
+        Country? Country { get; set; }
+
+        State? State { get; set; }
+
+        //----------------------------------------
+
+        public List<Flight>? LeavingFlights { get; set; }
+
+        public List<Flight>? ArrivingFlights { get; set; }
     }
 }
