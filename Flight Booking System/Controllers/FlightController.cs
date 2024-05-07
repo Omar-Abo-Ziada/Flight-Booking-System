@@ -17,15 +17,22 @@ namespace Flight_Booking_System.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMapper mapper;
         private readonly IAirPortRepository airPortRepository;
+        private readonly IPlaneRepository planeRepository;
+        private readonly IPassengerRepository passengerRepository;
+        private readonly ITicketRepository ticketRepository;
 
         public FlightController
             (IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment ,  IMapper mapper,
-            IAirPortRepository airPortRepository)
+            IAirPortRepository airPortRepository , IPlaneRepository planeRepository ,
+            IPassengerRepository passengerRepository , ITicketRepository ticketRepository)
         {
             this.flightRepository = flightRepository;
             _webHostEnvironment = webHostEnvironment;
             this.mapper = mapper;
             this.airPortRepository = airPortRepository;
+            this.planeRepository = planeRepository;
+            this.passengerRepository = passengerRepository;
+            this.ticketRepository = ticketRepository;
         }
 
         //***********************************************
@@ -300,6 +307,24 @@ namespace Flight_Booking_System.Controllers
             {
                 try
                 {
+                    List<Passenger> flightPassengers = passengerRepository.Get(p => p.FlightId == flightFromDB.Id);
+
+                    foreach (Passenger passenger in flightPassengers)
+                    {
+                        passenger.FlightId = null;
+                    }
+
+                    Plane flightPlane = planeRepository.Get(p => p.FlightId == flightFromDB.Id).FirstOrDefault();
+
+                    flightPlane.FlightId = null;
+
+                    List<Ticket> flightTickets = ticketRepository.Get(t => t.FlightId == flightFromDB.Id);
+
+                    foreach (Ticket ticket in flightTickets)
+                    {
+                        ticket.FlightId = null;
+                    }
+
                     flightRepository.Delete(flightFromDB);
 
                     flightRepository.Save();
