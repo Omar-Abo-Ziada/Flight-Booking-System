@@ -47,7 +47,7 @@ namespace Flight_Booking_System.Controllers
         }
 
 
-        [HttpGet("id:{int}")]   // from route
+        [HttpGet("{id:int}")]   // from route
         public ActionResult<GeneralResponse> GetById(int id)
         {
             State state = stateRepository.GetById(id);
@@ -80,7 +80,7 @@ namespace Flight_Booking_System.Controllers
         // get func
        
 
-        [HttpGet ("countryId:{int}")]  // from route
+        [HttpGet ("{countryId:int}")]  // from route
         public ActionResult<GeneralResponse> GetByCountryId(int countryId)
         {
             List<State> states = stateRepository.Get(s => s.CountryId == countryId).ToList();
@@ -183,7 +183,7 @@ namespace Flight_Booking_System.Controllers
         }
 
 
-        [HttpDelete("id:{int}")]  // from route
+        [HttpDelete("{id:int}")]  // from route
         public ActionResult<GeneralResponse> Delete(int id)
         {
             State state = stateRepository.GetById(id);

@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Flight_Booking_System.Controllers;
 using Flight_Booking_System.Services;
+using Flight_Booking_System.ExternalLogin;
 
 namespace Flight_Booking_System
 {
@@ -77,7 +78,7 @@ namespace Flight_Booking_System
             })
             .AddEntityFrameworkStores<ITIContext>()
             .AddDefaultTokenProviders(); // This line registers the default token providers
-           
+
 
             builder.Services.AddAuthentication(options =>
             {
@@ -122,7 +123,7 @@ namespace Flight_Booking_System
                 {
                     options.SuppressModelStateInvalidFilter = true;
                 });
-            
+
             //-----------------------------------------------------
 
             /// <summary>
@@ -137,7 +138,7 @@ namespace Flight_Booking_System
                     Title = "ASP.NET 5 Web API",
                     Description = " ITI Projrcy"
                 });
-              
+
                 // To Enable authorization using Swagger (JWT)
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
@@ -165,7 +166,12 @@ namespace Flight_Booking_System
             });
 
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
+
+            // saeed : register config of googleauthconfig class to read from app settings
+            builder.Services.Configure<GoogleAuthConfig>(builder.Configuration.GetSection("Google"));
+            // builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
             //************************************************************************************************
 
