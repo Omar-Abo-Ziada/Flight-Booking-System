@@ -88,6 +88,7 @@ namespace Flight_Booking_System.Controllers
         //[Authorize]
         public ActionResult<GeneralResponse> Add(Passenger passenger)
         {
+            ///TODO : Don't forget to send the dto in the params not the model
             if (ModelState.IsValid)
             {
                 passengerRepository.Insert(passenger);

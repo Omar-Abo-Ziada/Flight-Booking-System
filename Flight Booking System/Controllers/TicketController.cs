@@ -4,6 +4,7 @@ using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 
 namespace Flight_Booking_System.Controllers
 {
@@ -12,13 +13,22 @@ namespace Flight_Booking_System.Controllers
     public class TicketController : ControllerBase
     {
         private readonly ITicketRepository ticketRepository;
+        private readonly IPassengerRepository passengerRepository;
+        private readonly IFlightRepository flightRepository;
+        private readonly IPlaneRepository planeRepository;
+        private readonly ISeatRepository seatRepository;
 
-        public TicketController(ITicketRepository _ticketRepository)
+        public TicketController(ITicketRepository _ticketRepository, IPassengerRepository passengerRepository,
+            IFlightRepository flightRepository, IPlaneRepository planeRepository , ISeatRepository seatRepository)
         {
             ticketRepository = _ticketRepository;
+            this.passengerRepository = passengerRepository;
+            this.flightRepository = flightRepository;
+            this.planeRepository = planeRepository;
+            this.seatRepository = seatRepository;
         }
 
-
+        //***********************************************
 
         [HttpGet]
         public ActionResult<GeneralResponse> GetAllTickets()
@@ -31,7 +41,7 @@ namespace Flight_Booking_System.Controllers
             {
                 TicketDTO ticketDTO = new TicketDTO()
                 {
-                    Id = ticket.Id,
+                    //Id = ticket.Id,
                     Class = ticket.Class,
                     Price = ticket.Price,
                     PassengerId = ticket.PassengerId,
@@ -69,7 +79,7 @@ namespace Flight_Booking_System.Controllers
             {
                 TicketDTO ticketDTO = new TicketDTO()
                 {
-                    Id = ticket.Id,
+                    //Id = ticket.Id,
                     Class = ticket.Class,
                     Price = ticket.Price,
                     FlightId = ticket.FlightId,
@@ -87,29 +97,78 @@ namespace Flight_Booking_System.Controllers
         }
 
 
-
-
         [HttpPost]
         public ActionResult<GeneralResponse> AddTicket(TicketDTO ticketDTO)
         {
             if (ModelState.IsValid)
             {
+                ///TODO : don't forget include passengers also
+                Flight? flight = flightRepository.GetWithPlane((int)ticketDTO.FlightId);
+
+                if (flight?.Plane?.capacity <= flight?.Passengers?.Count)
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Data = null,
+                        Message = "There is no place left on the plane ."
+                    };
+                }
+
                 Ticket ticket = new Ticket()
                 {
-                    Id = ticketDTO.Id,
+                    //Id = ticketDTO.Id,
                     Class = ticketDTO.Class,
                     Price = ticketDTO.Price,
-                    FlightId = ticketDTO.FlightId,
-                    PassengerId = ticketDTO.PassengerId,
-                    //SeatId = ticketDTO.SeatId
+
+                    FlightId = ticketDTO.FlightId, // from front
+                    Flight = flightRepository.GetById((int)ticketDTO.FlightId),
+
+                    PassengerId = ticketDTO.PassengerId,// from front
+                    Passenger = passengerRepository.GetById((int)ticketDTO.PassengerId),
                 };
+
                 ticketRepository.Insert(ticket);
+
                 ticketRepository.Save();
+
+                Passenger passernger = passengerRepository.GetById((int)ticketDTO.PassengerId);
+
+                passernger.Flight = ticket.Flight;
+                passernger.FlightId = ticket.FlightId;
+                passernger.Ticket = ticket;
+
+                Flight flightFromDB = flightRepository.GetById((int)ticket.FlightId);
+
+                flightFromDB.Passengers.Add(passernger);
+                flightFromDB.Tickets.Add(ticket);
+
+                Seat seat = new Seat()
+                {
+                    Section = ticketDTO.Section,
+
+                    TicketId = ticket.Id,
+                    Ticket = ticket,
+                };
+
+                seatRepository.Insert(seat);
+
+                seatRepository.Save();
+
+                seat.Number = seat.Id;
+
+                ticket.Seat = seat;
+
+                ticketRepository.Save();
+                passengerRepository.Save();
+                planeRepository.Save();
+                flightRepository.Save();
+
                 return new GeneralResponse()
                 {
                     IsSuccess = true,
-                    Data = ticket,
-                    Message = "Ticket Added Successfully"
+                    Data = null,
+                    Message = "Ticket and Seat were Added Successfully"
                 };
             }
             else
@@ -122,6 +181,7 @@ namespace Flight_Booking_System.Controllers
                 };
             }
         }
+
 
         [HttpPut("{ticketId:int}")]
         public ActionResult<GeneralResponse> UpdateTicket(int ticketId, TicketDTO ticketDTO)
@@ -138,7 +198,7 @@ namespace Flight_Booking_System.Controllers
             }
             else
             {
-                t1.Id = ticketDTO.Id;
+                //t1.Id = ticketDTO.Id;
                 t1.Class = ticketDTO.Class;
                 t1.Price = ticketDTO.Price;
                 t1.FlightId = ticketDTO.FlightId;
@@ -154,8 +214,6 @@ namespace Flight_Booking_System.Controllers
                     Message = "Updated Successfully"
                 };
             }
-
-
         }
 
         [HttpDelete("{ticketId:int}")]
@@ -183,11 +241,5 @@ namespace Flight_Booking_System.Controllers
                 };
             }
         }
-
-
-     
-
-     
-
     }
 }
