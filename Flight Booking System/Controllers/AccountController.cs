@@ -45,18 +45,6 @@ namespace Flight_Booking_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                ApplicationUSer user = new ApplicationUSer()
-                {
-                    UserName = userDTO.UserName,
-                    PasswordHash = userDTO.Password,
-                    Email = userDTO.Email,
-                    PhoneNumber = userDTO.PhoneNumber,
-
-                    EmailConfirmed = false,
-                    PhoneNumberConfirmed = false,
-
-                };
-
                 // Also Creating a new passenger with flightId = null , flight = null , ticket = null
                 Passenger userPassenger = new Passenger()
                 {
@@ -68,13 +56,30 @@ namespace Flight_Booking_System.Controllers
 
                     Flight = null,
                     FlightId = null,
-                    
-                    Ticket = null ,
+
+                    Ticket = null,
                 };
 
                 _passengerRepository.Insert(userPassenger);
 
                 _passengerRepository.Save();
+
+                ApplicationUSer user = new ApplicationUSer()
+                {
+                    UserName = userDTO.UserName,
+                    PasswordHash = userDTO.Password,
+                    Email = userDTO.Email,
+                    PhoneNumber = userDTO.PhoneNumber,
+
+                    EmailConfirmed = false,
+                    PhoneNumberConfirmed = false,
+
+                    Passenger = userPassenger,
+                    PassengerId = userPassenger.Id,
+                };
+
+                userPassenger.User = user;
+
 
                 // create Account in database
                 IdentityResult createAccResult = await _userManager.CreateAsync(user, userDTO.Password);
@@ -97,8 +102,8 @@ namespace Flight_Booking_System.Controllers
                     return new GeneralResponse()
                     {
                         IsSuccess = true,
-                        Data = null,
-                        Message = "Account Created Successfully and Confiramtion mail has been sent"
+                        Data = userPassenger.Id,
+                        Message = "Account Created Successfully and Confiramtion mail has been sent , and there is the Passenger ID => save it and send it when he wants to Add a ticket"
                     };
                 }
                 else

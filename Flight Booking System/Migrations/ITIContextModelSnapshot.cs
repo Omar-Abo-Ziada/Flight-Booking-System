@@ -106,6 +106,9 @@ namespace Flight_Booking_System.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int?>("PassengerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -134,6 +137,10 @@ namespace Flight_Booking_System.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("PassengerId")
+                        .IsUnique()
+                        .HasFilter("[PassengerId] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -789,6 +796,15 @@ namespace Flight_Booking_System.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Flight_Booking_System.Models.ApplicationUSer", b =>
+                {
+                    b.HasOne("Flight_Booking_System.Models.Passenger", "Passenger")
+                        .WithOne("User")
+                        .HasForeignKey("Flight_Booking_System.Models.ApplicationUSer", "PassengerId");
+
+                    b.Navigation("Passenger");
+                });
+
             modelBuilder.Entity("Flight_Booking_System.Models.Country", b =>
                 {
                     b.HasOne("Flight_Booking_System.Models.AirPort", "AirPort")
@@ -949,6 +965,8 @@ namespace Flight_Booking_System.Migrations
             modelBuilder.Entity("Flight_Booking_System.Models.Passenger", b =>
                 {
                     b.Navigation("Ticket");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Ticket", b =>
