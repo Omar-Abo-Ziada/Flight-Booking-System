@@ -38,6 +38,5 @@ namespace Flight_Booking_System.Models
         public int? PassengerId { get; set; }
 
         public Passenger? Passenger { get; set; }
-
     }
 }

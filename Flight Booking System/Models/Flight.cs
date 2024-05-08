@@ -39,10 +39,10 @@ namespace Flight_Booking_System.Models
 
         //-----------------------------------------
 
-        public List<Passenger>? Passengers { get; set; }
+        public List<Passenger>? Passengers { get; set; } = new List<Passenger>();
 
         //-----------------------------------------
 
-        public List<Ticket>? Tickets { get; set; }
+        public List<Ticket>? Tickets { get; set; } = new List<Ticket>();
     }
 }
