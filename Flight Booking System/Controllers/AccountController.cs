@@ -28,12 +28,15 @@ namespace Flight_Booking_System.Controllers
         private readonly UserManager<ApplicationUSer> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
+        private readonly IGoogleAuthService googleAuthService;
 
-        public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration, IEmailService emailService)
+        public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration, IEmailService emailService,
+             IGoogleAuthService _googleAuthService)
         {
             this._userManager = userManager;
             this._configuration = configuration;
             _emailService = emailService;
+            googleAuthService = _googleAuthService;
         }
 
         [HttpPost("register")]
