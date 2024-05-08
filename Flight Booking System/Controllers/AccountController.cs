@@ -334,5 +334,21 @@ namespace Flight_Booking_System.Controllers
                 };
             }
         }
+
+
+        // saeed : google login 
+        [HttpPost("googleLogin")]
+        public async Task<ActionResult<GeneralResponse>> googleLogin()
+        {
+            GoogleSignInDTO googleSignInDTO = new GoogleSignInDTO()
+            {
+                IdToken = Request.Headers["IdToken"]
+            };
+
+            // string idToken = Request.Headers["Authorization"];
+            //googleSignInDTO.IdToken = idToken;
+            return await googleAuthService.GoogleSignIn(googleSignInDTO);
+        }
+
     }
 }
