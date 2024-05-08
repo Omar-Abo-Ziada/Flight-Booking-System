@@ -37,5 +37,12 @@ namespace Flight_Booking_System.Models
         // couldn't do that because it leads to migrations Error
 
         public Ticket? Ticket { get; set; }
+
+        //-----------------------------------------
+        //[ForeignKey("User")]
+        //public int? UserId { get; set; }
+
+        public ApplicationUSer? User { get; set; }
+
     }
 }

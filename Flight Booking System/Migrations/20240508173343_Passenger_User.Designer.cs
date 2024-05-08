@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Flight_Booking_System.Migrations
 {
     [DbContext(typeof(ITIContext))]
-    [Migration("20240506113125_addimgtoflight")]
-    partial class addimgtoflight
+    [Migration("20240508173343_Passenger_User")]
+    partial class Passenger_User
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,6 +109,9 @@ namespace Flight_Booking_System.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int?>("PassengerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -138,6 +141,10 @@ namespace Flight_Booking_System.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("PassengerId")
+                        .IsUnique()
+                        .HasFilter("[PassengerId] IS NOT NULL");
+
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
@@ -157,7 +164,9 @@ namespace Flight_Booking_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AirPortId");
+                    b.HasIndex("AirPortId")
+                        .IsUnique()
+                        .HasFilter("[AirPortId] IS NOT NULL");
 
                     b.ToTable("Countries");
 
@@ -524,7 +533,9 @@ namespace Flight_Booking_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AirPortId");
+                    b.HasIndex("AirPortId")
+                        .IsUnique()
+                        .HasFilter("[AirPortId] IS NOT NULL");
 
                     b.HasIndex("CountryId");
 
@@ -788,11 +799,20 @@ namespace Flight_Booking_System.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Flight_Booking_System.Models.ApplicationUSer", b =>
+                {
+                    b.HasOne("Flight_Booking_System.Models.Passenger", "Passenger")
+                        .WithOne("User")
+                        .HasForeignKey("Flight_Booking_System.Models.ApplicationUSer", "PassengerId");
+
+                    b.Navigation("Passenger");
+                });
+
             modelBuilder.Entity("Flight_Booking_System.Models.Country", b =>
                 {
                     b.HasOne("Flight_Booking_System.Models.AirPort", "AirPort")
-                        .WithMany()
-                        .HasForeignKey("AirPortId");
+                        .WithOne("Country")
+                        .HasForeignKey("Flight_Booking_System.Models.Country", "AirPortId");
 
                     b.Navigation("AirPort");
                 });
@@ -842,8 +862,8 @@ namespace Flight_Booking_System.Migrations
             modelBuilder.Entity("Flight_Booking_System.Models.State", b =>
                 {
                     b.HasOne("Flight_Booking_System.Models.AirPort", "AirPort")
-                        .WithMany()
-                        .HasForeignKey("AirPortId");
+                        .WithOne("State")
+                        .HasForeignKey("Flight_Booking_System.Models.State", "AirPortId");
 
                     b.HasOne("Flight_Booking_System.Models.Country", "Country")
                         .WithMany("States")
@@ -924,7 +944,11 @@ namespace Flight_Booking_System.Migrations
                 {
                     b.Navigation("ArrivingFlights");
 
+                    b.Navigation("Country");
+
                     b.Navigation("LeavingFlights");
+
+                    b.Navigation("State");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Country", b =>
@@ -944,6 +968,8 @@ namespace Flight_Booking_System.Migrations
             modelBuilder.Entity("Flight_Booking_System.Models.Passenger", b =>
                 {
                     b.Navigation("Ticket");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Flight_Booking_System.Models.Ticket", b =>

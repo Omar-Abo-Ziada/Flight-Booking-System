@@ -39,6 +39,5 @@ namespace Flight_Booking_System.DTOs
         //public int? FlightId { get; set; } = null;
 
         //public Flight? Flight { get; set; } = null;
-
     }
 }
