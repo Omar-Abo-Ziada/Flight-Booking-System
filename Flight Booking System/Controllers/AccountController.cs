@@ -68,7 +68,8 @@ namespace Flight_Booking_System.Controllers
 
                     Flight = null,
                     FlightId = null,
-                    Ticket = null,
+                    
+                    Ticket = null ,
                 };
 
                 _passengerRepository.Insert(userPassenger);
@@ -81,7 +82,7 @@ namespace Flight_Booking_System.Controllers
                 if (createAccResult.Succeeded)
                 {
                     // Adding user Role by default
-                     await _userManager.AddToRoleAsync(user, "User");
+                    await _userManager.AddToRoleAsync(user, "User");
 
                     // Generate email confirmation token
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
