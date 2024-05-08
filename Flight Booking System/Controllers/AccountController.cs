@@ -68,7 +68,7 @@ namespace Flight_Booking_System.Controllers
 
                     Flight = null,
                     FlightId = null,
-                    Ticket = null,
+                    Ticket = null ,
                 };
 
                 _passengerRepository.Insert(userPassenger);
