@@ -42,7 +42,6 @@ namespace Flight_Booking_System.Controllers
                 // Also Creating a new passenger with flightId = null , flight = null , ticket = null
                 Passenger userPassenger = new Passenger()
                 {
-
                     Name = userDTO.UserName,
                     Age = userDTO.Age,
                     Gender = userDTO.Gender,
@@ -305,7 +304,6 @@ namespace Flight_Booking_System.Controllers
         //ibrahim forget password
 
         [HttpPost("ChnagePassword")]
-
         public async Task<ActionResult<GeneralResponse>> ChnagePassword([FromBody] ChangePasswordModel changePasswordModel)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -316,7 +314,6 @@ namespace Flight_Booking_System.Controllers
                 {
                     IsSuccess = false,
                     Message = "User not found"
-
                 };
             }
             else
@@ -329,7 +326,6 @@ namespace Flight_Booking_System.Controllers
                     {
                         IsSuccess = false,
                         Message = $"{resulst.Errors}"
-
                     };
                 }
                 else
@@ -341,8 +337,6 @@ namespace Flight_Booking_System.Controllers
                     };
                 }
             }
-
         }
-
     }
 }
