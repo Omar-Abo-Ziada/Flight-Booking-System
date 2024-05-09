@@ -1,16 +1,15 @@
 ﻿
 using Flight_Booking_System.Context;
+using Flight_Booking_System.ExternalLogin;
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
+using Flight_Booking_System.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using Flight_Booking_System.Controllers;
-using Flight_Booking_System.Services;
-using Flight_Booking_System.ExternalLogin;
 
 namespace Flight_Booking_System
 {
@@ -79,6 +78,8 @@ namespace Flight_Booking_System
             .AddEntityFrameworkStores<ITIContext>()
             .AddDefaultTokenProviders(); // This line registers the default token providers
 
+            //ibrahim:this line for forget password configrations for ==>link time epirtations
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromHours(10));
 
             builder.Services.AddAuthentication(options =>
             {

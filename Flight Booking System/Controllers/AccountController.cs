@@ -2,7 +2,6 @@ using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Response;
 using Flight_Booking_System.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 //using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
@@ -10,13 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Infobip.Api.Client;
-using System.Net.Mail;
-using RestSharp;
-using Infobip.Api.Client.Model;
-using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
 
 
 namespace Flight_Booking_System.Controllers
@@ -241,8 +233,8 @@ namespace Flight_Booking_System.Controllers
                             Message = "Token Created Successfully"
                         };
                     }
-                    else  
-                    {  
+                    else
+                    {
                         return new GeneralResponse()
                         {
                             IsSuccess = false,
@@ -276,6 +268,48 @@ namespace Flight_Booking_System.Controllers
             // string idToken = Request.Headers["Authorization"];
             //googleSignInDTO.IdToken = idToken;
             return await googleAuthService.GoogleSignIn(googleSignInDTO);
+        }
+
+        //ibrahim forget password
+
+        [HttpPost("ChnagePassword")]
+
+        public async Task<ActionResult<GeneralResponse>> ChnagePassword([FromBody] ChangePasswordModel changePasswordModel)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Message = "User not found"
+
+                };
+            }
+            else
+            {
+                var resulst = await _userManager.ChangePasswordAsync(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword);
+
+                if (!resulst.Succeeded)
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Message = $"{resulst.Errors}"
+
+                    };
+                }
+                else
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = true,
+                        Message = "password changed sucessfully"
+                    };
+                }
+            }
+
         }
 
     }
