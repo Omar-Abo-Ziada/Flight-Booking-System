@@ -48,6 +48,7 @@ namespace Flight_Booking_System.Controllers
                 // Also Creating a new passenger with flightId = null , flight = null , ticket = null
                 Passenger userPassenger = new Passenger()
                 {
+
                     Name = userDTO.UserName,
                     Age = userDTO.Age,
                     Gender = userDTO.Gender,
