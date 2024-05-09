@@ -26,7 +26,7 @@ namespace Flight_Booking_System.Services
         private readonly GoogleAuthConfig _googleAuthConfig;
         //  private readonly ILog _logger;
         private readonly IConfiguration _configuration;
-        //   private readonly PassengerRepository _passengerRepository;
+        //  private readonly PassengerRepository _passengerRepository;
 
 
         public GoogleAuthService(
@@ -62,6 +62,27 @@ namespace Flight_Booking_System.Services
                     Message = "Google login failed"
                 };
             }
+
+            Passenger userPassenger = new Passenger()
+            {
+               
+
+                Name = payload.Name,
+                //Age = userDTO.Age,           // take default
+                //Gender = userDTO.Gender,      // take default
+                PassportNum = null,
+                NationalId = null,
+
+                Flight = null,
+                FlightId = null,
+
+                Ticket = null,
+            };
+
+            //_passengerRepository.Insert(userPassenger);
+
+            //_passengerRepository.Save();
+
 
             List<Claim> myClaims = new List<Claim>();
             myClaims.Add(new Claim(ClaimTypes.Email, payload.Email));
