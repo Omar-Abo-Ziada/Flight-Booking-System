@@ -36,6 +36,26 @@ namespace Flight_Booking_System.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Also Creating a new passenger with flightId = null , flight = null , ticket = null
+                Passenger userPassenger = new Passenger()
+                {
+
+                    Name = userDTO.UserName,
+                    Age = userDTO.Age,
+                    Gender = userDTO.Gender,
+                    PassportNum = userDTO.PassportNum,
+                    NationalId = userDTO.NationalId,
+
+                    Flight = null,
+                    FlightId = null,
+
+                    Ticket = null,
+                };
+
+                _passengerRepository.Insert(userPassenger);
+
+                _passengerRepository.Save();
+
                 ApplicationUSer user = new ApplicationUSer()
                 {
                     UserName = userDTO.UserName,
