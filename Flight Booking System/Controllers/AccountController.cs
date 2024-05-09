@@ -238,7 +238,7 @@ namespace Flight_Booking_System.Controllers
                             myClaims.Add(new Claim(ClaimTypes.Role, role));
                         }
 
-                        // security key 
+                        //  security key 
                         SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
 
                         // in the JWT header =>  credentials : key + ALgorithm
