@@ -1,5 +1,6 @@
-using Flight_Booking_System.DTOs;
+﻿using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
+using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
 using Flight_Booking_System.Services;
 using Microsoft.AspNetCore.Identity;
@@ -21,14 +22,16 @@ namespace Flight_Booking_System.Controllers
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
         private readonly IGoogleAuthService googleAuthService;
+        private readonly IPassengerRepository _passengerRepository;
 
         public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration, IEmailService emailService,
-             IGoogleAuthService _googleAuthService)
+             IGoogleAuthService _googleAuthService , IPassengerRepository passengerRepository)
         {
             this._userManager = userManager;
             this._configuration = configuration;
             _emailService = emailService;
             googleAuthService = _googleAuthService;
+            this._passengerRepository = passengerRepository;
         }
 
         [HttpPost("register")]
@@ -36,6 +39,26 @@ namespace Flight_Booking_System.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Also Creating a new passenger with flightId = null , flight = null , ticket = null
+                Passenger userPassenger = new Passenger()
+                {
+
+                    Name = userDTO.UserName,
+                    Age = userDTO.Age,
+                    Gender = userDTO.Gender,
+                    PassportNum = userDTO.PassportNum,
+                    NationalId = userDTO.NationalId,
+
+                    Flight = null,
+                    FlightId = null,
+
+                    Ticket = null,
+                };
+
+                _passengerRepository.Insert(userPassenger);
+
+                _passengerRepository.Save();
+
                 ApplicationUSer user = new ApplicationUSer()
                 {
                     UserName = userDTO.UserName,
@@ -46,27 +69,36 @@ namespace Flight_Booking_System.Controllers
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
 
+                    Passenger = userPassenger,
+                    PassengerId = userPassenger.Id,
                 };
+
+                userPassenger.User = user;
+
 
                 // create Account in database
                 IdentityResult createAccResult = await _userManager.CreateAsync(user, userDTO.Password);
 
                 if (createAccResult.Succeeded)
                 {
+                    // Adding user Role by default
+                    await _userManager.AddToRoleAsync(user, "User");
+
                     // Generate email confirmation token
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, Request.Scheme);
 
+                    string mailBody = $"<!DOCTYPE html>\r\n<html>\r\n<head>\r\n  <title>Email Confirmation</title>\r\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\r\n  <style>\r\n    body {{\r\n      background: #f9f9f9;\r\n      margin: 0;\r\n      padding: 0;\r\n    }}\r\n    .container {{\r\n      max-width: 640px;\r\n      margin: 0 auto;\r\n      background: #ffffff;\r\n      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);\r\n      border-radius: 4px;\r\n      overflow: hidden;\r\n    }}\r\n  </style>\r\n</head>\r\n<body>\r\n  <div class=\"container\">\r\n    <div style=\"background-color: #7289da; padding: 57px; text-align: center;\">\r\n      <div style=\"cursor: auto; color: white; font-family: Arial, sans-serif; font-size: 36px; font-weight: 600;\">\r\n        Welcome to SkyLink!\r\n      </div>\r\n    </div>\r\n    \r\n    <div style=\"padding: 40px 70px;\">\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <h2 style=\"font-weight: 500; font-size: 20px; color: #4f545c;\">Hey SmilesDavis,</h2>\r\n        <p>\r\n          Welcome aboard SkyLink! 🚀 Thanks for signing up! We're thrilled to have you join our community.\r\n        </p>\r\n        <p>\r\n          To get started, we just need to confirm your email address to ensure everything runs smoothly.\r\n        </p>\r\n        <p>\r\n          Click the button below to verify your email and unlock all the amazing features SkyLink has to offer:\r\n        </p>\r\n      </div>\r\n      <div style=\"text-align: center; padding: 20px;\">\r\n        <a href=\"{confirmationLink}\" style=\"display: inline-block; background-color: #7289da; color: white; text-decoration: none; padding: 15px 30px; border-radius: 3px;\">Verify Email</a>\r\n      </div>\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>\r\n        <p>Omar<br>SkyLink Team</p>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</body>\r\n</html>\r\n";
                     // Send email confirmation link
-                    await _emailService.SendEmailAsync(userDTO.Email, "Email Confiramtion", $"Please confirm your email by clicking here: <a href='{confirmationLink}'>link</a>", true);
+                    await _emailService.SendEmailAsync(userDTO.Email, "Email Confiramtion", mailBody, true);
 
                     //----------------------------------
 
                     return new GeneralResponse()
                     {
                         IsSuccess = true,
-                        Data = null,
-                        Message = "Account Created Successfully and Confiramtion mail has been sent"
+                        Data = userPassenger.Id,
+                        Message = "Account Created Successfully and Confiramtion mail has been sent , and there is the Passenger ID => save it and send it when he wants to Add a ticket"
                     };
                 }
                 else
