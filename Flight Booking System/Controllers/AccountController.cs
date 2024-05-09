@@ -1,8 +1,8 @@
-using Flight_Booking_System.DTOs;
+﻿using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
+using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
 using Flight_Booking_System.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 //using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
@@ -10,13 +10,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Infobip.Api.Client;
-using System.Net.Mail;
-using RestSharp;
-using Infobip.Api.Client.Model;
-using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
 
 
 namespace Flight_Booking_System.Controllers
@@ -29,14 +22,16 @@ namespace Flight_Booking_System.Controllers
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
         private readonly IGoogleAuthService googleAuthService;
+        private readonly IPassengerRepository _passengerRepository;
 
         public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration, IEmailService emailService,
-             IGoogleAuthService _googleAuthService)
+             IGoogleAuthService _googleAuthService , IPassengerRepository passengerRepository)
         {
             this._userManager = userManager;
             this._configuration = configuration;
             _emailService = emailService;
             googleAuthService = _googleAuthService;
+            this._passengerRepository = passengerRepository;
         }
 
         [HttpPost("register")]
@@ -44,6 +39,26 @@ namespace Flight_Booking_System.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Also Creating a new passenger with flightId = null , flight = null , ticket = null
+                Passenger userPassenger = new Passenger()
+                {
+
+                    Name = userDTO.UserName,
+                    Age = userDTO.Age,
+                    Gender = userDTO.Gender,
+                    PassportNum = userDTO.PassportNum,
+                    NationalId = userDTO.NationalId,
+
+                    Flight = null,
+                    FlightId = null,
+
+                    Ticket = null,
+                };
+
+                _passengerRepository.Insert(userPassenger);
+
+                _passengerRepository.Save();
+
                 ApplicationUSer user = new ApplicationUSer()
                 {
                     UserName = userDTO.UserName,
@@ -54,99 +69,36 @@ namespace Flight_Booking_System.Controllers
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
 
+                    Passenger = userPassenger,
+                    PassengerId = userPassenger.Id,
                 };
+
+                userPassenger.User = user;
+
 
                 // create Account in database
                 IdentityResult createAccResult = await _userManager.CreateAsync(user, userDTO.Password);
 
                 if (createAccResult.Succeeded)
                 {
+                    // Adding user Role by default
+                    await _userManager.AddToRoleAsync(user, "User");
+
                     // Generate email confirmation token
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, Request.Scheme);
 
+                    string mailBody = $"<!DOCTYPE html>\r\n<html>\r\n<head>\r\n  <title>Email Confirmation</title>\r\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\r\n  <style>\r\n    body {{\r\n      background: #f9f9f9;\r\n      margin: 0;\r\n      padding: 0;\r\n    }}\r\n    .container {{\r\n      max-width: 640px;\r\n      margin: 0 auto;\r\n      background: #ffffff;\r\n      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);\r\n      border-radius: 4px;\r\n      overflow: hidden;\r\n    }}\r\n  </style>\r\n</head>\r\n<body>\r\n  <div class=\"container\">\r\n    <div style=\"background-color: #7289da; padding: 57px; text-align: center;\">\r\n      <div style=\"cursor: auto; color: white; font-family: Arial, sans-serif; font-size: 36px; font-weight: 600;\">\r\n        Welcome to SkyLink!\r\n      </div>\r\n    </div>\r\n    \r\n    <div style=\"padding: 40px 70px;\">\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <h2 style=\"font-weight: 500; font-size: 20px; color: #4f545c;\">Hey SmilesDavis,</h2>\r\n        <p>\r\n          Welcome aboard SkyLink! 🚀 Thanks for signing up! We're thrilled to have you join our community.\r\n        </p>\r\n        <p>\r\n          To get started, we just need to confirm your email address to ensure everything runs smoothly.\r\n        </p>\r\n        <p>\r\n          Click the button below to verify your email and unlock all the amazing features SkyLink has to offer:\r\n        </p>\r\n      </div>\r\n      <div style=\"text-align: center; padding: 20px;\">\r\n        <a href=\"{confirmationLink}\" style=\"display: inline-block; background-color: #7289da; color: white; text-decoration: none; padding: 15px 30px; border-radius: 3px;\">Verify Email</a>\r\n      </div>\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>\r\n        <p>Omar<br>SkyLink Team</p>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</body>\r\n</html>\r\n";
                     // Send email confirmation link
-                    await _emailService.SendEmailAsync(userDTO.Email, "Email Confiramtion", $"Please confirm your email by clicking here: <a href='{confirmationLink}'>link</a>", true);
-
-                    #region Phone confiramtion (not done yet)
-                    // // Generate phone number confirmation token
-                    // var phoneToken = await _userManager.GenerateChangePhoneNumberTokenAsync(user, userDTO.PhoneNumber);
-
-                    // // Send phone number confirmation token via SMS or other means
-                    // var infobipClientOptions = new RestClientOptions("https://qy2pew.api.infobip.com")
-                    // {
-                    //     MaxTimeout = -1,
-                    // };
-                    // var infobipClient = new RestClient(infobipClientOptions);
-
-                    // var infobipRequest = new RestRequest("/2fa/2/applications", RestSharp.Method.Get);
-
-                    // infobipRequest.AddHeader("Authorization", "{authorization}"); // Replace {authorization} with your actual authorization token
-                    // infobipRequest.AddHeader("Accept", "application/json");
-                    // var infobipResponse = await infobipClient.ExecuteAsync(infobipRequest);
-                    // // Log the response content
-                    // // Example using Serilog: Log.Information(infobipResponse.Content);
-
-                    // //----------------------------------
-
-                    // var infobipApiBaseUrl = _configuration["Infobip:ApiBaseUrl"];
-                    // var qy2pewApiBaseUrl = _configuration["Infobip:Qy2pewApiBaseUrl"];
-                    // var apiKey = _configuration["Infobip:ApiKey"];
-                    // var apiKeyPrefix = _configuration["Infobip:ApiKeyPrefix"];
-                    // var userAgent = _configuration["Infobip:UserAgent"];
-
-                    // // Initialize Infobip SMS client
-                    // var infobipConfiguration = new Configuration() 
-                    // { 
-                    //     BasePath = infobipApiBaseUrl ,
-                    //     ApiKey = apiKey ,
-                    //     //UserAgent = userAgent ,
-                    //     //ApiKeyPrefix = apiKeyPrefix ,
-                    // };
-
-                    // var infobipSmsClient = new SmsClient(infobipConfiguration);
-
-                    // // Create SMS message
-                    // var smsTextualRequest = new SmsTextualRequest
-                    // {
-                    //     From = "SenderName", // Your sender name or number
-                    //     To = userDTO.PhoneNumber, // Recipient phone number
-                    //     Text = "Your confirmation code is: " + phoneToken // Your confirmation message
-                    // };
-
-                    // //Send SMS message
-                    //var smsResponse = await infobipSmsClient.SendSmsTextualAsync(smsTextualRequest);
-
-                    // //Handle response(e.g., check if the message was sent successfully)
-                    // if (smsResponse != null && smsResponse.Messages != null && smsResponse.Messages.Count > 0)
-                    // {
-                    //     // SMS sent successfully
-                    //     return new GeneralResponse()
-                    //     {
-                    //         IsSuccess = true,
-                    //         Data = smsResponse.Messages,
-                    //         Message = "SMS Sent Successfully"
-                    //     };
-                    // }
-                    // else
-                    // {
-                    //     // Failed to send SMS
-                    //     return new GeneralResponse()
-                    //     {
-                    //         IsSuccess = false,
-                    //         Data = null,
-                    //         Message = "Failed to send SMS"
-                    //     };
-                    // } 
-                    #endregion
+                    await _emailService.SendEmailAsync(userDTO.Email, "Email Confiramtion", mailBody, true);
 
                     //----------------------------------
 
                     return new GeneralResponse()
                     {
                         IsSuccess = true,
-                        Data = null,
-                        Message = "Account Created Successfully and Confiramtion mail has been sent"
+                        Data = userPassenger.Id,
+                        Message = "Account Created Successfully and Confiramtion mail has been sent , and there is the Passenger ID => save it and send it when he wants to Add a ticket"
                     };
                 }
                 else
@@ -313,8 +265,8 @@ namespace Flight_Booking_System.Controllers
                             Message = "Token Created Successfully"
                         };
                     }
-                    else  
-                    {  
+                    else
+                    {
                         return new GeneralResponse()
                         {
                             IsSuccess = false,
@@ -348,6 +300,48 @@ namespace Flight_Booking_System.Controllers
             // string idToken = Request.Headers["Authorization"];
             //googleSignInDTO.IdToken = idToken;
             return await googleAuthService.GoogleSignIn(googleSignInDTO);
+        }
+
+        //ibrahim forget password
+
+        [HttpPost("ChnagePassword")]
+
+        public async Task<ActionResult<GeneralResponse>> ChnagePassword([FromBody] ChangePasswordModel changePasswordModel)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Message = "User not found"
+
+                };
+            }
+            else
+            {
+                var resulst = await _userManager.ChangePasswordAsync(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword);
+
+                if (!resulst.Succeeded)
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Message = $"{resulst.Errors}"
+
+                    };
+                }
+                else
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = true,
+                        Message = "password changed sucessfully"
+                    };
+                }
+            }
+
         }
 
     }
