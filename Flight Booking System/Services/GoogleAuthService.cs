@@ -52,7 +52,7 @@ namespace Flight_Booking_System.Services
                 Audience = new string[] { _googleAuthConfig.ClientId }
             };
 
-            Payload payload = await GoogleJsonWebSignature.ValidateAsync(model.IdToken, settings);
+            Payload payload = await GoogleJsonWebSignature.ValidateAsync(model.IdToken, settings); // validate that aud of token matches clienId of my project on google cloud api
             if (payload == null)
             {
                 return new GeneralResponse
@@ -75,7 +75,7 @@ namespace Flight_Booking_System.Services
             SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             // in the JWT payload => JwtSecurityToken is a class that design the token
-            JwtSecurityToken jwtSecurityToken = new JwtSecurityToken
+            JwtSecurityToken jwtSecurityToken = new JwtSecurityToken    // design token
                 (
                 issuer: _configuration["JWT:ValidIss"], // the povider API who is responsible for creating the token
                 audience: _configuration["JWT:ValidAud"],  // the consumer (React domain)
@@ -99,7 +99,7 @@ namespace Flight_Booking_System.Services
             {
                 IsSuccess = true,
                 Data = new { name = payload.Name, email = payload.Email },
-                Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),  // create token
                 Expired = jwtSecurityToken.ValidTo,
                 Message = "successful external login"
             };
