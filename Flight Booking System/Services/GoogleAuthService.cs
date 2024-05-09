@@ -26,15 +26,15 @@ namespace Flight_Booking_System.Services
         private readonly GoogleAuthConfig _googleAuthConfig;
         //  private readonly ILog _logger;
         private readonly IConfiguration _configuration;
-        //  private readonly PassengerRepository _passengerRepository;
+        private readonly IPassengerRepository _passengerRepository;
 
 
         public GoogleAuthService(
             UserManager<ApplicationUSer> userManager,
             ITIContext context,
             IOptions<GoogleAuthConfig> googleAuthConfig,
-             IConfiguration configuration
-            //   PassengerRepository passengerRepository
+            IConfiguration configuration,
+            IPassengerRepository passengerRepository
             )
         {
             _userManager = userManager;
@@ -42,7 +42,7 @@ namespace Flight_Booking_System.Services
             _googleAuthConfig = googleAuthConfig.Value;
             //  _logger = LogManager.GetLogger(typeof(GoogleAuthService));
             _configuration = configuration;
-            //  _passengerRepository = passengerRepository;
+            _passengerRepository = passengerRepository;
         }
 
         public async Task<GeneralResponse> GoogleSignIn(GoogleSignInDTO model) 
@@ -79,9 +79,9 @@ namespace Flight_Booking_System.Services
                 Ticket = null,
             };
 
-            //_passengerRepository.Insert(userPassenger);
+            _passengerRepository.Insert(userPassenger);
 
-            //_passengerRepository.Save();
+            _passengerRepository.Save();
 
 
             List<Claim> myClaims = new List<Claim>();
