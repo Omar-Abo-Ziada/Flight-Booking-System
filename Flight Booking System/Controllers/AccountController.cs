@@ -1,8 +1,7 @@
-﻿using Flight_Booking_System.DTOs;
+using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Response;
 using Flight_Booking_System.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 //using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
@@ -10,14 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Infobip.Api.Client;
-using System.Net.Mail;
-using RestSharp;
-using Infobip.Api.Client.Model;
-using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
-using Flight_Booking_System.Repositories;
 
 
 namespace Flight_Booking_System.Controllers
@@ -29,15 +20,15 @@ namespace Flight_Booking_System.Controllers
         private readonly UserManager<ApplicationUSer> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
-        private readonly IPassengerRepository _passengerRepository;
+        private readonly IGoogleAuthService googleAuthService;
 
-        public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration,
-            IEmailService emailService, IPassengerRepository passengerRepository)
+        public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration, IEmailService emailService,
+             IGoogleAuthService _googleAuthService)
         {
-            _userManager = userManager;
-            _configuration = configuration;
+            this._userManager = userManager;
+            this._configuration = configuration;
             _emailService = emailService;
-            _passengerRepository = passengerRepository;
+            googleAuthService = _googleAuthService;
         }
 
         [HttpPost("register")]
@@ -75,36 +66,27 @@ namespace Flight_Booking_System.Controllers
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
 
-                    Passenger = userPassenger,
-                    PassengerId = userPassenger.Id,
                 };
-
-                userPassenger.User = user;
-
 
                 // create Account in database
                 IdentityResult createAccResult = await _userManager.CreateAsync(user, userDTO.Password);
 
                 if (createAccResult.Succeeded)
                 {
-                    // Adding user Role by default
-                    await _userManager.AddToRoleAsync(user, "User");
-
                     // Generate email confirmation token
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, Request.Scheme);
 
-                    string mailBody = $"<!DOCTYPE html>\r\n<html>\r\n<head>\r\n  <title>Email Confirmation</title>\r\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\r\n  <style>\r\n    body {{\r\n      background: #f9f9f9;\r\n      margin: 0;\r\n      padding: 0;\r\n    }}\r\n    .container {{\r\n      max-width: 640px;\r\n      margin: 0 auto;\r\n      background: #ffffff;\r\n      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);\r\n      border-radius: 4px;\r\n      overflow: hidden;\r\n    }}\r\n  </style>\r\n</head>\r\n<body>\r\n  <div class=\"container\">\r\n    <div style=\"background-color: #7289da; padding: 57px; text-align: center;\">\r\n      <div style=\"cursor: auto; color: white; font-family: Arial, sans-serif; font-size: 36px; font-weight: 600;\">\r\n        Welcome to SkyLink!\r\n      </div>\r\n    </div>\r\n    \r\n    <div style=\"padding: 40px 70px;\">\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <h2 style=\"font-weight: 500; font-size: 20px; color: #4f545c;\">Hey SmilesDavis,</h2>\r\n        <p>\r\n          Welcome aboard SkyLink! 🚀 Thanks for signing up! We're thrilled to have you join our community.\r\n        </p>\r\n        <p>\r\n          To get started, we just need to confirm your email address to ensure everything runs smoothly.\r\n        </p>\r\n        <p>\r\n          Click the button below to verify your email and unlock all the amazing features SkyLink has to offer:\r\n        </p>\r\n      </div>\r\n      <div style=\"text-align: center; padding: 20px;\">\r\n        <a href=\"{confirmationLink}\" style=\"display: inline-block; background-color: #7289da; color: white; text-decoration: none; padding: 15px 30px; border-radius: 3px;\">Verify Email</a>\r\n      </div>\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>\r\n        <p>Omar<br>SkyLink Team</p>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</body>\r\n</html>\r\n";
                     // Send email confirmation link
-                    await _emailService.SendEmailAsync(userDTO.Email, "Email Confiramtion", mailBody, true);
+                    await _emailService.SendEmailAsync(userDTO.Email, "Email Confiramtion", $"Please confirm your email by clicking here: <a href='{confirmationLink}'>link</a>", true);
 
                     //----------------------------------
 
                     return new GeneralResponse()
                     {
                         IsSuccess = true,
-                        Data = userPassenger.Id,
-                        Message = "Account Created Successfully and Confiramtion mail has been sent , and there is the Passenger ID => save it and send it when he wants to Add a ticket"
+                        Data = null,
+                        Message = "Account Created Successfully and Confiramtion mail has been sent"
                     };
                 }
                 else
@@ -292,5 +274,63 @@ namespace Flight_Booking_System.Controllers
                 };
             }
         }
+
+
+        // saeed : google login 
+        [HttpPost("googleLogin")]
+        public async Task<ActionResult<GeneralResponse>> googleLogin()
+        {
+            GoogleSignInDTO googleSignInDTO = new GoogleSignInDTO()
+            {
+                IdToken = Request.Headers["IdToken"]
+            };
+
+            // string idToken = Request.Headers["Authorization"];
+            //googleSignInDTO.IdToken = idToken;
+            return await googleAuthService.GoogleSignIn(googleSignInDTO);
+        }
+
+        //ibrahim forget password
+
+        [HttpPost("ChnagePassword")]
+
+        public async Task<ActionResult<GeneralResponse>> ChnagePassword([FromBody] ChangePasswordModel changePasswordModel)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Message = "User not found"
+
+                };
+            }
+            else
+            {
+                var resulst = await _userManager.ChangePasswordAsync(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword);
+
+                if (!resulst.Succeeded)
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Message = $"{resulst.Errors}"
+
+                    };
+                }
+                else
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = true,
+                        Message = "password changed sucessfully"
+                    };
+                }
+            }
+
+        }
+
     }
 }

@@ -42,7 +42,7 @@ namespace Flight_Booking_System.Controllers
         }
 
 
-        [HttpGet ("id:{int}")]   // from route
+        [HttpGet("{id:int}")]   // from route
         public ActionResult<GeneralResponse> GetById(int id) 
         {
            Country country = countryRepository.GetById(id);
@@ -137,7 +137,7 @@ namespace Flight_Booking_System.Controllers
         }
 
 
-        [HttpDelete("id:{int}")]  // from route
+        [HttpDelete("{id:int}")]  // from route
         public ActionResult<GeneralResponse>Delete(int id)
         {
            Country country = countryRepository.GetById(id);
