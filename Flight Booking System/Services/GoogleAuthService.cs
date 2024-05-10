@@ -26,15 +26,15 @@ namespace Flight_Booking_System.Services
         private readonly GoogleAuthConfig _googleAuthConfig;
         //  private readonly ILog _logger;
         private readonly IConfiguration _configuration;
-        //   private readonly PassengerRepository _passengerRepository;
+        private readonly IPassengerRepository _passengerRepository;
 
 
         public GoogleAuthService(
             UserManager<ApplicationUSer> userManager,
             ITIContext context,
             IOptions<GoogleAuthConfig> googleAuthConfig,
-             IConfiguration configuration
-            //   PassengerRepository passengerRepository
+            IConfiguration configuration,
+            IPassengerRepository passengerRepository
             )
         {
             _userManager = userManager;
@@ -42,7 +42,7 @@ namespace Flight_Booking_System.Services
             _googleAuthConfig = googleAuthConfig.Value;
             //  _logger = LogManager.GetLogger(typeof(GoogleAuthService));
             _configuration = configuration;
-            //  _passengerRepository = passengerRepository;
+            _passengerRepository = passengerRepository;
         }
 
         public async Task<GeneralResponse> GoogleSignIn(GoogleSignInDTO model) 
@@ -52,7 +52,7 @@ namespace Flight_Booking_System.Services
                 Audience = new string[] { _googleAuthConfig.ClientId }
             };
 
-            Payload payload = await GoogleJsonWebSignature.ValidateAsync(model.IdToken, settings);
+            Payload payload = await GoogleJsonWebSignature.ValidateAsync(model.IdToken, settings); // validate that aud of token matches clienId of my project on google cloud api
             if (payload == null)
             {
                 return new GeneralResponse
@@ -62,6 +62,27 @@ namespace Flight_Booking_System.Services
                     Message = "Google login failed"
                 };
             }
+
+            Passenger userPassenger = new Passenger()
+            {
+               
+
+                Name = payload.Name,
+                //Age = userDTO.Age,           // take default
+                //Gender = userDTO.Gender,      // take default
+                PassportNum = null,
+                NationalId = null,
+
+                Flight = null,
+                FlightId = null,
+
+                Ticket = null,
+            };
+
+            _passengerRepository.Insert(userPassenger);
+
+            _passengerRepository.Save();
+
 
             List<Claim> myClaims = new List<Claim>();
             myClaims.Add(new Claim(ClaimTypes.Email, payload.Email));
@@ -75,7 +96,7 @@ namespace Flight_Booking_System.Services
             SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             // in the JWT payload => JwtSecurityToken is a class that design the token
-            JwtSecurityToken jwtSecurityToken = new JwtSecurityToken
+            JwtSecurityToken jwtSecurityToken = new JwtSecurityToken    // design token
                 (
                 issuer: _configuration["JWT:ValidIss"], // the povider API who is responsible for creating the token
                 audience: _configuration["JWT:ValidAud"],  // the consumer (React domain)
@@ -99,7 +120,7 @@ namespace Flight_Booking_System.Services
             {
                 IsSuccess = true,
                 Data = new { name = payload.Name, email = payload.Email },
-                Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),  // create token
                 Expired = jwtSecurityToken.ValidTo,
                 Message = "successful external login"
             };
