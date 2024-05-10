@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 //using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Sockets;
 using System.Security.Claims;
 using System.Text;
 
@@ -23,15 +24,22 @@ namespace Flight_Booking_System.Controllers
         private readonly IEmailService _emailService;
         private readonly IGoogleAuthService googleAuthService;
         private readonly IPassengerRepository _passengerRepository;
+        private readonly ITicketRepository _ticketRepository;
+        private readonly IFlightRepository _flightRepository;
+        private readonly ISeatRepository _seatRepository;
 
         public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration, IEmailService emailService,
-             IGoogleAuthService _googleAuthService , IPassengerRepository passengerRepository)
+             IGoogleAuthService _googleAuthService, IPassengerRepository passengerRepository,
+             ITicketRepository ticketRepository, IFlightRepository flightRepository , ISeatRepository seatRepository)
         {
             this._userManager = userManager;
             this._configuration = configuration;
             _emailService = emailService;
             googleAuthService = _googleAuthService;
             this._passengerRepository = passengerRepository;
+            this._ticketRepository = ticketRepository;
+            this._flightRepository = flightRepository;
+            this._seatRepository = seatRepository;
         }
 
         [HttpPost("register")]
@@ -81,7 +89,16 @@ namespace Flight_Booking_System.Controllers
                 if (createAccResult.Succeeded)
                 {
                     // Adding user Role by default
-                    await _userManager.AddToRoleAsync(user, "User");
+                    IdentityResult addRoleResult = await _userManager.AddToRoleAsync(user, "User");
+
+                    if (!addRoleResult.Succeeded)
+                    {
+                        return new GeneralResponse()
+                        {
+                            IsSuccess = false,
+                            Message = "Couldn't Add the default Role to this user ,, check that you already added Roles first"
+                        };
+                    }
 
                     // Generate email confirmation token
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -336,6 +353,164 @@ namespace Flight_Booking_System.Controllers
                         Message = "password changed sucessfully"
                     };
                 }
+            }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<GeneralResponse>> DeleteUser(string userName)
+        {
+            ApplicationUSer? user = await _userManager.FindByNameAsync(userName);
+
+            if (user is null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Message = "There is no user with this  username ."
+                };
+            }
+
+            #region deleting user references first if found
+
+            //Passenger passenger = _passengerRepository.GetById(user.PassengerId);
+            Passenger? passenger = _passengerRepository.GetWithTicket(user.PassengerId);
+
+            if (passenger != null)
+            {
+
+                // checking if there is a flight realted to this passenger 
+                Flight? flight = _flightRepository.GetWithPlane_Passengers(passenger.FlightId);
+
+                if (flight != null)
+                {
+                    // checking if there is a flight contains this passenger on it 
+                    if (flight.Passengers.Contains(passenger))
+                    {
+                        flight.Passengers.Remove(passenger);
+                    }
+
+                    // checking if there is a ticket related to this passenger
+                    //Ticket? ticket = _ticketRepository.Get(t => t.PassengerId == passenger.Id).FirstOrDefault();
+                    Ticket? ticket = _ticketRepository.GetWithSeat_Passenger(passenger?.Ticket?.Id);
+
+                    if (ticket != null)
+                    {
+                        // checking if there is a flight contains this ticket on it 
+                        if (flight.Tickets.Contains(ticket))
+                        {
+                            flight.Tickets.Remove(ticket);
+                        }
+
+                        ticket.Passenger = null;
+                        ticket.PassengerId = null;
+
+                        ticket.FlightId = null;
+                        ticket.Flight = null;
+
+                        if(ticket.Seat != null)
+                        {
+                            Seat? seat = _seatRepository.GetWithTicket(ticket.Seat.Id);
+
+                            if(seat != null)
+                            {
+                                seat.Ticket = null;
+                                seat.TicketId = null;
+
+                                try
+                                {
+                                    _seatRepository.Delete(seat);
+                                    _seatRepository.Save();
+
+                                    ticket.Seat = null;
+                                }
+                                catch (Exception ex)
+                                {
+                                    return new GeneralResponse()
+                                    {
+                                        IsSuccess = false,
+                                        Data = ex.Message,
+                                        Message = "Couldn't delete the seat related to this passenger"
+                                    };
+                                }
+                            }
+                        }
+
+                        try
+                        {
+                            _ticketRepository.Delete(ticket);
+                            _ticketRepository.Save();
+                        }
+                        catch(Exception ex)
+                        {
+                            return new GeneralResponse()
+                            {
+                                IsSuccess = false,
+                                Data = ex.Message,
+                                Message = "Couldn't delete the ticket related to this passenger "
+                            };
+                        }
+                    }
+                }
+
+                passenger.User = null;
+
+                passenger.Flight = null;
+                passenger.FlightId = null;
+
+                passenger.Ticket = null;
+
+                try
+                {
+                    _passengerRepository.Delete(passenger);
+                    _passengerRepository.Save();
+                }
+                catch (Exception ex)
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Data = ex.Message,
+                        Message = "Couldn't delete the passenger due to this error"
+                    };
+                }
+            }
+
+            #endregion
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+            foreach (var role in userRoles)
+            {
+                // don't forget to remove his role first
+                IdentityResult removeRoleResult = await _userManager.RemoveFromRoleAsync(user, role);
+
+                if (!removeRoleResult.Succeeded)
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Message = $"Couldn't Remove the ({role}) role from the user before deleting the user"
+                    };
+                }
+            }
+
+            IdentityResult deleteResult = await _userManager.DeleteAsync(user);
+
+            if (deleteResult.Succeeded)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = true,
+                    Message = $"the user : {user.UserName} deleted successfully ."
+                };
+            }
+            else
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Message = $"Failed to delete the user : {user.UserName}"
+                };
             }
         }
     }

@@ -13,10 +13,10 @@ namespace Flight_Booking_System.Repositories
 
         }
 
-        public Flight? GetWithPlane(int id)
+        public Flight? GetWithPlane_Passengers(int? id)
         {
             return Context.Flights
-                 .Where(f => f.Id == id).Include(f => f.Plane).FirstOrDefault();
+                 .Where(f => f.Id == id).Include(f => f.Plane).Include(f => f.Passengers).FirstOrDefault();
         }
     }
 }

@@ -4,7 +4,7 @@
     {
         List<T> GetAll(string? include = null);
 
-        T GetById(int id);
+        T GetById(int? id);
 
         List<T> Get(Func<T, bool> where);
 

@@ -103,7 +103,7 @@ namespace Flight_Booking_System.Controllers
             if (ModelState.IsValid)
             {
                 ///TODO : don't forget include passengers also
-                Flight? flight = flightRepository.GetWithPlane((int)ticketDTO.FlightId);
+                Flight? flight = flightRepository.GetWithPlane_Passengers((int)ticketDTO.FlightId);
 
                 if (flight?.Plane?.capacity <= flight?.Passengers?.Count)
                 {
@@ -156,7 +156,7 @@ namespace Flight_Booking_System.Controllers
                 seatRepository.Save();
 
                 seat.Number = seat.Id;
-
+                //ggggggggggg
                 ticket.Seat = seat;
 
                 ticketRepository.Save();
@@ -231,6 +231,7 @@ namespace Flight_Booking_System.Controllers
             }
             else
             {
+                
                 ticketRepository.Delete(ticket);
                 ticketRepository.Save();
                 return new GeneralResponse()
