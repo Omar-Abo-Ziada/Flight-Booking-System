@@ -114,7 +114,8 @@ namespace Flight_Booking_System.Controllers
                     {
                         IsSuccess = true,
                         Data = userPassenger.Id,
-                        Message = "Account Created Successfully and Confiramtion mail has been sent , and there is the Passenger ID => save it and send it when he wants to Add a ticket"
+                        Message = "Account Created Successfully and Confiramtion mail has been sent , " +
+                        "and there is the Passenger ID => save it and send it when he wants to Add a ticket"
                     };
                 }
                 else

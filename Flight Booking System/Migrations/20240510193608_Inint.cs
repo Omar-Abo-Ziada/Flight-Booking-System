@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Flight_Booking_System.Migrations
 {
     /// <inheritdoc />
-    public partial class Passenger_User : Migration
+    public partial class Inint : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

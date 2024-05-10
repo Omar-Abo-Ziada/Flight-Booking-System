@@ -82,7 +82,7 @@ namespace Flight_Booking_System.Controllers
                 };
             }
         }
-
+  
         [HttpPost]
         //[Authorize]
         public ActionResult<GeneralResponse> Add(Passenger passenger)
