@@ -20,6 +20,7 @@ namespace Flight_Booking_System.Controllers
             this.passengerRepository = _passengerRepository;
             this.mapper = mapper;  
         }
+
         [HttpGet]
         public ActionResult<GeneralResponse> Get()
         {

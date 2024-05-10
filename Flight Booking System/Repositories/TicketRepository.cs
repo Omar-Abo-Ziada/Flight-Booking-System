@@ -1,6 +1,7 @@
 ﻿using Flight_Booking_System.Context;
 using Flight_Booking_System.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Flight_Booking_System.Repositories
 {
@@ -8,44 +9,14 @@ namespace Flight_Booking_System.Repositories
     {
         public TicketRepository(ITIContext _context) : base(_context)
         {
+
         }
 
-        public void Insert(Ticket item)
-        {
-            Context.Add(item);
-        }
+        //*************************************************************
 
-        public void Update(Ticket item)
+        public Ticket? GetWithSeat_Passenger(int? id)
         {
-            Context.Update(item);
-        }
-
-        public List<Ticket> GetAll(string? include = null)
-        {
-            if (include == null)
-            {
-                return Context.Tickets.ToList();
-            }
-            return Context.Tickets.Include(include).ToList();
-        }
-
-        public Ticket GetById(int Id)
-        {
-            return Context.Tickets.FirstOrDefault(item => item.Id == Id);
-        }
-        public List<Ticket> Get(Func<Ticket, bool> where)
-        {
-            return Context.Tickets.Where(where).ToList();
-        }
-
-        public void Delete(Ticket item)
-        {
-            Context.Remove(item);
-        }
-
-        public void Save()
-        {
-            Context.SaveChanges();
+          return  Context.Tickets.Where(t => t.Id == id).Include(t => t.Seat).Include(t => t.Passenger).FirstOrDefault();
         }
     }
 }

@@ -4,6 +4,6 @@ namespace Flight_Booking_System.Repositories
 {
     public interface IFlightRepository : IRepository<Flight>
     {
-        Flight? GetWithPlane(int id);
+        Flight? GetWithPlane_Passengers(int? id);
     }
 }
