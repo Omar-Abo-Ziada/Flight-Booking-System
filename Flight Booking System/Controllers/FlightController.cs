@@ -20,11 +20,13 @@ namespace Flight_Booking_System.Controllers
         private readonly IPlaneRepository planeRepository;
         private readonly IPassengerRepository passengerRepository;
         private readonly ITicketRepository ticketRepository;
+        private readonly ISeatRepository seatRepository;
 
         public FlightController
             (IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment ,  IMapper mapper,
             IAirPortRepository airPortRepository , IPlaneRepository planeRepository ,
-            IPassengerRepository passengerRepository , ITicketRepository ticketRepository)
+            IPassengerRepository passengerRepository , ITicketRepository ticketRepository,
+            ISeatRepository seatRepository)
         {
             this.flightRepository = flightRepository;
             _webHostEnvironment = webHostEnvironment;
@@ -33,6 +35,7 @@ namespace Flight_Booking_System.Controllers
             this.planeRepository = planeRepository;
             this.passengerRepository = passengerRepository;
             this.ticketRepository = ticketRepository;
+            this.seatRepository = seatRepository;
         }
 
         //***********************************************
@@ -312,22 +315,60 @@ namespace Flight_Booking_System.Controllers
                     foreach (Passenger passenger in flightPassengers)
                     {
                         passenger.FlightId = null;
+                        passenger.Flight = null;
                     }
 
                     Plane flightPlane = planeRepository.Get(p => p.FlightId == flightFromDB.Id).FirstOrDefault();
 
                     flightPlane.FlightId = null;
+                    flightPlane.Flight = null;
+
 
                     List<Ticket> flightTickets = ticketRepository.Get(t => t.FlightId == flightFromDB.Id);
 
+                   
                     foreach (Ticket ticket in flightTickets)
-                    {
+                    { 
+                        Seat seat = seatRepository.Get(s => s.TicketId == ticket.Id).First();
                         ticket.FlightId = null;
+                        ticket.Flight = null;
+                        ticket.Seat = null;
+                        ticket.Passenger = null;
+                        seat.TicketId = null; 
+                        seat.Ticket = null;
+                        seatRepository.Delete(seat);
+                        ticketRepository.Delete(ticket);
                     }
+
+                    seatRepository.Save();
+                    ticketRepository.Save();
+
+
+                    // delete flight from source airport leaving flights list
+
+                    AirPort? sourceAirport = airPortRepository.GetSourceWithFlights(flightFromDB.SourceAirportId);  ///todo : can access after deletion????
+                    if(sourceAirport.LeavingFlights != null)
+                    {
+                        sourceAirport.LeavingFlights.Remove(flightFromDB);
+                    }
+                
+
+
+                    // delete flight from destination airport arriving flights list
+
+
+                    AirPort? destinationAirport = airPortRepository.GetDsetinationWithFlights(flightFromDB.DestinationAirportId);  ///todo : can access after deletion????
+                    if (destinationAirport.ArrivingFlights != null)
+                    {
+                        destinationAirport.ArrivingFlights.Remove(flightFromDB);
+                    }
+
 
                     flightRepository.Delete(flightFromDB);
 
                     flightRepository.Save();
+
+
 
                     return new GeneralResponse()
                     {

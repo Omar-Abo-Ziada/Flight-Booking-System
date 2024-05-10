@@ -19,5 +19,17 @@ namespace Flight_Booking_System.Repositories
 
             return airPortfromDB;
         }
+
+       public AirPort? GetSourceWithFlights(int? id) 
+        {
+            return Context.AirPorts.Where(a => a.Id == id)
+                .Include(a => a.LeavingFlights).FirstOrDefault();
+        }
+
+        public AirPort? GetDsetinationWithFlights(int? id) 
+        {
+            return Context.AirPorts.Where(a => a.Id == id)
+                .Include(a => a.ArrivingFlights).FirstOrDefault();
+        }
     }
 }
