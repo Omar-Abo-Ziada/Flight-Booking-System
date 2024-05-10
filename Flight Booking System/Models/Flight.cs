@@ -39,10 +39,13 @@ namespace Flight_Booking_System.Models
 
         //-----------------------------------------
 
+        /// todo : remove the new list and check in the controller
         public List<Passenger>? Passengers { get; set; } = new List<Passenger>();
 
         //-----------------------------------------
 
+        /// todo : remove the new list and check in the controller
         public List<Ticket>? Tickets { get; set; } = new List<Ticket>();
     }
 }
+///todo : the passengers added in model creating are not added in the lists in the models => sol : api called intiliz loops on all the FKs and creates lists and add them in it .. and this will be for the all models

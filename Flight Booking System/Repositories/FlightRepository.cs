@@ -13,6 +13,20 @@ namespace Flight_Booking_System.Repositories
 
         }
 
+        //*************************************************************
+
+        // used in system initialize
+        public List<Flight> GetAllWithAllIncludes()
+        {
+          return  Context.Flights
+                .Include(f => f.SourceAirport)
+                .Include(f => f.DestinationAirport)
+                .Include(f => f.Plane)
+                .Include(f => f.Passengers)
+                .Include(f => f.Tickets)
+                .ToList();
+        }
+
         public Flight? GetWithPlane_Passengers(int? id)
         {
             return Context.Flights

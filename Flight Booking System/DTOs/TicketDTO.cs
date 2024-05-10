@@ -22,7 +22,7 @@ namespace Flight_Booking_System.DTOs
         public Class Class { get; set; } // have to be sent from the front-end
 
         [Required(ErrorMessage = "The Passenger Id is required")]
-        public int? PassengerId { get; set; }
+        public int? PassengerId { get; set; } // have to be sent from the front-end
 
         //[Required(ErrorMessage = "The SeatId  is required")]
         //public int? SeatId { get; set; }

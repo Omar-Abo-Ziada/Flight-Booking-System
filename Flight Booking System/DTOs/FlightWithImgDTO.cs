@@ -6,21 +6,23 @@ namespace Flight_Booking_System.DTOs
 {
     public class FlightWithImgDTO
     {
-        
+        public int? PlaneId { get; set; }
+
+        //------------------------------------
+
         public int Id { get; set; }
 
         public string? imageURL { get; set; }
 
         [NotMapped]
         [Required(ErrorMessage = "The Image required")]
-
         public IFormFile? Image { get; set; }
 
-        [Required(ErrorMessage = "The StartId required")]
+        [Required(ErrorMessage = "The Source Airport Id is required")]
         public int? StartId { get; set; }
 
 
-        [Required(ErrorMessage = "The DestinationId required")]
+        [Required(ErrorMessage = "The Destination Airport Id required")]
         public int? DestinationId { get; set; }
 
 
@@ -28,19 +30,7 @@ namespace Flight_Booking_System.DTOs
 
         public DateTime? ArrivalTime { get; set; }
 
-        public TimeSpan? Duration { get; set; }
-
-        [Required(ErrorMessage = "The PlaneId required")]
-
-        public int? PlaneId { get; set; }
-
-        [Required(ErrorMessage = "The AirLineId  is required")]
-
-        public int? AirLineId { get; set; }
-
-
-
-
+        public string? Duration { get; set; } 
 
     }
 }

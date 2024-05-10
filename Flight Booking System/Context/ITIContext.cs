@@ -77,7 +77,7 @@ namespace Flight_Booking_System.Context
          );
 
             modelBuilder.Entity<Country>().HasData(
-             new Country { Id = 1, Name = "Egypt", AirPortId = 1 },
+             new Country { Id = 1, Name = "Egypt", AirPortId = 1},
              new Country { Id = 2, Name = "USA", AirPortId = 2 },
              new Country { Id = 3, Name = "Germany", AirPortId = 3 },
              new Country { Id = 4, Name = "Australia", AirPortId = 4 },
