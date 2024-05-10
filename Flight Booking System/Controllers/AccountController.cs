@@ -390,7 +390,6 @@ namespace Flight_Booking_System.Controllers
                     }
 
                     // checking if there is a ticket related to this passenger
-                    //Ticket? ticket = _ticketRepository.Get(t => t.PassengerId == passenger.Id).FirstOrDefault();
                     Ticket? ticket = _ticketRepository.GetWithSeat_Passenger(passenger?.Ticket?.Id);
 
                     if (ticket != null)
