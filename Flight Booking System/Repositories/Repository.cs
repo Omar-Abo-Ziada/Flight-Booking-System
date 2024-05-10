@@ -26,7 +26,7 @@ namespace Flight_Booking_System.Repositories
             return Context.Set<T>().Include(include).ToList();
         }
 
-        public T GetById(int Id)
+        public T GetById(int? Id)
         {
             return Context.Set<T>().Find(Id);
         }

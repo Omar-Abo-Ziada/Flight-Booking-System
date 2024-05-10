@@ -8,44 +8,14 @@ namespace Flight_Booking_System.Repositories
     {
         public SeatRepository(ITIContext _context) : base(_context)
         {
+
         }
 
-        public void Insert(Seat item)
-        {
-            Context.Add(item);
-        }
+        //*******************************************
 
-        public void Update(Seat item)
+        public Seat? GetWithTicket(int? id)
         {
-            Context.Update(item);
-        }
-
-        public List<Seat> GetAll(string? include = null)
-        {
-            if (include == null)
-            {
-                return Context.Seats.ToList();
-            }
-            return Context.Seats.Include(include).ToList();
-        }
-
-        public Seat GetById(int Id)
-        {
-            return Context.Seats.FirstOrDefault(item => item.Id == Id);
-        }
-        public List<Seat> Get(Func<Seat, bool> where)
-        {
-            return Context.Seats.Where(where).ToList();
-        }
-
-        public void Delete(Seat item)
-        {
-            Context.Remove(item);
-        }
-
-        public void Save()
-        {
-            Context.SaveChanges();
+            return Context.Seats.Where(s => s.Id == id).FirstOrDefault();
         }
     }
 }

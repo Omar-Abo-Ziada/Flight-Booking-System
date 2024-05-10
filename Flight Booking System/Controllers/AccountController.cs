@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 //using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Sockets;
 using System.Security.Claims;
 using System.Text;
 
@@ -23,15 +24,22 @@ namespace Flight_Booking_System.Controllers
         private readonly IEmailService _emailService;
         private readonly IGoogleAuthService googleAuthService;
         private readonly IPassengerRepository _passengerRepository;
+        private readonly ITicketRepository _ticketRepository;
+        private readonly IFlightRepository _flightRepository;
+        private readonly ISeatRepository _seatRepository;
 
         public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration, IEmailService emailService,
-             IGoogleAuthService _googleAuthService , IPassengerRepository passengerRepository)
+             IGoogleAuthService _googleAuthService, IPassengerRepository passengerRepository,
+             ITicketRepository ticketRepository, IFlightRepository flightRepository , ISeatRepository seatRepository)
         {
             this._userManager = userManager;
             this._configuration = configuration;
             _emailService = emailService;
             googleAuthService = _googleAuthService;
             this._passengerRepository = passengerRepository;
+            this._ticketRepository = ticketRepository;
+            this._flightRepository = flightRepository;
+            this._seatRepository = seatRepository;
         }
 
         [HttpPost("register")]
@@ -81,13 +89,22 @@ namespace Flight_Booking_System.Controllers
                 if (createAccResult.Succeeded)
                 {
                     // Adding user Role by default
-                    await _userManager.AddToRoleAsync(user, "User");
+                    IdentityResult addRoleResult = await _userManager.AddToRoleAsync(user, "User");
+
+                    if (!addRoleResult.Succeeded)
+                    {
+                        return new GeneralResponse()
+                        {
+                            IsSuccess = false,
+                            Message = "Couldn't Add the default Role to this user ,, check that you already added Roles first"
+                        };
+                    }
 
                     // Generate email confirmation token
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, Request.Scheme);
 
-                    string mailBody = $"<!DOCTYPE html>\r\n<html>\r\n<head>\r\n  <title>Email Confirmation</title>\r\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\r\n  <style>\r\n    body {{\r\n      background: #f9f9f9;\r\n      margin: 0;\r\n      padding: 0;\r\n    }}\r\n    .container {{\r\n      max-width: 640px;\r\n      margin: 0 auto;\r\n      background: #ffffff;\r\n      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);\r\n      border-radius: 4px;\r\n      overflow: hidden;\r\n    }}\r\n  </style>\r\n</head>\r\n<body>\r\n  <div class=\"container\">\r\n    <div style=\"background-color: #7289da; padding: 57px; text-align: center;\">\r\n      <div style=\"cursor: auto; color: white; font-family: Arial, sans-serif; font-size: 36px; font-weight: 600;\">\r\n        Welcome to SkyLink!\r\n      </div>\r\n    </div>\r\n    \r\n    <div style=\"padding: 40px 70px;\">\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <h2 style=\"font-weight: 500; font-size: 20px; color: #4f545c;\">Hey SmilesDavis,</h2>\r\n        <p>\r\n          Welcome aboard SkyLink! 🚀 Thanks for signing up! We're thrilled to have you join our community.\r\n        </p>\r\n        <p>\r\n          To get started, we just need to confirm your email address to ensure everything runs smoothly.\r\n        </p>\r\n        <p>\r\n          Click the button below to verify your email and unlock all the amazing features SkyLink has to offer:\r\n        </p>\r\n      </div>\r\n      <div style=\"text-align: center; padding: 20px;\">\r\n        <a href=\"{confirmationLink}\" style=\"display: inline-block; background-color: #7289da; color: white; text-decoration: none; padding: 15px 30px; border-radius: 3px;\">Verify Email</a>\r\n      </div>\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>\r\n        <p>Omar<br>SkyLink Team</p>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</body>\r\n</html>\r\n";
+                    string mailBody = $"<!DOCTYPE html>\r\n<html>\r\n<head>\r\n  <title>Email Confirmation</title>\r\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\r\n  <style>\r\n    body {{\r\n      background: #f9f9f9;\r\n      margin: 0;\r\n      padding: 0;\r\n    }}\r\n    .container {{\r\n      max-width: 640px;\r\n      margin: 0 auto;\r\n      background: #ffffff;\r\n      box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);\r\n      border-radius: 4px;\r\n      overflow: hidden;\r\n    }}\r\n  </style>\r\n</head>\r\n<body>\r\n  <div class=\"container\">\r\n    <div style=\"background-color: #7289da; padding: 57px; text-align: center;\">\r\n      <div style=\"cursor: auto; color: white; font-family: Arial, sans-serif; font-size: 36px; font-weight: 600;\">\r\n        Welcome to SkyLink!\r\n      </div>\r\n    </div>\r\n    \r\n    <div style=\"padding: 40px 70px;\">\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <h2 style=\"font-weight: 500; font-size: 20px; color: #4f545c;\">Hey {user.UserName},</h2>\r\n        <p>\r\n          Welcome aboard SkyLink! 🚀 Thanks for signing up! We're thrilled to have you join our community.\r\n        </p>\r\n        <p>\r\n          To get started, we just need to confirm your email address to ensure everything runs smoothly.\r\n        </p>\r\n        <p>\r\n          Click the button below to verify your email and unlock all the amazing features SkyLink has to offer:\r\n        </p>\r\n      </div>\r\n      <div style=\"text-align: center; padding: 20px;\">\r\n        <a href=\"{confirmationLink}\" style=\"display: inline-block; background-color: #7289da; color: white; text-decoration: none; padding: 15px 30px; border-radius: 3px;\">Verify Email</a>\r\n      </div>\r\n      <div style=\"color: #737f8d; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px;\">\r\n        <p>If you have any questions or need assistance, feel free to reach out to our support team.</p>\r\n        <p>Omar<br>SkyLink Team</p>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</body>\r\n</html>\r\n";
                     // Send email confirmation link
                     await _emailService.SendEmailAsync(userDTO.Email, "Email Confiramtion", mailBody, true);
 
@@ -336,6 +353,164 @@ namespace Flight_Booking_System.Controllers
                         Message = "password changed sucessfully"
                     };
                 }
+            }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<GeneralResponse>> DeleteUser(string userName)
+        {
+            ApplicationUSer? user = await _userManager.FindByNameAsync(userName);
+
+            if (user is null)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Message = "There is no user with this  username ."
+                };
+            }
+
+            #region deleting user references first if found
+
+            //Passenger passenger = _passengerRepository.GetById(user.PassengerId);
+            Passenger? passenger = _passengerRepository.GetWithTicket(user.PassengerId);
+
+            if (passenger != null)
+            {
+
+                // checking if there is a flight realted to this passenger 
+                Flight? flight = _flightRepository.GetWithPlane_Passengers(passenger.FlightId);
+
+                if (flight != null)
+                {
+                    // checking if there is a flight contains this passenger on it 
+                    if (flight.Passengers.Contains(passenger))
+                    {
+                        flight.Passengers.Remove(passenger);
+                    }
+
+                    // checking if there is a ticket related to this passenger
+                    //Ticket? ticket = _ticketRepository.Get(t => t.PassengerId == passenger.Id).FirstOrDefault();
+                    Ticket? ticket = _ticketRepository.GetWithSeat_Passenger(passenger?.Ticket?.Id);
+
+                    if (ticket != null)
+                    {
+                        // checking if there is a flight contains this ticket on it 
+                        if (flight.Tickets.Contains(ticket))
+                        {
+                            flight.Tickets.Remove(ticket);
+                        }
+
+                        ticket.Passenger = null;
+                        ticket.PassengerId = null;
+
+                        ticket.FlightId = null;
+                        ticket.Flight = null;
+
+                        if(ticket.Seat != null)
+                        {
+                            Seat? seat = _seatRepository.GetWithTicket(ticket.Seat.Id);
+
+                            if(seat != null)
+                            {
+                                seat.Ticket = null;
+                                seat.TicketId = null;
+
+                                try
+                                {
+                                    _seatRepository.Delete(seat);
+                                    _seatRepository.Save();
+
+                                    ticket.Seat = null;
+                                }
+                                catch (Exception ex)
+                                {
+                                    return new GeneralResponse()
+                                    {
+                                        IsSuccess = false,
+                                        Data = ex.Message,
+                                        Message = "Couldn't delete the seat related to this passenger"
+                                    };
+                                }
+                            }
+                        }
+
+                        try
+                        {
+                            _ticketRepository.Delete(ticket);
+                            _ticketRepository.Save();
+                        }
+                        catch(Exception ex)
+                        {
+                            return new GeneralResponse()
+                            {
+                                IsSuccess = false,
+                                Data = ex.Message,
+                                Message = "Couldn't delete the ticket related to this passenger "
+                            };
+                        }
+                    }
+                }
+
+                passenger.User = null;
+
+                passenger.Flight = null;
+                passenger.FlightId = null;
+
+                passenger.Ticket = null;
+
+                try
+                {
+                    _passengerRepository.Delete(passenger);
+                    _passengerRepository.Save();
+                }
+                catch (Exception ex)
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Data = ex.Message,
+                        Message = "Couldn't delete the passenger due to this error"
+                    };
+                }
+            }
+
+            #endregion
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+            foreach (var role in userRoles)
+            {
+                // don't forget to remove his role first
+                IdentityResult removeRoleResult = await _userManager.RemoveFromRoleAsync(user, role);
+
+                if (!removeRoleResult.Succeeded)
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Message = $"Couldn't Remove the ({role}) role from the user before deleting the user"
+                    };
+                }
+            }
+
+            IdentityResult deleteResult = await _userManager.DeleteAsync(user);
+
+            if (deleteResult.Succeeded)
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = true,
+                    Message = $"the user : {user.UserName} deleted successfully ."
+                };
+            }
+            else
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Message = $"Failed to delete the user : {user.UserName}"
+                };
             }
         }
     }

@@ -6,6 +6,5 @@ namespace Flight_Booking_System.DTOs
     {
         [Required]
         public string IdToken { get; set; }
-
     }
 }
