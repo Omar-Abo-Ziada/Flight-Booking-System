@@ -103,7 +103,7 @@ namespace Flight_Booking_System.Controllers
             if (ModelState.IsValid)
             {
                 ///TODO : don't forget include passengers also
-                Flight? flight = flightRepository.GetWithPlane_Passengers((int)ticketDTO.FlightId);
+                Flight? flight = flightRepository.GetWithPlane_Passengers(ticketDTO.FlightId);
 
                 if (flight?.Plane?.capacity <= flight?.Passengers?.Count)
                 {
@@ -122,23 +122,23 @@ namespace Flight_Booking_System.Controllers
                     Price = ticketDTO.Price,
 
                     FlightId = ticketDTO.FlightId, // from front
-                    Flight = flightRepository.GetById((int)ticketDTO.FlightId),
+                    Flight = flightRepository.GetById(ticketDTO.FlightId),
 
                     PassengerId = ticketDTO.PassengerId,// from front
-                    Passenger = passengerRepository.GetById((int)ticketDTO.PassengerId),
+                    Passenger = passengerRepository.GetById(ticketDTO.PassengerId),
                 };
 
                 ticketRepository.Insert(ticket);
 
                 ticketRepository.Save();
 
-                Passenger passernger = passengerRepository.GetById((int)ticketDTO.PassengerId);
+                Passenger passernger = passengerRepository.GetById(ticketDTO.PassengerId);
 
                 passernger.Flight = ticket.Flight;
                 passernger.FlightId = ticket.FlightId;
                 passernger.Ticket = ticket;
 
-                Flight flightFromDB = flightRepository.GetById((int)ticket.FlightId);
+                Flight flightFromDB = flightRepository.GetById(ticket.FlightId);
 
                 flightFromDB.Passengers.Add(passernger);
                 flightFromDB.Tickets.Add(ticket);
@@ -156,7 +156,7 @@ namespace Flight_Booking_System.Controllers
                 seatRepository.Save();
 
                 seat.Number = seat.Id;
-                //ggggggggggg
+
                 ticket.Seat = seat;
 
                 ticketRepository.Save();

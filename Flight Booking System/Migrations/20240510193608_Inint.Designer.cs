@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Flight_Booking_System.Migrations
 {
     [DbContext(typeof(ITIContext))]
-    [Migration("20240508184727_test")]
-    partial class test
+    [Migration("20240510193608_Inint")]
+    partial class Inint
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

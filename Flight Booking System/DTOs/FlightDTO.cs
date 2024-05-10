@@ -6,6 +6,9 @@ namespace Flight_Booking_System.DTOs
 {
     public class FlightDTO
     {
+        public int? PlaneId { get; set; }
+        //----------------------------------------
+
         public int? SourceAirportNum { get; set; }
 
         public string? SourceAirportName { get; set; }

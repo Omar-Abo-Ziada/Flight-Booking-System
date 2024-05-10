@@ -40,43 +40,30 @@ namespace Flight_Booking_System.Controllers
         [HttpGet]
         public ActionResult<GeneralResponse> Get()
         {
-            List<Flight> flights = flightRepository.GetAll();
+            List<Flight> flights = flightRepository.GetAll("Plane");
 
             List<FlightDTO> flightDTOs = new List<FlightDTO>();
 
             foreach (Flight flight in flights)
             {
-                //FlightDTO flightDTO = new FlightDTO()
-                //{
-                //    Id = flight.Id,
-
-                //    //Start = flight.Start,
-                //    //Destiantion = flight.Destination,
-
-                //    DepartureTime = flight.DepartureTime,
-                //    ArrivalTime = flight.ArrivalTime,
-
-                //    PlaneId = flight.PlaneId,
-                //    DestinationId = flight.DestinationId,
-                //    StartId = flight.StartId,
-                //};
-
                 FlightDTO flightDTO = mapper.Map<Flight, FlightDTO>(flight);
 
-                AirPort SourceAirport = airPortRepository.GetWithIncludes((int)flight.SourceAirportId);
+                flightDTO.PlaneId = flight?.Plane?.Id;
 
-                AirPort DestinationAirport = airPortRepository.GetWithIncludes((int)flight.DestinationAirportId);
+                AirPort? SourceAirport = airPortRepository.GetWithIncludes(flight?.SourceAirportId);
 
-                flightDTO.SourceAirportNum = SourceAirport.AirPortNumber;
-                flightDTO.SourceAirportName = SourceAirport.Name;
-                flightDTO.SourceAirportCountryName = SourceAirport.Country.Name;
-                flightDTO.SourceAirportStateName = SourceAirport.State.Name;
+                AirPort? DestinationAirport = airPortRepository.GetWithIncludes(flight?.DestinationAirportId);
+
+                flightDTO.SourceAirportNum = SourceAirport?.AirPortNumber;
+                flightDTO.SourceAirportName = SourceAirport?.Name;
+                flightDTO.SourceAirportCountryName = SourceAirport?.Country?.Name;
+                flightDTO.SourceAirportStateName = SourceAirport?.State?.Name;
 
 
-                flightDTO.DestinationAirportNum = DestinationAirport.AirPortNumber;
-                flightDTO.DestinationAirportName = DestinationAirport.Name;
-                flightDTO.DestinationAirportCountryName = DestinationAirport.Country.Name;
-                flightDTO.DestinationAirportStateName = DestinationAirport.State.Name;
+                flightDTO.DestinationAirportNum = DestinationAirport?.AirPortNumber;
+                flightDTO.DestinationAirportName = DestinationAirport?.Name;
+                flightDTO.DestinationAirportCountryName = DestinationAirport?.Country?.Name;
+                flightDTO.DestinationAirportStateName = DestinationAirport?.State?.Name;
 
                 flightDTOs.Add(flightDTO);
             }
@@ -107,37 +94,22 @@ namespace Flight_Booking_System.Controllers
             }
             else
             {
-                //FlightDTO flightDTO = new FlightDTO()
-                //{
-                //    Id = flightFromDB.Id,
-
-                //    //Start = flightFromDB.Start,
-                //    //Destiantion = flightFromDB.Destination,
-
-                //    DepartureTime = flightFromDB.DepartureTime,
-                //    ArrivalTime = flightFromDB.ArrivalTime,
-
-                //    PlaneId = flightFromDB.PlaneId,
-                //    DestinationId = flightFromDB.DestinationId,
-                //    StartId = flightFromDB.StartId,
-                //};
-
                 FlightDTO flightDTO = mapper.Map<Flight, FlightDTO>(flightFromDB);
 
-                AirPort SourceAirport = airPortRepository.GetWithIncludes((int)flightFromDB.SourceAirportId);
+                AirPort SourceAirport = airPortRepository.GetWithIncludes(flightFromDB.SourceAirportId);
 
-                AirPort DestinationAirport = airPortRepository.GetWithIncludes((int)flightFromDB.DestinationAirportId);
+                AirPort DestinationAirport = airPortRepository.GetWithIncludes(flightFromDB.DestinationAirportId);
 
-                flightDTO.SourceAirportNum = SourceAirport.AirPortNumber;
-                flightDTO.SourceAirportName = SourceAirport.Name;
-                flightDTO.SourceAirportCountryName = SourceAirport.Country.Name;
-                flightDTO.SourceAirportStateName = SourceAirport.State.Name;
+                flightDTO.SourceAirportNum = SourceAirport?.AirPortNumber;
+                flightDTO.SourceAirportName = SourceAirport?.Name;
+                flightDTO.SourceAirportCountryName = SourceAirport?.Country?.Name;
+                flightDTO.SourceAirportStateName = SourceAirport?.State?.Name;
 
 
-                flightDTO.DestinationAirportNum = DestinationAirport.AirPortNumber;
-                flightDTO.DestinationAirportName = DestinationAirport.Name;
-                flightDTO.DestinationAirportCountryName = DestinationAirport.Country.Name;
-                flightDTO.DestinationAirportStateName = DestinationAirport.State.Name;
+                flightDTO.DestinationAirportNum = DestinationAirport?.AirPortNumber;
+                flightDTO.DestinationAirportName = DestinationAirport?.Name;
+                flightDTO.DestinationAirportCountryName = DestinationAirport?.Country?.Name;
+                flightDTO.DestinationAirportStateName = DestinationAirport?.State?.Name;
 
 
                 return new GeneralResponse()
@@ -156,7 +128,7 @@ namespace Flight_Booking_System.Controllers
         public ActionResult<GeneralResponse> Add(FlightWithImgDTO flightDTO)
         {
             string uploadpath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
-            string imagename = Guid.NewGuid().ToString() + "_" + flightDTO.Image.FileName;
+            string imagename = Guid.NewGuid().ToString() + "_" + flightDTO?.Image?.FileName;
             string filepath = Path.Combine(uploadpath, imagename);
             using (FileStream fileStream = new FileStream(filepath, FileMode.Create))
             {
@@ -166,27 +138,77 @@ namespace Flight_Booking_System.Controllers
 
             if (ModelState.IsValid)
             {
+                Plane plane = planeRepository.GetById(flightDTO.PlaneId);
+
+                AirPort? sourceAirport = airPortRepository.GetSourceWithFlights(flightDTO.StartId);
+                AirPort? destinationAirport = airPortRepository.GetDsetinationWithFlights(flightDTO.DestinationId);
+
                 Flight flight = new Flight()
                 {
-                    Id = flightDTO.Id,
-                    //PlaneId= flightDTO.PlaneId,
-                    DestinationAirportId = flightDTO.DestinationId,
-                    imageURL=flightDTO.imageURL,
+                    //Id = flightDTO.Id,
+                    imageURL = flightDTO.imageURL,
+
                     SourceAirportId = flightDTO.StartId,
-                    ArrivalTime= flightDTO.ArrivalTime,
-                    DepartureTime= flightDTO.DepartureTime,
-                  Duration= flightDTO.Duration,
-                  //AirLineId= flightDTO.AirLineId,
+                    SourceAirport = sourceAirport,
+
+                    DestinationAirportId = flightDTO.DestinationId,
+                    DestinationAirport = destinationAirport,
+
+                    ArrivalTime = flightDTO.ArrivalTime,
+                    DepartureTime = flightDTO.DepartureTime,
+                    Plane = plane,
                 };
+
+
+                if (TimeSpan.TryParse(flightDTO.Duration, out TimeSpan ParsedDuration))
+                {
+                    flight.Duration = ParsedDuration;
+                }
+                else
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Message = "Invalid Duration Format , it has to be like this : 'HH:MM:SS'"
+                    };
+                }
+
                 flightRepository.Insert(flight);
 
+                flightRepository.Save();
+
+                if(sourceAirport?.LeavingFlights == null)
+                {
+                    sourceAirport.LeavingFlights = new List<Flight>();
+
+                    sourceAirport.LeavingFlights.Add(flight);
+                }
+                else
+                {
+                    sourceAirport.LeavingFlights.Add(flight);
+                }
+
+                if (destinationAirport?.ArrivingFlights == null)
+                {
+                    destinationAirport.ArrivingFlights = new List<Flight>();
+
+                    destinationAirport.ArrivingFlights.Add(flight);
+                }
+                else
+                {
+                    destinationAirport.ArrivingFlights.Add(flight);
+                }
+
+                plane.FlightId = flight.Id;
+                plane.Flight = flight;
+
+                planeRepository.Save();
+                airPortRepository.Save();
                 flightRepository.Save();
 
                 return new GeneralResponse()
                 {
                     IsSuccess = true,
-
-                    Data = flight,
 
                     Message = "Flight Added Successfully",
                 };
