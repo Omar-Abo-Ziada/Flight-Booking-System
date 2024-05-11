@@ -23,9 +23,9 @@ namespace Flight_Booking_System.Controllers
         private readonly ISeatRepository seatRepository;
 
         public FlightController
-            (IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment ,  IMapper mapper,
-            IAirPortRepository airPortRepository , IPlaneRepository planeRepository ,
-            IPassengerRepository passengerRepository , ITicketRepository ticketRepository,
+            (IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment, IMapper mapper,
+            IAirPortRepository airPortRepository, IPlaneRepository planeRepository,
+            IPassengerRepository passengerRepository, ITicketRepository ticketRepository,
             ISeatRepository seatRepository)
         {
             this.flightRepository = flightRepository;
@@ -127,7 +127,7 @@ namespace Flight_Booking_System.Controllers
         }
 
         [HttpPost]
-     //   [Authorize]
+        // [Authorize]
         public ActionResult<GeneralResponse> Add(FlightWithImgDTO flightDTO)
         {
             string uploadpath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
@@ -148,7 +148,7 @@ namespace Flight_Booking_System.Controllers
 
                 Flight flight = new Flight()
                 {
-                    //Id = flightDTO.Id,
+                    Id = flightDTO.Id,
                     imageURL = flightDTO.imageURL,
 
                     SourceAirportId = flightDTO.StartId,
@@ -180,7 +180,7 @@ namespace Flight_Booking_System.Controllers
 
                 flightRepository.Save();
 
-                if(sourceAirport?.LeavingFlights == null)
+                if (sourceAirport?.LeavingFlights == null)
                 {
                     sourceAirport.LeavingFlights = new List<Flight>();
 
@@ -245,7 +245,7 @@ namespace Flight_Booking_System.Controllers
         {
             Flight? flightFromDB = flightRepository.GetById(id);
 
-            if (flightFromDB == null )
+            if (flightFromDB == null)
             {
                 return new GeneralResponse()
                 {
@@ -273,7 +273,7 @@ namespace Flight_Booking_System.Controllers
                 flightFromDB.SourceAirportId = editedFlightDTO.SourceAirportId;
                 flightFromDB.DestinationAirportId = editedFlightDTO.DestinationAirportId;
 
-                if (TimeSpan.TryParse(editedFlightDTO.Duration , out TimeSpan ParsedDuration))
+                if (TimeSpan.TryParse(editedFlightDTO.Duration, out TimeSpan ParsedDuration))
                 {
                     flightFromDB.Duration = ParsedDuration;
                 }
@@ -348,15 +348,15 @@ namespace Flight_Booking_System.Controllers
 
                     List<Ticket> flightTickets = ticketRepository.Get(t => t.FlightId == flightFromDB.Id);
 
-                   
+
                     foreach (Ticket ticket in flightTickets)
-                    { 
+                    {
                         Seat seat = seatRepository.Get(s => s.TicketId == ticket.Id).First();
                         ticket.FlightId = null;
                         ticket.Flight = null;
                         ticket.Seat = null;
                         ticket.Passenger = null;
-                        seat.TicketId = null; 
+                        seat.TicketId = null;
                         seat.Ticket = null;
                         seatRepository.Delete(seat);
                         ticketRepository.Delete(ticket);
@@ -369,11 +369,11 @@ namespace Flight_Booking_System.Controllers
                     // delete flight from source airport leaving flights list
 
                     AirPort? sourceAirport = airPortRepository.GetSourceWithFlights(flightFromDB.SourceAirportId);  ///todo : can access after deletion????
-                    if(sourceAirport.LeavingFlights != null)
+                    if (sourceAirport.LeavingFlights != null)
                     {
                         sourceAirport.LeavingFlights.Remove(flightFromDB);
                     }
-                
+
 
 
                     // delete flight from destination airport arriving flights list

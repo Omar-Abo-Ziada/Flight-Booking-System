@@ -51,7 +51,7 @@ namespace Flight_Booking_System.Controllers
                 Plane? plane = planeRepository.Get(p => p.FlightId == flight.Id).FirstOrDefault();
 
                 plane.Flight = flight;
-                plane.FlightId = flight?.Id;
+                //plane.FlightId = flight?.Id;
 
                 flight.Plane = plane;
 
@@ -128,7 +128,6 @@ namespace Flight_Booking_System.Controllers
 
                                 if (seat != null)
                                 {
-                                    seat.TicketId = ticket.Id;
                                     seat.Ticket = ticket;
                                 }
 
