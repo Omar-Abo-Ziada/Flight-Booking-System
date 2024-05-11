@@ -116,7 +116,7 @@ namespace Flight_Booking_System.Controllers
 
                 Ticket ticket = new Ticket()
                 {
-                    //Id = ticketDTO.Id,
+                    Id = ticketDTO.Id,
                     Class = ticketDTO.Class,
                     Price = ticketDTO.Price,
 
@@ -139,8 +139,18 @@ namespace Flight_Booking_System.Controllers
 
                 Flight flightFromDB = flightRepository.GetById(ticket.FlightId);
 
-                flightFromDB.Passengers.Add(passernger);
-                flightFromDB.Tickets.Add(ticket);
+                if(flightFromDB != null)
+                {
+                    if(flightFromDB.Passengers != null)
+                    {
+                        flightFromDB.Passengers.Add(passernger);
+                    }
+
+                    if(flightFromDB.Tickets != null)
+                    {
+                        flightFromDB.Tickets.Add(ticket);
+                    }
+                }
 
                 Seat seat = new Seat()
                 {
@@ -162,6 +172,7 @@ namespace Flight_Booking_System.Controllers
                 passengerRepository.Save();
                 planeRepository.Save();
                 flightRepository.Save();
+                seatRepository.Save();  // if there any error then this line my be the problem
 
                 return new GeneralResponse()
                 {
@@ -186,7 +197,7 @@ namespace Flight_Booking_System.Controllers
         {
             //>>>>>>>>>>>>>>>>>>>>>>>>>> Omar :  Actually I won't complete it => it has no meaning to edit a ticket .. u have to delete it and add a new one   <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-            throw new Exception("Edit Ticket has no meaning ,, instead delete ticket and add a new one");
+            throw new Exception("Don't use it ,Edit Ticket actually has no meaning ,, instead delete ticket and add a new one");
 
             Ticket? ticket = ticketRepository.GetWithAllIncludes(ticketId);
 
