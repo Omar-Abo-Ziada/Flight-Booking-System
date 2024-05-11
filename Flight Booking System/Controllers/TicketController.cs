@@ -184,34 +184,46 @@ namespace Flight_Booking_System.Controllers
         [HttpPut("{ticketId:int}")]
         public ActionResult<GeneralResponse> UpdateTicket(int ticketId, TicketDTO ticketDTO)
         {
-            Ticket t1 = ticketRepository.GetById(ticketId);
-            if (t1 == null || t1.Id != ticketId)
+            //>>>>>>>>>>>>>>>>>>>>>>>>>> Omar :  Actually I won't complete it => it has no meaning to edit a ticket .. u have to delete it and add a new one   <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+            throw new Exception("Edit Ticket has no meaning ,, instead delete ticket and add a new one");
+
+            Ticket? ticket = ticketRepository.GetWithAllIncludes(ticketId);
+
+            if (ticket == null || ticket.Id != ticketId)
             {
                 return new GeneralResponse()
                 {
                     IsSuccess = false,
                     Data = null,
-                    Message = "Invalid Ticket ID "
+                    Message = "No ticket found with this ID," +
+                    " or the ID of the given ticket doesn't match the edited ticket Id."
                 };
             }
-            else
-            {
-                //t1.Id = ticketDTO.Id;
-                t1.Class = ticketDTO.Class;
-                t1.Price = ticketDTO.Price;
-                t1.FlightId = ticketDTO.FlightId;
-                //t1.SeatId = ticketDTO.SeatId;
-                t1.PassengerId = ticketDTO.PassengerId;
 
-                ticketRepository.Update(t1);
-                ticketRepository.Save();
-                return new GeneralResponse()
-                {
-                    IsSuccess = true,
-                    Data = t1,
-                    Message = "Updated Successfully"
-                };
-            }
+            // updating primtives first
+            ticket.Id = ticketDTO.Id;
+            ticket.Class = ticketDTO.Class;
+            ticket.Price = ticketDTO.Price;
+
+
+            // now before updating the FKs => edit the related objs with those FKs first
+            Passenger passenger = passengerRepository.GetById(ticketDTO.PassengerId);
+            passenger.Ticket = ticket;
+
+            Flight? flight = flightRepository.GetWithTickets(ticketDTO.FlightId);
+
+            ticket.FlightId = ticketDTO.FlightId;
+            ticket.PassengerId = ticketDTO.PassengerId;
+
+            ticketRepository.Save();
+
+            return new GeneralResponse()
+            {
+                IsSuccess = true,
+                Data = ticket,
+                Message = "Updated Successfully"
+            };
         }
 
         [HttpDelete("{ticketId:int}")]

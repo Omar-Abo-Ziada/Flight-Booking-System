@@ -10,5 +10,6 @@ namespace Flight_Booking_System.Repositories
 
         Flight? GetWithTickets_Passengers(int? id);
 
+        Flight? GetWithTickets(int? id);
     }
 }
