@@ -419,6 +419,7 @@ namespace Flight_Booking_System.Controllers
                                 try
                                 {
                                     _seatRepository.Delete(seat);
+
                                     _seatRepository.Save();
 
                                     ticket.Seat = null;
@@ -438,6 +439,7 @@ namespace Flight_Booking_System.Controllers
                         try
                         {
                             _ticketRepository.Delete(ticket);
+
                             _ticketRepository.Save();
                         }
                         catch (Exception ex)
@@ -462,6 +464,7 @@ namespace Flight_Booking_System.Controllers
                 try
                 {
                     _passengerRepository.Delete(passenger);
+
                     _passengerRepository.Save();
                 }
                 catch (Exception ex)
