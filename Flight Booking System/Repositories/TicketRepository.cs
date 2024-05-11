@@ -16,7 +16,17 @@ namespace Flight_Booking_System.Repositories
 
         public Ticket? GetWithSeat_Passenger(int? id)
         {
-          return  Context.Tickets.Where(t => t.Id == id).Include(t => t.Seat).Include(t => t.Passenger).FirstOrDefault();
+            return Context.Tickets.Where(t => t.Id == id).Include(t => t.Seat).Include(t => t.Passenger).FirstOrDefault();
+        }
+
+        public Ticket? GetWithAllIncludes(int? id)
+        {
+            return Context.Tickets
+                .Where(t => t.Id == id)
+                .Include(t => t.Flight)
+                .Include(t => t.Seat)
+                .Include(t => t.Passenger)
+                .FirstOrDefault();
         }
     }
 }

@@ -7,5 +7,8 @@ namespace Flight_Booking_System.Repositories
         Flight? GetWithPlane_Passengers(int? id);
 
         List<Flight> GetAllWithAllIncludes();
+
+        Flight? GetWithTickets_Passengers(int? id);
+
     }
 }
