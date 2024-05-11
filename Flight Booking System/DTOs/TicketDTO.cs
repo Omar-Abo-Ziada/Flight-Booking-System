@@ -7,7 +7,7 @@ namespace Flight_Booking_System.DTOs
 {
     public class TicketDTO
     {
-        public Section? Section { get; set; } = Enums.Section.Middle;
+        public Section? Section { get; set; } = Enums.Section.Middle;   /// todo : not in model??
 
         //--------------------------------------------
 

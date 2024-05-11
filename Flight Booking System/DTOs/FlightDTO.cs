@@ -7,6 +7,11 @@ namespace Flight_Booking_System.DTOs
     public class FlightDTO
     {
         public int? PlaneId { get; set; }
+        // saeed : adding additional info for front
+        public int Id { get; set; }
+        public string? PlaneName { get; set; } 
+        public List<PassengerDTO>? passengerDTOs { get; set; } = new List<PassengerDTO>();
+        public List<TicketDTO>? ticketDTOs { get; set; } = new List<TicketDTO>();
         //----------------------------------------
 
         public int? SourceAirportNum { get; set; }

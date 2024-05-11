@@ -107,35 +107,46 @@ namespace Flight_Booking_System.Controllers
 
                 if (passengers != null)
                 {
+                    // saeed
+                    List<Ticket> passengersTickets = new List<Ticket>();
+                  //  List<Seat> passengersSeats = new List<Seat>();
+
                     foreach (Passenger passenger in passengers)
                     {
-                        passenger.Flight = flight;
+                        passenger.Flight = flight;                  /// todo : should be inside if "passenger may be just user" ???????
 
-                        if(passenger.Ticket != null)
+                        if(passenger.Ticket != null)  // mean he is a real passenger not user
                         {
                             Ticket? ticket = ticketRepository.Get(t => t.PassengerId == passenger.Id).FirstOrDefault();
 
                             if (ticket != null)
                             {
-                                ticket.Passenger = passenger;
+                                ticket.Passenger = passenger;       /// todo : should be assigned before?
 
                                 ticket.Flight = flight;
                                 ticket.FlightId = flight.Id;
 
-                                passenger.Ticket = ticket;
+                                passenger.Ticket = ticket;              /// todo : should be assigned before?
 
                                 Seat? seat = seatRepository.Get(s => s.TicketId == ticket.Id).FirstOrDefault();
 
                                 if (seat != null)
                                 {
-                                    seat.TicketId = ticket.Id;
+                                    seat.TicketId = ticket.Id;    /// todo : how get seat using tickedud then assign to tickedid???????
                                     seat.Ticket = ticket;
+                                    ///todo : initialize seats list 
+                                  //  passengersSeats.Add(seat);
                                 }
 
-                                ticket.Seat = seat;
+                                ticket.Seat = seat;                    /// todo : should be assigned before?
                             }
+                            ///todo : initialize tickets list 
+                            passengersTickets.Add(ticket);
                         }
                     }
+                    /// todo : initialize lists
+                    flight.Passengers = passengers;
+                    flight.Tickets = passengersTickets;
                 }
 
                 //----------------------------------------------------------
