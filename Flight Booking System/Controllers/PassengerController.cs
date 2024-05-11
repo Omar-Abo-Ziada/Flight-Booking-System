@@ -15,10 +15,10 @@ namespace Flight_Booking_System.Controllers
     {
         readonly IPassengerRepository passengerRepository;
         readonly IMapper mapper;
-        public PassengerController(IPassengerRepository _passengerRepository , IMapper mapper)
+        public PassengerController(IPassengerRepository _passengerRepository, IMapper mapper)
         {
             this.passengerRepository = _passengerRepository;
-            this.mapper = mapper;  
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -36,7 +36,7 @@ namespace Flight_Booking_System.Controllers
                 //    Name = passenger.Name,
                 //    Gender = passenger.Gender,
                 //}; // the same thing but prefered using mapper
-                var passengerDTOMap = mapper.Map<Passenger, PassengerDTO>(passenger); 
+                var passengerDTOMap = mapper.Map<Passenger, PassengerDTO>(passenger);
 
                 passengerDTOs.Add(passengerDTOMap);
             }
@@ -82,7 +82,7 @@ namespace Flight_Booking_System.Controllers
                 };
             }
         }
-  
+
         [HttpPost]
         //[Authorize]
         public ActionResult<GeneralResponse> Add(Passenger passenger)
@@ -130,7 +130,7 @@ namespace Flight_Booking_System.Controllers
 
                     Data = null,
 
-                    Message = "Not Passenger Found" 
+                    Message = "Not Passenger Found"
                 };
             }
             else
@@ -150,7 +150,7 @@ namespace Flight_Booking_System.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")] 
+        [HttpDelete("{id:int}")]
         public ActionResult<GeneralResponse> Delete(int id)
         {
             Passenger? passengerFromDB = passengerRepository.GetById(id);

@@ -30,7 +30,7 @@ namespace Flight_Booking_System.Controllers
 
         public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration, IEmailService emailService,
              IGoogleAuthService _googleAuthService, IPassengerRepository passengerRepository,
-             ITicketRepository ticketRepository, IFlightRepository flightRepository , ISeatRepository seatRepository)
+             ITicketRepository ticketRepository, IFlightRepository flightRepository, ISeatRepository seatRepository)
         {
             this._userManager = userManager;
             this._configuration = configuration;
@@ -316,7 +316,7 @@ namespace Flight_Booking_System.Controllers
 
             // string idToken = Request.Headers["Authorization"];
             //googleSignInDTO.IdToken = idToken;
-            return await googleAuthService.GoogleSignIn(googleSignInDTO); 
+            return await googleAuthService.GoogleSignIn(googleSignInDTO);
         }
 
         //ibrahim forget password
@@ -407,11 +407,11 @@ namespace Flight_Booking_System.Controllers
                         ticket.FlightId = null;
                         ticket.Flight = null;
 
-                        if(ticket.Seat != null)
+                        if (ticket.Seat != null)
                         {
                             Seat? seat = _seatRepository.GetWithTicket(ticket.Seat.Id);
 
-                            if(seat != null)
+                            if (seat != null)
                             {
                                 seat.Ticket = null;
                                 seat.TicketId = null;
@@ -440,7 +440,7 @@ namespace Flight_Booking_System.Controllers
                             _ticketRepository.Delete(ticket);
                             _ticketRepository.Save();
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             return new GeneralResponse()
                             {
@@ -477,7 +477,7 @@ namespace Flight_Booking_System.Controllers
 
             #endregion
 
-                var userRoles = await _userManager.GetRolesAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
 
             foreach (var role in userRoles)
             {
