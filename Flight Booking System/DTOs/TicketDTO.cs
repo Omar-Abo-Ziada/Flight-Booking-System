@@ -11,8 +11,8 @@ namespace Flight_Booking_System.DTOs
 
         //--------------------------------------------
 
-        //[Required(ErrorMessage = "The Ticket Id is required")]
-        //public int Id { get; set; }
+        [Required(ErrorMessage = "The Ticket Id is required")]
+        public int Id { get; set; }
 
         [Column(TypeName = "money")]
         [Required(ErrorMessage = "The Price  is required")]
@@ -23,9 +23,6 @@ namespace Flight_Booking_System.DTOs
 
         [Required(ErrorMessage = "The Passenger Id is required")]
         public int? PassengerId { get; set; } // have to be sent from the front-end
-
-        //[Required(ErrorMessage = "The SeatId  is required")]
-        //public int? SeatId { get; set; }
 
         [Required(ErrorMessage = "The FlightId  is required")]
         public int? FlightId { get; set; } // have to be sent from the front-end
