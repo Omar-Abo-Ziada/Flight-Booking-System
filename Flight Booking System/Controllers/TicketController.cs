@@ -139,14 +139,14 @@ namespace Flight_Booking_System.Controllers
 
                 Flight flightFromDB = flightRepository.GetById(ticket.FlightId);
 
-                if(flightFromDB != null)
+                if (flightFromDB != null)
                 {
-                    if(flightFromDB.Passengers != null)
+                    if (flightFromDB.Passengers != null)
                     {
                         flightFromDB.Passengers.Add(passernger);
                     }
 
-                    if(flightFromDB.Tickets != null)
+                    if (flightFromDB.Tickets != null)
                     {
                         flightFromDB.Tickets.Add(ticket);
                     }
@@ -288,6 +288,9 @@ namespace Flight_Booking_System.Controllers
             if (passenger != null)
             {
                 passenger.Ticket = null;
+
+                passenger.Flight = null;
+                passenger.FlightId = null;
             }
 
             //-------------------------------------------------------------------
