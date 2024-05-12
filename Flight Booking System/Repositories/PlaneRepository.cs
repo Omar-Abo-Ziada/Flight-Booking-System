@@ -38,6 +38,11 @@ namespace Flight_Booking_System.Repositories
             return Context.Planes.Where(where).ToList();
         }
 
+        public Plane GetByFlightId(int Id) 
+        {
+            return Context.Planes.FirstOrDefault(item => item.FlightId == Id);
+        }
+
         public void Delete(Plane item)
         {
             Context.Remove(item);

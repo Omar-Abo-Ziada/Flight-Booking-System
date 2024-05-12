@@ -41,9 +41,9 @@ namespace Flight_Booking_System.Controllers
         //***********************************************
 
         [HttpGet]
-        public ActionResult<GeneralResponse> Get()
+        public ActionResult<GeneralResponse> Get() 
         {
-            List<Flight> flights = flightRepository.GetAll("Plane");
+            List<Flight> flights = flightRepository.GetAllWithAllIncludes();  // saeed : replace get include plane with get with all includes
 
             List<FlightDTO> flightDTOs = new List<FlightDTO>();
 
@@ -51,7 +51,34 @@ namespace Flight_Booking_System.Controllers
             {
                 FlightDTO flightDTO = mapper.Map<Flight, FlightDTO>(flight);
 
+                foreach(Passenger passenger in flight.Passengers)
+                {
+                    flightDTO.passengerDTOs.Add(new PassengerDTO
+                    {
+                       Id = passenger.Id,
+                       Name = passenger.Name,
+                       Gender = passenger.Gender,
+                       Age = (int)passenger.Age,
+                       IsChild = passenger.IsChild,
+                       PassportNum = passenger.PassportNum,
+                       NationalId = passenger.NationalId
+                    });
+                }
+
+                foreach(Ticket ticket in flight.Tickets)
+                {
+                    flightDTO.ticketDTOs.Add(new TicketDTO
+                    {
+                        Price = ticket.Price,
+                        Class = ticket.Class,
+                        PassengerId = ticket.PassengerId,
+                        FlightId = ticket.FlightId
+                    });
+                }
+
                 flightDTO.PlaneId = flight?.Plane?.Id;
+                // add plane name too
+                flightDTO.PlaneName = flight?.Plane?.Name;
 
                 AirPort? SourceAirport = airPortRepository.GetWithIncludes(flight?.SourceAirportId);
 
@@ -82,7 +109,8 @@ namespace Flight_Booking_System.Controllers
         [HttpGet("{id:int}")] // from route  
         public ActionResult<GeneralResponse> GetbyId(int id)
         {
-            Flight? flightFromDB = flightRepository.GetById(id);
+            Flight? flightFromDB = flightRepository.GetOneWithAllIncludes(id);
+            ///todo handle plane name and id in dto or maher will?????
 
             if (flightFromDB == null)
             {
@@ -113,6 +141,34 @@ namespace Flight_Booking_System.Controllers
                 flightDTO.DestinationAirportName = DestinationAirport?.Name;
                 flightDTO.DestinationAirportCountryName = DestinationAirport?.Country?.Name;
                 flightDTO.DestinationAirportStateName = DestinationAirport?.State?.Name;
+                
+
+                foreach (Passenger passenger in flightFromDB.Passengers)
+                {
+                    flightDTO.passengerDTOs.Add(new PassengerDTO
+                    {
+                        Id = passenger.Id,
+                        Name = passenger.Name,
+                        Gender = passenger.Gender,
+                        Age = (int)passenger.Age,
+                        IsChild = passenger.IsChild,
+                        PassportNum = passenger.PassportNum,
+                        NationalId = passenger.NationalId
+                    });
+                }
+
+                foreach (Ticket ticket in flightFromDB.Tickets)
+                {
+                    flightDTO.ticketDTOs.Add(new TicketDTO
+                    {
+                        Price = ticket.Price,
+                        Class = ticket.Class,
+                        PassengerId = ticket.PassengerId,
+                        FlightId = ticket.FlightId
+                    });
+                }
+
+
 
 
                 return new GeneralResponse()
@@ -243,10 +299,10 @@ namespace Flight_Booking_System.Controllers
         //[Authorize]
         public ActionResult<GeneralResponse> Edit(int id, FlightDTO editedFlightDTO)
         {
-            Flight? flightFromDB = flightRepository.GetById(id);
+            Flight? flightFromDB = flightRepository.GetWitPassengers_Tickets(id);   /// todo: saeed : change from getbyid to getWithPassengers_tickets
 
-            if (flightFromDB == null)
-            {
+            if (flightFromDB == null )
+            { 
                 return new GeneralResponse()
                 {
                     IsSuccess = false,
@@ -259,21 +315,126 @@ namespace Flight_Booking_System.Controllers
             }
             else
             {
+                try
+                {
+
+                
                 // can't use update here because the same instance is already tracked when I got him by Id
                 // so I just map with my self and save changes => also cant use automapper because it creates a new instance and doesn't modify the existed one 
                 // so SaveChanges won't take effect unless I Mapped manually
                 //flightRepository.Update(editedFlightDTO);
 
                 //Maual Mapping
+                if (flightFromDB.DepartureTime != editedFlightDTO.DepartureTime || flightFromDB.ArrivalTime != editedFlightDTO.ArrivalTime
+                 || flightFromDB.SourceAirportId != editedFlightDTO.SourceAirportId || flightFromDB.DestinationAirportId != editedFlightDTO.DestinationAirportId)
+                {
+                    flightFromDB.Passengers = null;
+                    flightFromDB.Tickets = null;
+                    List<Passenger>? oldFlightPassengers = passengerRepository.GetPassengersForFlightWithAllIncludes(flightFromDB.Id);
+
+                    if(oldFlightPassengers != null)
+                    {
+                        foreach (Passenger passenger in oldFlightPassengers)
+                        {
+                            passenger.FlightId = null;
+                            passenger.Flight = null;
+                            passenger.Ticket = null;
+                            passengerRepository.Update(passenger);
+                            passengerRepository.Delete(passenger);
+                        }
+                    }
+
+                    List<Ticket>? oldFlightTickets = ticketRepository.GetWithSeatByFlightId(flightFromDB.Id);
+                    if(oldFlightTickets != null ) 
+                    { 
+                       foreach(Ticket ticket in oldFlightTickets)
+                        {
+                            // del ticket and seat 
+                            ticket.FlightId = null;  
+                            ticket.Flight = null;      // no obj from flight included
+                            ticket.Passenger = null;
+                            ticket.PassengerId = null;
+                            ticketRepository.Update(ticket);
+                            ticketRepository.Delete(ticket);
+
+                            Seat? seat = seatRepository.GetWithTicket(ticket?.Seat?.Id);
+                            seat.TicketId = null;
+                            seat.Ticket = null;
+                            ticket.Seat = null;
+                            seatRepository.Update(seat);
+                            seatRepository.Delete(seat);
+                        }
+                    }
+
+                }
+
                 flightFromDB.imageURL = editedFlightDTO.imageURL;
                 flightFromDB.DepartureTime = editedFlightDTO.DepartureTime;
                 flightFromDB.ArrivalTime = editedFlightDTO.ArrivalTime;
                 flightFromDB.IsActive = editedFlightDTO.IsActive;
 
-                flightFromDB.SourceAirportId = editedFlightDTO.SourceAirportId;
-                flightFromDB.DestinationAirportId = editedFlightDTO.DestinationAirportId;
+                // get sourceAirportId before mapping >> use it to update list of flights in airport
+                if( editedFlightDTO.SourceAirportId != flightFromDB.SourceAirportId ) 
+                {
+                    airPortRepository.GetById(flightFromDB.SourceAirportId) 
+                                .LeavingFlights?.Remove(flightFromDB);
 
-                if (TimeSpan.TryParse(editedFlightDTO.Duration, out TimeSpan ParsedDuration))
+                    flightFromDB.SourceAirportId = editedFlightDTO.SourceAirportId;
+                    // assign obj too
+
+                    airPortRepository.GetById(flightFromDB.SourceAirportId)
+                              .LeavingFlights?.Add(flightFromDB);
+                }
+
+                if (editedFlightDTO.DestinationAirportId != flightFromDB.DestinationAirportId)
+                {
+                    airPortRepository.GetById(flightFromDB.DestinationAirportId)
+                                .ArrivingFlights?.Remove(flightFromDB);
+
+                    flightFromDB.DestinationAirportId = editedFlightDTO.DestinationAirportId;
+
+                    airPortRepository.GetById(flightFromDB.DestinationAirportId)
+                              .ArrivingFlights?.Add(flightFromDB);
+                }
+
+                // check if flight plane changed >> change in d.b
+                Plane oldPlane = planeRepository.GetByFlightId(flightFromDB.Id);
+                Plane newPlane = planeRepository.GetById(editedFlightDTO.PlaneId);
+
+                if (oldPlane?.Id != newPlane.Id)         // front : if flight has no plane yet >> dropdown list >> no assigned plane yet
+                {
+                    if(oldPlane != null)
+                        {
+                            oldPlane.FlightId = null;
+                            oldPlane.Flight = null;
+                            planeRepository.Update(oldPlane);
+                        }
+
+                    //    flightFromDB.Plane = newPlane;
+
+                        if (newPlane.FlightId != null)
+                    {
+                       Flight anotherFlightWithSamePlane = flightRepository.GetById(newPlane.FlightId);
+                            // saeed : flight : plane >> should be 1 : m to make this check
+                            if (editedFlightDTO.DepartureTime >= anotherFlightWithSamePlane.DepartureTime &&
+                                editedFlightDTO.DepartureTime < anotherFlightWithSamePlane.ArrivalTime) 
+                            { 
+                                return new GeneralResponse
+                            {
+                                IsSuccess = false,
+                                Data = editedFlightDTO,
+                                Message = "selected plane is already assigned for another flight in same time"
+                            };
+                            }
+                    }
+                        flightFromDB.Plane = newPlane;
+                        newPlane.FlightId = flightFromDB.Id;
+                        newPlane.Flight = flightFromDB;
+                        planeRepository.Update(newPlane);
+                }
+
+               
+                if (TimeSpan.TryParse(editedFlightDTO.Duration , out TimeSpan ParsedDuration))
                 {
                     flightFromDB.Duration = ParsedDuration;
                 }
@@ -287,7 +448,12 @@ namespace Flight_Booking_System.Controllers
                     };
                 }
 
+                airPortRepository.Save();
                 flightRepository.Save();
+                ticketRepository.Save();
+                seatRepository.Save();
+                planeRepository.Save();
+
 
                 return new GeneralResponse()
                 {
@@ -297,7 +463,16 @@ namespace Flight_Booking_System.Controllers
 
                     Message = "Flight Edited Successfully",
                 };
-
+                }
+                catch(Exception ex)
+                {
+                    return new GeneralResponse
+                    {
+                        IsSuccess = false,
+                        Data = null,
+                        Message = ex.Message
+                    };
+                }
                 // omar : we can use one od them if we needed but I think the General Response is better 
                 #region possible return responses
                 // omar : possible return responses :
@@ -338,12 +513,19 @@ namespace Flight_Booking_System.Controllers
                     {
                         passenger.FlightId = null;
                         passenger.Flight = null;
+                        passenger.Ticket = null;
+                        passengerRepository.Update(passenger);
                     }
 
-                    Plane flightPlane = planeRepository.Get(p => p.FlightId == flightFromDB.Id).FirstOrDefault();
+                    Plane? flightPlane = planeRepository.Get(p => p.FlightId == flightFromDB.Id).FirstOrDefault();
 
-                    flightPlane.FlightId = null;
-                    flightPlane.Flight = null;
+                    if (flightPlane != null)
+                    {
+                        flightPlane.FlightId = null;
+                        flightPlane.Flight = null;
+                        planeRepository.Update(flightPlane);
+                    }
+                    
 
 
                     List<Ticket> flightTickets = ticketRepository.Get(t => t.FlightId == flightFromDB.Id);
@@ -359,7 +541,7 @@ namespace Flight_Booking_System.Controllers
                         seat.TicketId = null;
                         seat.Ticket = null;
                         seatRepository.Delete(seat);
-                        ticketRepository.Delete(ticket);
+                        ticketRepository.Delete(ticket); 
                     }
 
                     seatRepository.Save();
@@ -369,7 +551,8 @@ namespace Flight_Booking_System.Controllers
                     // delete flight from source airport leaving flights list
 
                     AirPort? sourceAirport = airPortRepository.GetSourceWithFlights(flightFromDB.SourceAirportId);  ///todo : can access after deletion????
-                    if (sourceAirport.LeavingFlights != null)
+
+                    if(sourceAirport.LeavingFlights != null) 
                     {
                         sourceAirport.LeavingFlights.Remove(flightFromDB);
                     }
@@ -385,12 +568,9 @@ namespace Flight_Booking_System.Controllers
                         destinationAirport.ArrivingFlights.Remove(flightFromDB);
                     }
 
-
                     flightRepository.Delete(flightFromDB);
 
                     flightRepository.Save();
-
-
 
                     return new GeneralResponse()
                     {
