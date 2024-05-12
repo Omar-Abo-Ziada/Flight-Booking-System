@@ -38,7 +38,7 @@ namespace Flight_Booking_System.DTOs
 
         public string? imageURL { get; set; }
 
-        public DateTime? DepartureTime { get; set; } = DateTime.Now;
+        public DateTime? DepartureTime { get; set; } = DateTime.Now; 
 
         public DateTime? ArrivalTime { get; set; } = DateTime.Now.AddHours(5);
 

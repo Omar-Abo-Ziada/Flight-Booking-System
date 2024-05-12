@@ -302,7 +302,7 @@ namespace Flight_Booking_System.Controllers
             Flight? flightFromDB = flightRepository.GetWitPassengers_Tickets(id);   /// todo: saeed : change from getbyid to getWithPassengers_tickets
 
             if (flightFromDB == null )
-            {
+            { 
                 return new GeneralResponse()
                 {
                     IsSuccess = false,
@@ -315,6 +315,10 @@ namespace Flight_Booking_System.Controllers
             }
             else
             {
+                try
+                {
+
+                
                 // can't use update here because the same instance is already tracked when I got him by Id
                 // so I just map with my self and save changes => also cant use automapper because it creates a new instance and doesn't modify the existed one 
                 // so SaveChanges won't take effect unless I Mapped manually
@@ -335,12 +339,14 @@ namespace Flight_Booking_System.Controllers
                             passenger.FlightId = null;
                             passenger.Flight = null;
                             passenger.Ticket = null;
+                            passengerRepository.Update(passenger);
+                            passengerRepository.Delete(passenger);
                         }
                     }
 
                     List<Ticket>? oldFlightTickets = ticketRepository.GetWithSeatByFlightId(flightFromDB.Id);
                     if(oldFlightTickets != null ) 
-                    {
+                    { 
                        foreach(Ticket ticket in oldFlightTickets)
                         {
                             // del ticket and seat 
@@ -348,12 +354,15 @@ namespace Flight_Booking_System.Controllers
                             ticket.Flight = null;      // no obj from flight included
                             ticket.Passenger = null;
                             ticket.PassengerId = null;
+                            ticketRepository.Update(ticket);
+                            ticketRepository.Delete(ticket);
 
                             Seat? seat = seatRepository.GetWithTicket(ticket?.Seat?.Id);
                             seat.TicketId = null;
                             seat.Ticket = null;
                             ticket.Seat = null;
-
+                            seatRepository.Update(seat);
+                            seatRepository.Delete(seat);
                         }
                     }
 
@@ -390,24 +399,41 @@ namespace Flight_Booking_System.Controllers
 
                 // check if flight plane changed >> change in d.b
                 Plane oldPlane = planeRepository.GetByFlightId(flightFromDB.Id);
-
-                if (oldPlane?.Id != editedFlightDTO?.PlaneId)         // front : if flight has no plane yet >> dropdown list >> no assigned plane yet
-                {
-                    oldPlane.FlightId = null;
-                    oldPlane.Flight = null;
-                    planeRepository.GetById(editedFlightDTO.PlaneId)
-                                                           .FlightId = flightFromDB.Id;
-                }
-
-               
                 Plane newPlane = planeRepository.GetById(editedFlightDTO.PlaneId);
-                if (newPlane.Id != oldPlane.Id) 
-                {
-                    //oldPlane.FlightId = null;
-                    flightFromDB.Plane = newPlane;
-                }
-               
 
+                if (oldPlane?.Id != newPlane.Id)         // front : if flight has no plane yet >> dropdown list >> no assigned plane yet
+                {
+                    if(oldPlane != null)
+                        {
+                            oldPlane.FlightId = null;
+                            oldPlane.Flight = null;
+                            planeRepository.Update(oldPlane);
+                        }
+
+                    //    flightFromDB.Plane = newPlane;
+
+                        if (newPlane.FlightId != null)
+                    {
+                       Flight anotherFlightWithSamePlane = flightRepository.GetById(newPlane.FlightId);
+                            // saeed : flight : plane >> should be 1 : m to make this check
+                            if (editedFlightDTO.DepartureTime >= anotherFlightWithSamePlane.DepartureTime &&
+                                editedFlightDTO.DepartureTime < anotherFlightWithSamePlane.ArrivalTime) 
+                            { 
+                                return new GeneralResponse
+                            {
+                                IsSuccess = false,
+                                Data = editedFlightDTO,
+                                Message = "selected plane is already assigned for another flight in same time"
+                            };
+                            }
+                    }
+                        flightFromDB.Plane = newPlane;
+                        newPlane.FlightId = flightFromDB.Id;
+                        newPlane.Flight = flightFromDB;
+                        planeRepository.Update(newPlane);
+                }
+
+               
                 if (TimeSpan.TryParse(editedFlightDTO.Duration , out TimeSpan ParsedDuration))
                 {
                     flightFromDB.Duration = ParsedDuration;
@@ -426,6 +452,7 @@ namespace Flight_Booking_System.Controllers
                 flightRepository.Save();
                 ticketRepository.Save();
                 seatRepository.Save();
+                planeRepository.Save();
 
 
                 return new GeneralResponse()
@@ -436,7 +463,16 @@ namespace Flight_Booking_System.Controllers
 
                     Message = "Flight Edited Successfully",
                 };
-
+                }
+                catch(Exception ex)
+                {
+                    return new GeneralResponse
+                    {
+                        IsSuccess = false,
+                        Data = null,
+                        Message = ex.Message
+                    };
+                }
                 // omar : we can use one od them if we needed but I think the General Response is better 
                 #region possible return responses
                 // omar : possible return responses :
@@ -478,12 +514,18 @@ namespace Flight_Booking_System.Controllers
                         passenger.FlightId = null;
                         passenger.Flight = null;
                         passenger.Ticket = null;
+                        passengerRepository.Update(passenger);
                     }
 
-                    Plane flightPlane = planeRepository.Get(p => p.FlightId == flightFromDB.Id).FirstOrDefault();
+                    Plane? flightPlane = planeRepository.Get(p => p.FlightId == flightFromDB.Id).FirstOrDefault();
 
-                    flightPlane.FlightId = null;
-                    flightPlane.Flight = null;
+                    if (flightPlane != null)
+                    {
+                        flightPlane.FlightId = null;
+                        flightPlane.Flight = null;
+                        planeRepository.Update(flightPlane);
+                    }
+                    
 
 
                     List<Ticket> flightTickets = ticketRepository.Get(t => t.FlightId == flightFromDB.Id);
@@ -525,12 +567,9 @@ namespace Flight_Booking_System.Controllers
                         destinationAirport.ArrivingFlights.Remove(flightFromDB);
                     }
 
-
                     flightRepository.Delete(flightFromDB);
 
                     flightRepository.Save();
-
-
 
                     return new GeneralResponse()
                     {
