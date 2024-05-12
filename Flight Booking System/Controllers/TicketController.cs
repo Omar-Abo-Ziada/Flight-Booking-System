@@ -1,4 +1,5 @@
-﻿using Flight_Booking_System.DTOs;
+﻿using Azure.Identity;
+using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
@@ -19,7 +20,7 @@ namespace Flight_Booking_System.Controllers
         private readonly ISeatRepository seatRepository;
 
         public TicketController(ITicketRepository _ticketRepository, IPassengerRepository passengerRepository,
-            IFlightRepository flightRepository, IPlaneRepository planeRepository , ISeatRepository seatRepository)
+            IFlightRepository flightRepository, IPlaneRepository planeRepository, ISeatRepository seatRepository)
         {
             ticketRepository = _ticketRepository;
             this.passengerRepository = passengerRepository;
@@ -41,12 +42,11 @@ namespace Flight_Booking_System.Controllers
             {
                 TicketDTO ticketDTO = new TicketDTO()
                 {
-                    //Id = ticket.Id,
+                    Id = ticket.Id,
                     Class = ticket.Class,
                     Price = ticket.Price,
                     PassengerId = ticket.PassengerId,
                     FlightId = ticket.FlightId,
-                    //SeatId = ticket.SeatId,
 
                 };
 
@@ -79,11 +79,10 @@ namespace Flight_Booking_System.Controllers
             {
                 TicketDTO ticketDTO = new TicketDTO()
                 {
-                    //Id = ticket.Id,
+                    Id = ticket.Id,
                     Class = ticket.Class,
                     Price = ticket.Price,
                     FlightId = ticket.FlightId,
-                    //SeatId = ticket.SeatId,
                     PassengerId = ticket.PassengerId,
                 };
 
@@ -117,7 +116,7 @@ namespace Flight_Booking_System.Controllers
 
                 Ticket ticket = new Ticket()
                 {
-                    //Id = ticketDTO.Id,
+                    Id = ticketDTO.Id,
                     Class = ticketDTO.Class,
                     Price = ticketDTO.Price,
 
@@ -140,8 +139,18 @@ namespace Flight_Booking_System.Controllers
 
                 Flight flightFromDB = flightRepository.GetById(ticket.FlightId);
 
-                flightFromDB.Passengers.Add(passernger);
-                flightFromDB.Tickets.Add(ticket);
+                if (flightFromDB != null)
+                {
+                    if (flightFromDB.Passengers != null)
+                    {
+                        flightFromDB.Passengers.Add(passernger);
+                    }
+
+                    if (flightFromDB.Tickets != null)
+                    {
+                        flightFromDB.Tickets.Add(ticket);
+                    }
+                }
 
                 Seat seat = new Seat()
                 {
@@ -163,6 +172,7 @@ namespace Flight_Booking_System.Controllers
                 passengerRepository.Save();
                 planeRepository.Save();
                 flightRepository.Save();
+                seatRepository.Save();  // if there any error then this line my be the problem
 
                 return new GeneralResponse()
                 {
@@ -182,44 +192,56 @@ namespace Flight_Booking_System.Controllers
             }
         }
 
-
         [HttpPut("{ticketId:int}")]
         public ActionResult<GeneralResponse> UpdateTicket(int ticketId, TicketDTO ticketDTO)
         {
-            Ticket t1 = ticketRepository.GetById(ticketId);
-            if (t1 == null || t1.Id != ticketId)
+            //>>>>>>>>>>>>>>>>>>>>>>>>>> Omar :  Actually I won't complete it => it has no meaning to edit a ticket .. u have to delete it and add a new one   <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+            throw new Exception("Don't use it ,Edit Ticket actually has no meaning ,, instead delete ticket and add a new one");
+
+            Ticket? ticket = ticketRepository.GetWithAllIncludes(ticketId);
+
+            if (ticket == null || ticket.Id != ticketId)
             {
                 return new GeneralResponse()
                 {
                     IsSuccess = false,
                     Data = null,
-                    Message = "Invalid Ticket ID "
+                    Message = "No ticket found with this ID," +
+                    " or the ID of the given ticket doesn't match the edited ticket Id."
                 };
             }
-            else
-            {
-                //t1.Id = ticketDTO.Id;
-                t1.Class = ticketDTO.Class;
-                t1.Price = ticketDTO.Price;
-                t1.FlightId = ticketDTO.FlightId;
-                //t1.SeatId = ticketDTO.SeatId;
-                t1.PassengerId = ticketDTO.PassengerId;
 
-                ticketRepository.Update(t1);
-                ticketRepository.Save();
-                return new GeneralResponse()
-                {
-                    IsSuccess = true,
-                    Data = t1,
-                    Message = "Updated Successfully"
-                };
-            }
+            // updating primtives first
+            ticket.Id = ticketDTO.Id;
+            ticket.Class = ticketDTO.Class;
+            ticket.Price = ticketDTO.Price;
+
+
+            // now before updating the FKs => edit the related objs with those FKs first
+            Passenger passenger = passengerRepository.GetById(ticketDTO.PassengerId);
+            passenger.Ticket = ticket;
+
+            Flight? flight = flightRepository.GetWithTickets(ticketDTO.FlightId);
+
+            ticket.FlightId = ticketDTO.FlightId;
+            ticket.PassengerId = ticketDTO.PassengerId;
+
+            ticketRepository.Save();
+
+            return new GeneralResponse()
+            {
+                IsSuccess = true,
+                Data = ticket,
+                Message = "Updated Successfully"
+            };
         }
 
         [HttpDelete("{ticketId:int}")]
         public ActionResult<GeneralResponse> DeleteTicket(int ticketId)
         {
-            Ticket ticket = ticketRepository.GetById(ticketId);
+            Ticket? ticket = ticketRepository.GetWithAllIncludes(ticketId);
+
             if (ticket == null)
             {
                 return new GeneralResponse()
@@ -229,18 +251,99 @@ namespace Flight_Booking_System.Controllers
                     Message = "Invalid Ticket ID"
                 };
             }
-            else
+
+            #region Deleting Refrences First
+
+            // I think this way getting the seat directly by the seat obj Id in ticket
+            // => is mush faster than looping the all seats in DB using func(s => s.ticketId == ticket.Id)
+            Seat? seat = seatRepository.GetById(ticket?.Seat?.Id);
+
+            if (seat != null)
             {
-                
+                seat.TicketId = null;    //  neccessary
+                seat.Ticket = null;      // not neccessary
+
+                try
+                {
+                    seatRepository.Delete(seat);
+                }
+                catch (Exception ex)
+                {
+                    return new GeneralResponse()
+                    {
+                        IsSuccess = false,
+                        Data = ex.Message,
+                        Message = "Couldn't delete the seat related to the ticket due to this error."
+                    };
+                }
+            }
+
+            //-------------------------------------------------------------------
+
+
+            // I think this way getting the passenger directly by the passenger obj Id in ticket
+            // => is mush faster than looping the all passengers and include ticket in DB using func(p => p.ticket.Id == ticket.Id)
+            Passenger? passenger = passengerRepository.GetById(ticket?.Passenger?.Id);
+
+            if (passenger != null)
+            {
+                passenger.Ticket = null;
+
+                passenger.Flight = null;
+                passenger.FlightId = null;
+            }
+
+            //-------------------------------------------------------------------
+
+            // much faster than => Get(f => f.Tickets.Contains(ticket)).FirstOrDefault();
+            Flight? flight = flightRepository.GetWithTickets_Passengers(passenger?.FlightId);
+
+            if (flight != null)
+            {
+                if (flight.Tickets != null && flight.Tickets.Contains(ticket))
+                {
+                    flight.Tickets.Remove(ticket);
+                }
+
+                if (flight.Passengers != null && flight.Passengers.Contains(passenger))
+                {
+                    // this passenger has no ticket now => so he is just a user until he book another ticket
+                    flight.Passengers.Remove(passenger);
+                }
+            }
+
+            //-------------------------------------------------------------------
+
+            #endregion
+
+            try
+            {
                 ticketRepository.Delete(ticket);
-                ticketRepository.Save();
+            }
+            catch (Exception ex)
+            {
                 return new GeneralResponse()
                 {
-                    IsSuccess = true,
-                    Data = null,
-                    Message = "Ticket Deleted Successfully"
+                    IsSuccess = false,
+                    Data = ex.Message,
+                    Message = "Couldn't delete the ticket due to this error."
                 };
             }
+
+            flightRepository.Save();
+
+            passengerRepository.Save();
+
+            ticketRepository.Save();
+
+            seatRepository.Save();
+
+            return new GeneralResponse()
+            {
+                IsSuccess = true,
+                Data = null,
+                Message = "Ticket Deleted Successfully"
+            };
         }
     }
 }

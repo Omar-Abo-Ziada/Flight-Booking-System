@@ -50,5 +50,20 @@ namespace Flight_Booking_System.Repositories
                             .Where(f => f.Id == id).Include(f => f.Tickets)
                             .Include(f => f.Passengers).FirstOrDefault();
         }
+        
+        public Flight? GetWithTickets_Passengers(int? id)
+        {
+            return Context.Flights.Where(f => f.Id == id)
+                .Include(f => f.Tickets)
+                .Include(f => f.Passengers)
+                .FirstOrDefault();
+        }
+
+        public Flight? GetWithTickets(int? id)
+        {
+            return Context.Flights.Where(f => f.Id == id)
+                .Include(f => f.Tickets)
+                .FirstOrDefault();
+        }
     }
 }
