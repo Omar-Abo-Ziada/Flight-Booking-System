@@ -28,6 +28,8 @@ namespace Flight_Booking_System.DTOs
     //    [Required(ErrorMessage = "The National ID is required")]
         public string? NationalId { get; set; }
 
+        public int? FlightId { get; set; }
+
         //----------------------------------------
 
         //[ForeignKey("Ticket")]
