@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 //using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Sockets;
 using System.Security.Claims;
 using System.Text;
 
@@ -27,10 +26,12 @@ namespace Flight_Booking_System.Controllers
         private readonly ITicketRepository _ticketRepository;
         private readonly IFlightRepository _flightRepository;
         private readonly ISeatRepository _seatRepository;
+        private readonly IPhoneConfirmationService phoneConfirmationService;
+
 
         public AccountController(UserManager<ApplicationUSer> userManager, IConfiguration configuration, IEmailService emailService,
              IGoogleAuthService _googleAuthService, IPassengerRepository passengerRepository,
-             ITicketRepository ticketRepository, IFlightRepository flightRepository, ISeatRepository seatRepository)
+             ITicketRepository ticketRepository, IFlightRepository flightRepository, ISeatRepository seatRepository, IPhoneConfirmationService phoneConfirmationService)
         {
             this._userManager = userManager;
             this._configuration = configuration;
@@ -40,6 +41,8 @@ namespace Flight_Booking_System.Controllers
             this._ticketRepository = ticketRepository;
             this._flightRepository = flightRepository;
             this._seatRepository = seatRepository;
+            this.phoneConfirmationService = phoneConfirmationService;
+
         }
 
         [HttpPost("register")]
@@ -515,6 +518,29 @@ namespace Flight_Booking_System.Controllers
                     Message = $"Failed to delete the user : {user.UserName}"
                 };
             }
+        }
+
+        //ibraihim send smsm(PhoneConfirmationService)from(ibrahim(sendSMS) branch)
+
+        [HttpPost("PhoneConfirmation_Sendsms")]
+        public ActionResult<GeneralResponse> PhoneConfirmation_Sendsms(PhoneConfirmationDto phoneConfirmationDto)
+        {
+            var result = phoneConfirmationService.SendVerificationCode(phoneConfirmationDto.PhoneNumber, phoneConfirmationDto.Body);
+
+            if (!string.IsNullOrEmpty(result.ErrorMessage))
+            {
+                return new GeneralResponse()
+                {
+                    IsSuccess = false,
+                    Message = $"{result.ErrorMessage}"
+                };
+            }
+
+            return new GeneralResponse()
+            {
+                IsSuccess = true,
+                Message = $"confirmation sended"
+            };
         }
     }
 }
