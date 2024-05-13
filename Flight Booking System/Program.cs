@@ -48,6 +48,10 @@ namespace Flight_Booking_System
                 });
             });
 
+            //ibrahim phone confirmation registering settings to map its class
+
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
+            builder.Services.AddTransient<IPhoneConfirmationService, PhoneConfirmationService>();
 
             // Registering Repos :
             builder.Services.AddScoped<IAirPortRepository, AirPortRepository>();
