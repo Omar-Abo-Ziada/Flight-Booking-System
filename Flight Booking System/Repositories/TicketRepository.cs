@@ -28,5 +28,10 @@ namespace Flight_Booking_System.Repositories
                 .Include(t => t.Passenger)
                 .FirstOrDefault();
         }
+
+        public List<Ticket> GetWithSeatByFlightId(int id) 
+        {
+            return Context.Tickets.Where(t => t.FlightId == id).Include(t => t.Seat).ToList();
+        }
     }
 }
