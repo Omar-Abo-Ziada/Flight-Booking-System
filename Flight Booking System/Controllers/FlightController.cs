@@ -41,7 +41,7 @@ namespace Flight_Booking_System.Controllers
         //***********************************************
 
         [HttpGet]
-        public ActionResult<GeneralResponse> Get() 
+        public ActionResult<GeneralResponse> Get()  
         {
             List<Flight> flights = flightRepository.GetAllWithAllIncludes();  // saeed : replace get include plane with get with all includes
 
@@ -184,7 +184,7 @@ namespace Flight_Booking_System.Controllers
 
         [HttpPost]
         // [Authorize]
-        public ActionResult<GeneralResponse> Add(FlightWithImgDTO flightDTO)
+        public ActionResult<GeneralResponse> Add(FlightWithImgDTO flightDTO) 
         {
             string uploadpath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
             string imagename = Guid.NewGuid().ToString() + "_" + flightDTO?.Image?.FileName;
@@ -202,12 +202,15 @@ namespace Flight_Booking_System.Controllers
                 AirPort? sourceAirport = airPortRepository.GetSourceWithFlights(flightDTO.StartId);
                 AirPort? destinationAirport = airPortRepository.GetDsetinationWithFlights(flightDTO.DestinationId);
 
+              //  AirPort sourceAirport = airPortRepository.GetById(flightDTO.StartId);
                 Flight flight = new Flight()
                 {
-                    Id = flightDTO.Id,
+                  //  Id = flightDTO.Id,
                     imageURL = flightDTO.imageURL,
 
+
                     SourceAirportId = flightDTO.StartId,
+                    
                     SourceAirport = sourceAirport,
 
                     DestinationAirportId = flightDTO.DestinationId,
