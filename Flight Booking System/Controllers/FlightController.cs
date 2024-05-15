@@ -3,6 +3,7 @@ using Flight_Booking_System.DTOs;
 using Flight_Booking_System.Models;
 using Flight_Booking_System.Repositories;
 using Flight_Booking_System.Response;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +22,13 @@ namespace Flight_Booking_System.Controllers
         private readonly IPassengerRepository passengerRepository;
         private readonly ITicketRepository ticketRepository;
         private readonly ISeatRepository seatRepository;
+        private readonly IWebHostEnvironment webHost;
 
         public FlightController
             (IFlightRepository flightRepository, IWebHostEnvironment webHostEnvironment, IMapper mapper,
             IAirPortRepository airPortRepository, IPlaneRepository planeRepository,
             IPassengerRepository passengerRepository, ITicketRepository ticketRepository,
-            ISeatRepository seatRepository)
+            ISeatRepository seatRepository, IWebHostEnvironment _webHost)
         {
             this.flightRepository = flightRepository;
             _webHostEnvironment = webHostEnvironment;
@@ -36,6 +38,7 @@ namespace Flight_Booking_System.Controllers
             this.passengerRepository = passengerRepository;
             this.ticketRepository = ticketRepository;
             this.seatRepository = seatRepository;
+            webHost = _webHost;
         }
 
         //***********************************************
@@ -182,18 +185,120 @@ namespace Flight_Booking_System.Controllers
             }
         }
 
+
+        [HttpPost("saveImage")]
+        public async Task<GeneralResponse> saveImage()  // unsupported media type 
+        {
+            string filePath = null ;
+            string imageName = "image not added";
+            var res = false;
+            try
+            {
+                var UploadedFile = Request.Form.Files[0];
+                //foreach (var file in UploadedFiles)
+                //{
+                //  string filename = UploadedFile.FileName;
+                //  string filepath = getFilepath(UploadedFile.FileName);
+
+                string uploadpath = Path.Combine(webHost.WebRootPath, "images");
+                if (!System.IO.Directory.Exists(uploadpath))
+                {
+                    System.IO.Directory.CreateDirectory(uploadpath);
+                }
+                imageName = Guid.NewGuid().ToString() + "-" + UploadedFile.FileName;
+                filePath = Path.Combine(uploadpath, imageName);
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+
+                using (FileStream stream = System.IO.File.Create(filePath))
+                {
+                    await UploadedFile.CopyToAsync(stream);
+                    res = true;
+                }
+            }
+            //     }
+            catch
+            {
+
+            }
+            if (res)
+            {
+                return new GeneralResponse
+                {
+                    IsSuccess = true,
+                    Data = filePath,// Assuming imagePath is the variable holding the image path
+                    Message = "Image uploaded successfully"
+                };
+            }
+
+            else
+            {
+                return new GeneralResponse 
+                {
+                    IsSuccess = false,
+                    Data = null,// Assuming imagePath is the variable holding the image path
+                    Message = "fail on upload image"
+                };
+            }
+            //ValidationContext context = new ValidationContext(news);
+            //var validationResults = new List<ValidationResult>();
+            //bool isValid = Validator.TryValidateObject(news, context, validationResults, true);
+            //string resultMsg = "";
+
+            //if (isValid)
+            //{
+            //    try
+            //    {
+            //        if(news.imageFile != null)
+            //        {
+            //          Tuple<int,string> saveResult =
+            //                fileService.SaveImage(news.imageFile);
+
+            //            if(saveResult.Item1 == 1)
+            //            {
+            //                news.image = saveResult.Item2;
+            //                newsRepository.addNews(news);
+            //                newsRepository.save();
+            //                resultMsg = "Added successfully";
+            //                return Ok(resultMsg);
+            //            }
+            //        }
+            //        resultMsg = "Error on adding";
+            //        //newsRepository.addNews(news);
+            //        //newsRepository.save();
+            //        // return CreatedAtAction("GetById", new { id = news.id }, news); // how get id >> 0 ????
+            //    }
+            //    catch (Exception ex) 
+            //    {
+            //        return BadRequest(ex.Message);
+            //    }
+            //}
+            //var errorMessage = string.Join(", ", validationResults.Select(r => r.ErrorMessage));
+            //return BadRequest(errorMessage);
+        }
+
         [HttpPost]
         // [Authorize]
-        public ActionResult<GeneralResponse> Add(FlightWithImgDTO flightDTO) 
+        public ActionResult<GeneralResponse> Add(string DepartureTime, string ArrivalTime, int DestinationId, int StartId, string imageURL)  
         {
-            string uploadpath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
-            string imagename = Guid.NewGuid().ToString() + "_" + flightDTO?.Image?.FileName;
-            string filepath = Path.Combine(uploadpath, imagename);
-            using (FileStream fileStream = new FileStream(filepath, FileMode.Create))
-            {
-                flightDTO.Image.CopyTo(fileStream);
-            }
-            flightDTO.imageURL = imagename;
+            
+            FlightWithImgDTO flightDTO = new FlightWithImgDTO() { 
+             DepartureTime = DateTime.Parse(DepartureTime),
+             ArrivalTime = DateTime.Parse(ArrivalTime),
+             DestinationId = DestinationId,
+             StartId = StartId,
+             imageURL = imageURL
+            };
+            //string uploadpath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+            //string imagename = Guid.NewGuid().ToString() + "_" + flightDTO?.Image?.FileName;
+            //string filepath = Path.Combine(uploadpath, imagename);
+            //using (FileStream fileStream = new FileStream(filepath, FileMode.Create))
+            //{
+            //    flightDTO.Image.CopyTo(fileStream);
+            //}
+            //flightDTO.imageURL = imagename;
 
             if (ModelState.IsValid)
             {
