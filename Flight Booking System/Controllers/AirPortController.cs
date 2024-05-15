@@ -80,7 +80,8 @@ namespace Flight_Booking_System.Controllers
                 var airPortDTOs = airPorts.Select(airPort => new AirPortDTO
                 {
                     Name = airPort.Name,
-                    AirPortNumber = airPort.AirPortNumber
+                    AirPortNumber = airPort.AirPortNumber,
+                    Id = airPort.Id
                 });
                 return new GeneralResponse()
                 {

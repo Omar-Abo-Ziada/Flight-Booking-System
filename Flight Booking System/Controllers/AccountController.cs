@@ -279,7 +279,7 @@ namespace Flight_Booking_System.Controllers
                         return new GeneralResponse()
                         {
                             IsSuccess = true,
-                            Data = null,
+                            Data = roles,
                             Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                             Expired = jwtSecurityToken.ValidTo,
                             Message = "Token Created Successfully"
