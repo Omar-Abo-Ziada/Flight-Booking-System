@@ -228,7 +228,7 @@ namespace Flight_Booking_System.Controllers
                 return new GeneralResponse
                 {
                     IsSuccess = true,
-                    Data = filePath,// Assuming imagePath is the variable holding the image path
+                    Data = imageName,// Assuming imagePath is the variable holding the image path
                     Message = "Image uploaded successfully"
                 };
             }
@@ -281,7 +281,7 @@ namespace Flight_Booking_System.Controllers
 
         [HttpPost]
         // [Authorize]
-        public ActionResult<GeneralResponse> Add(string DepartureTime, string ArrivalTime, int DestinationId, int StartId, string imageURL)  
+        public ActionResult<GeneralResponse> Add(string DepartureTime, string ArrivalTime, int DestinationId, int StartId, string imageURL, int PlaneId)  
         {
             
             FlightWithImgDTO flightDTO = new FlightWithImgDTO() { 
@@ -289,7 +289,8 @@ namespace Flight_Booking_System.Controllers
              ArrivalTime = DateTime.Parse(ArrivalTime),
              DestinationId = DestinationId,
              StartId = StartId,
-             imageURL = imageURL
+             imageURL = imageURL,
+             PlaneId = PlaneId
             };
             //string uploadpath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
             //string imagename = Guid.NewGuid().ToString() + "_" + flightDTO?.Image?.FileName;
@@ -325,20 +326,22 @@ namespace Flight_Booking_System.Controllers
                     DepartureTime = flightDTO.DepartureTime,
                     Plane = plane,
                 };
+                TimeSpan? duration = flightDTO.ArrivalTime - flightDTO.DepartureTime;
 
-
-                if (TimeSpan.TryParse(flightDTO.Duration, out TimeSpan ParsedDuration))
-                {
-                    flight.Duration = ParsedDuration;
-                }
-                else
-                {
-                    return new GeneralResponse()
-                    {
-                        IsSuccess = false,
-                        Message = "Invalid Duration Format , it has to be like this : 'HH:MM:SS'"
-                    };
-                }
+                //TimeSpan.Parse(flightDTO.Duration) = DateTime.Parse(ArrivalTime) - DateTime.Parse(DepartureTime)
+                //if (TimeSpan.TryParse(flightDTO.Duration, out TimeSpan ParsedDuration))
+                //{
+                //    flight.Duration = ParsedDuration;
+                //}
+                flight.Duration = duration;
+                //else
+                //{
+                //    return new GeneralResponse()
+                //    {
+                //        IsSuccess = false,
+                //        Message = "Invalid Duration Format , it has to be like this : 'HH:MM:SS'"
+                //    };
+                //}
 
                 flightRepository.Insert(flight);
 
